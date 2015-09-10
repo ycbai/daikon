@@ -1,0 +1,1 @@
+This project provide a Talend shared library for all back-end application development.  
