@@ -19,16 +19,16 @@ import com.fasterxml.jackson.core.JsonGenerator;
  */
 public class TalendRuntimeException extends RuntimeException {
 
-    private static final long         serialVersionUID = -5306654994356243153L;
+    private static final long            serialVersionUID = -5306654994356243153L;
 
     /** This class' logger. */
-    private static final Logger       LOGGER           = LoggerFactory.getLogger(TalendRuntimeException.class);
+    private static final Logger          LOGGER           = LoggerFactory.getLogger(TalendRuntimeException.class);
 
     /** The error code for this exception. */
-    private final ErrorCode           code;
+    private final ErrorCode              code;
 
     /** The exception cause. */
-    private final Throwable           cause;
+    private final Throwable              cause;
 
     /** Context of the error when it occurred (used to detail the user error message in frontend). */
     private final TalendExceptionContext context;
@@ -117,7 +117,7 @@ public class TalendRuntimeException extends RuntimeException {
      * 
      * @param writer where to write this error.
      */
-    void writeTo(Writer writer) {
+    public void writeTo(Writer writer) {
         try {
             JsonGenerator generator = (new JsonFactory()).createGenerator(writer);
             generator.writeStartObject();

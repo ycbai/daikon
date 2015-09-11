@@ -16,6 +16,16 @@
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
 	</properties>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>talend_nexus_deployment</id>
+            <url>http://newbuild.talend.com:8081/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>talend_nexus_deployment</id>
+            <url>http://newbuild.talend.com:8081/nexus/content/repositories/releases/</url>
+        </repository>
+    </distributionManagement>
 
 	<dependencies>
 		<dependency>
