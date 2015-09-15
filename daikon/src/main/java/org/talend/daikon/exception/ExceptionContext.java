@@ -7,9 +7,9 @@ import java.util.Map;
 /**
  * Exception context holds the exception context, e.g. additional information about TDPException when they occur.
  */
-public class TalendExceptionContext implements Serializable {
+public class ExceptionContext implements Serializable {
 
-    private static final long   serialVersionUID = -8905451634883948364L;
+    private static final long serialVersionUID = -8905451634883948364L;
 
     /** The internal context. */
     private Map<String, Object> context;
@@ -17,7 +17,7 @@ public class TalendExceptionContext implements Serializable {
     /**
      * private constructor to ensure the build method use.
      */
-    private TalendExceptionContext() {
+    private ExceptionContext() {
         context = new HashMap<>();
     }
 
@@ -29,7 +29,7 @@ public class TalendExceptionContext implements Serializable {
      * @param value the value entry.
      * @return the context itself so that 'put' calls can be chained.
      */
-    public TalendExceptionContext put(String key, Object value) {
+    public ExceptionContext put(String key, Object value) {
         context.put(key, value);
         return this;
     }
@@ -37,8 +37,8 @@ public class TalendExceptionContext implements Serializable {
     /**
      * @return a fresh new context.
      */
-    public static TalendExceptionContext build() {
-        return new TalendExceptionContext();
+    public static ExceptionContext build() {
+        return new ExceptionContext();
     }
 
     /**
@@ -57,10 +57,16 @@ public class TalendExceptionContext implements Serializable {
         return context.containsKey(key);
     }
 
-    public TalendExceptionContext from(Map<String, Object> context) {
+    public ExceptionContext from(Map<String, Object> context) {
         if (context != null) {
             this.context.putAll(context);
         }
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return context != null ? context.toString() : super.toString();
+
     }
 }
