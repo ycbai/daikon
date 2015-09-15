@@ -1,5 +1,7 @@
 package org.talend.daikon.exception;
 
+import static org.junit.Assert.*;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +12,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
+import org.talend.daikon.exception.error.CommonErrorCodes;
 
 /**
  * Unit test for the TDPException
@@ -17,6 +20,13 @@ import org.skyscreamer.jsonassert.JSONAssert;
  * @see TDPException
  */
 public class TalendRuntimeExceptionTest {
+
+    @Test
+    public void createTalendRuntimeExceptionWithOnlyCode() {
+        TalendRuntimeException talendRuntimeException = new TalendRuntimeException(CommonErrorCodes.UNABLE_TO_PARSE_JSON, null,
+                null);
+        assertNotNull(talendRuntimeException);
+    }
 
     /**
      * @see TDPException#writeTo(Writer)

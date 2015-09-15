@@ -41,7 +41,7 @@ public class TalendRuntimeException extends RuntimeException {
      * @param context the context of the error when it occurred (used to detail the user error message in frontend).
      */
     public TalendRuntimeException(ErrorCode code, Throwable cause, ExceptionContext context) {
-        super(code.getCode() + ":" + context != null ? context.toString() : "", cause); //$NON-NLS-1$ //$NON-NLS-2$
+        super(code.getCode() + ":" + (context != null ? context.toString() : ""), cause); //$NON-NLS-1$ //$NON-NLS-2$
         this.code = code;
         this.cause = cause;
         this.context = (context == null ? ExceptionContext.build() : context);
