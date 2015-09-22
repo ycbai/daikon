@@ -33,11 +33,11 @@ public class I18nMessages {
 
     private String unknowKeyPrefix;
 
-    private ClassLoader classLoader;
+    transient private ClassLoader classLoader;
 
     /**
      * return the value associated to the key found in the bundle associated to the localeProvider and the baseName
-     * 
+     *
      * @param localeProvider, if null the java.util.Locale.getDefault() shall be used
      * @param ClassLoader, classloader used to find the resource with the baseName
      * @param baseName, used to create the underlying resource bundle, see {@link ResourceBundle#getBundle(String)}
@@ -53,7 +53,7 @@ public class I18nMessages {
 
     /**
      * same as {@link I18nMessages#I18nMessages(LocaleProvider, ClassLaoder , String, null)}
-     * 
+     *
      * @param localeProvider, if null the java.util.Locale.getDefault() shall be used
      * @param ClassLoader, classloader used to find the resource with the baseName
      * @param baseName, used to create the underlying resource bundle, see {@link ResourceBundle#getBundle(String)}
