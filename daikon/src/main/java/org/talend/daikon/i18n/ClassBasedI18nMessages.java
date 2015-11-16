@@ -35,7 +35,7 @@ public class ClassBasedI18nMessages extends I18nMessages {
      * of the clazz to look for the message.properties file.
      *
      * @param localeProvider, if null the java.util.Locale.getDefault() shall be used
-     * @param clazz, clazz used to find the resource based on the package name.
+     * @param clazz, clazz used to find the resource based on the it name or package name.
      * @param unknowKeyPrefix string used to prefix the returned key if the value was not found (if null then an empty
      * String is used)
      */
@@ -49,7 +49,7 @@ public class ClassBasedI18nMessages extends I18nMessages {
      * same as {@link I18nMessages#I18nMessages(LocaleProvider, Class<?>, String)} with unknowKeyPrefix set to null
      * 
      * @param localeProvider, if null the java.util.Locale.getDefault() shall be used
-     * @param clazz, clazz used to find the resource based on the package name.
+     * @param clazz, clazz used to find the resource based on the it name or package name.
      */
     public ClassBasedI18nMessages(LocaleProvider localeProvider, Class<?> clazz) {
         this(localeProvider, clazz, null);
@@ -58,7 +58,7 @@ public class ClassBasedI18nMessages extends I18nMessages {
     /**
      * same as {@link I18nMessages#I18nMessages(LocaleProvider, Class<?>, String)} with localeProvider set to null
      * 
-     * @param clazz, clazz used to find the resource based on the package name.
+     * @param clazz, clazz used to find the resource based on the it name or package name.
      * @param unknowKeyPrefix string used to prefix the returned key if the value was not found (if null then an empty
      * String is used)
      */
@@ -69,7 +69,7 @@ public class ClassBasedI18nMessages extends I18nMessages {
     /**
      * same as {@link I18nMessages#I18nMessages(Class<?>, String)} with unknowKeyPrefix set to null
      * 
-     * @param clazz, clazz used to find the resource based on the package name.
+     * @param clazz, clazz used to find the resource based on the it name or package name.
      */
     public ClassBasedI18nMessages(Class<?> clazz) {
         this(clazz, null);
