@@ -33,8 +33,19 @@ public class ClassBasedI18nMessagesTest {
         assertEquals("package2.another.key.value", classBasedI18nMessages.getMessage("another.key", null));
     }
 
+    @Test
     public void testGetMessageValueInheritedClass() {
         ClassBasedI18nMessages classBasedI18nMessages = new ClassBasedI18nMessages(TestClass2InheritingTestClass1.class);
         assertEquals("package1.unique.key.value", classBasedI18nMessages.getMessage("unique.key", null));
     }
+
+    @Test
+    public void testGetMessageValueClassNameMessageProperties() {
+        ClassBasedI18nMessages classBasedI18nMessages = new ClassBasedI18nMessages(this.getClass());
+        // check the value from the classname message property
+        assertEquals("the good value for a key", classBasedI18nMessages.getMessage("a.key", null));
+        // check the value from the package message property
+        assertEquals("value for the second key", classBasedI18nMessages.getMessage("a.second.key", null));
+    }
+
 }

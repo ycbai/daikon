@@ -15,9 +15,14 @@ package org.talend.daikon.i18n;
 import java.util.MissingResourceException;
 
 /**
- * This class look for i18n <b>messages.properties</b> file named according to package of the class used when creating
- * an instance. Not only it looks for the <package_name>.message.properties file but if none found is looks for the
- * super classes package propeties too.
+ * This class look for i18n <b>.properties</b> file according to the following policy. <br>
+ * <ul>
+ * <li>first the files with the name <b>clazz.getName() + "Messages.properties" </b> are searched.</li>w
+ * <li>if none is found then the files named <b>clazz.getPackage().getName() + ".messages.properties"</b> are searched.
+ * </li>
+ * </ul>
+ * Not only it looks for the current class with the following policy but if nothing found it applies the policy above to
+ * the super class until java.lang.Object is reached.
  */
 public class ClassBasedI18nMessages extends I18nMessages {
 
@@ -75,11 +80,18 @@ public class ClassBasedI18nMessages extends I18nMessages {
         // get the ResouceBundle Value
         Class<?> currentClass = clazz;
         while (currentClass != null && currentClass != Object.class) {
-            String baseName = computeBaseName(currentClass);
+            // try first ClassNameMessage.properties
+            String baseName = computeBaseName(currentClass, true);
             try {
                 return getFormatedMessage(key, currentClass.getClassLoader(), baseName, arguments);
             } catch (MissingResourceException mre) {
-                currentClass = currentClass.getSuperclass();
+                // try then PackageName.messages.properties
+                baseName = computeBaseName(currentClass, false);
+                try {
+                    return getFormatedMessage(key, currentClass.getClassLoader(), baseName, arguments);
+                } catch (MissingResourceException mre2) {
+                    currentClass = currentClass.getSuperclass();
+                }
             }
         }
         return unknowKeyPrefix + key;
@@ -91,8 +103,12 @@ public class ClassBasedI18nMessages extends I18nMessages {
      * @param currentClass used to derive the package of the file
      * @return the base name base on the package name of the class.
      */
-    private String computeBaseName(Class<?> currentClass) {
-        return currentClass.getPackage().getName().concat(".messages"); //$NON-NLS-1$
+    private String computeBaseName(Class<?> currentClass, boolean useClassName) {
+        if (useClassName) {
+            return currentClass.getName().concat("Messages"); //$NON-NLS-1$
+        } else {
+            return currentClass.getPackage().getName().concat(".messages"); //$NON-NLS-1$
+        }
     }
 
 }
