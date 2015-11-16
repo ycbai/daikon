@@ -1,0 +1,40 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+package org.talend.daikon.i18n;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+import org.talend.daikon.i18n.package1.package2.TestClass2InheritingTestClass1;
+
+/**
+ * created by sgandon on 16 nov. 2015
+ */
+public class ClassBasedI18nMessagesTest {
+
+    /**
+     * Test method for
+     * {@link org.talend.daikon.i18n.ClassBasedI18nMessages#getMessage(java.lang.String, java.lang.Object[])}.
+     */
+    @Test
+    public void testGetMessageValueTopClass() {
+        ClassBasedI18nMessages classBasedI18nMessages = new ClassBasedI18nMessages(TestClass2InheritingTestClass1.class);
+        assertEquals("package2.a.key.value", classBasedI18nMessages.getMessage("a.key", null));
+        assertEquals("package2.another.key.value", classBasedI18nMessages.getMessage("another.key", null));
+    }
+
+    public void testGetMessageValueInheritedClass() {
+        ClassBasedI18nMessages classBasedI18nMessages = new ClassBasedI18nMessages(TestClass2InheritingTestClass1.class);
+        assertEquals("package1.unique.key.value", classBasedI18nMessages.getMessage("unique.key", null));
+    }
+}
