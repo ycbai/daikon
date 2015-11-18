@@ -145,4 +145,20 @@ public class TalendRuntimeException extends RuntimeException {
     public ErrorCode getCode() {
         return code;
     }
+
+    /**
+     *
+     * @return the root cause of this error
+     */
+    @Override public Throwable getCause() {
+        return cause;
+    }
+
+    /**
+     *
+     * @return Context of the error when it occurred
+     */
+    public ExceptionContext getContext() {
+        return context;
+    }
 }

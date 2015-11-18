@@ -45,7 +45,7 @@ public class ExceptionContext implements Serializable {
      * @return wrapper for the Map.entrySet method so that one can iterate over this context entries.
      * @see Map#entrySet()
      */
-    Iterable<Map.Entry<String, Object>> entries() {
+    public Iterable<Map.Entry<String, Object>> entries() {
         return context.entrySet();
     }
 
@@ -53,7 +53,7 @@ public class ExceptionContext implements Serializable {
      * @param key the key to check.
      * @return true if this context contains the given key.
      */
-    boolean contains(String key) {
+    public boolean contains(String key) {
         return context.containsKey(key);
     }
 
