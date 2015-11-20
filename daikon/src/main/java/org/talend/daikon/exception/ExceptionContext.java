@@ -22,6 +22,14 @@ public class ExceptionContext implements Serializable {
     }
 
     /**
+     * creates a context from a builder
+     * @param builder
+     */
+    private ExceptionContext(ExceptionContextBuilder builder){
+        context = builder.context;
+    }
+
+    /**
      * Put the given key/value into this context.
      * 
      *
@@ -39,6 +47,19 @@ public class ExceptionContext implements Serializable {
      */
     public static ExceptionContext build() {
         return new ExceptionContext();
+    }
+
+    /**
+     * Creates an ExceptionContext with a builder
+     *
+     * <pre><code>
+     *     ExceptionContext.withBuilder().put("key1", value1).put("key2".value2).build();
+     * </code></pre>
+     *
+     * @return the builder
+     */
+    public static ExceptionContextBuilder withBuilder(){
+        return new ExceptionContextBuilder();
     }
 
     /**
@@ -69,4 +90,31 @@ public class ExceptionContext implements Serializable {
         return context != null ? context.toString() : super.toString();
 
     }
+
+    /**
+     * Exception Context Builder. Used with {@link ExceptionContext#withBuilder()}
+     */
+    public static class ExceptionContextBuilder {
+
+        private Map<String, Object> context = new HashMap<>();
+
+        /**
+         * Adds a new key / value pair in the context
+         * @param key
+         * @param value
+         * @return the builder
+         */
+        public ExceptionContextBuilder put(String key, Object value){
+            context.put(key, value);
+            return this;
+        }
+
+        /**
+         * @return the ExceptionContext resulting from the different calls to this builder
+         */
+        public ExceptionContext build(){
+            return new ExceptionContext(this);
+        }
+    }
+
 }
