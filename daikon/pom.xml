@@ -1,11 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
-	<groupId>org.talend.daikon</groupId>
+    
+    <parent>
+        <groupId>org.talend.daikon</groupId>
+        <artifactId>daikon-parent</artifactId>
+        <version>0.2.0.BUILD-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 	<artifactId>daikon</artifactId>
-	<version>0.2.0.BUILD-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 
 	<name>Daikon main shared library</name>
     <url>https://github.com/Talend/daikon</url>
@@ -53,11 +57,20 @@
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.6</version>
+		</dependency>
 	</dependencies>
-	<parent>
-		<groupId>org.talend.daikon</groupId>
-		<artifactId>daikon-parent</artifactId>
-		<version>0.2.0.BUILD-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+            </plugin>
+        </plugins>
+    </build>
+	
 </project>
