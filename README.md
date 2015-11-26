@@ -1,4 +1,4 @@
-# Talend Common Repository
+# Talend Daikon
 http://www.talend.com
 
 
@@ -33,5 +33,7 @@ Copyright (c) 2006-2015 Talend
 
 Licensed under the Apache V2 License
 
+## name origin
+The Daikon is a root vegetable and since this project is supposed to be the root of many projects we thought is was a fun and appropriate name.
 
 
