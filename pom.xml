@@ -4,7 +4,7 @@
 
 	<groupId>org.talend.daikon</groupId>
 	<artifactId>daikon-parent</artifactId>
-	<version>0.2.0.RELEASE</version>
+	<version>0.3.0.BUILD-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Daikon - parent pom</name>
