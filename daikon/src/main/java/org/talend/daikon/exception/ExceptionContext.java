@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.daikon.exception;
 
 import java.io.Serializable;
@@ -23,9 +35,10 @@ public class ExceptionContext implements Serializable {
 
     /**
      * creates a context from a builder
+     * 
      * @param builder
      */
-    private ExceptionContext(ExceptionContextBuilder builder){
+    private ExceptionContext(ExceptionContextBuilder builder) {
         context = builder.context;
     }
 
@@ -52,13 +65,15 @@ public class ExceptionContext implements Serializable {
     /**
      * Creates an ExceptionContext with a builder
      *
-     * <pre><code>
+     * <pre>
+     * <code>
      *     ExceptionContext.withBuilder().put("key1", value1).put("key2".value2).build();
-     * </code></pre>
+     * </code>
+     * </pre>
      *
      * @return the builder
      */
-    public static ExceptionContextBuilder withBuilder(){
+    public static ExceptionContextBuilder withBuilder() {
         return new ExceptionContextBuilder();
     }
 
@@ -100,11 +115,12 @@ public class ExceptionContext implements Serializable {
 
         /**
          * Adds a new key / value pair in the context
+         * 
          * @param key
          * @param value
          * @return the builder
          */
-        public ExceptionContextBuilder put(String key, Object value){
+        public ExceptionContextBuilder put(String key, Object value) {
             context.put(key, value);
             return this;
         }
@@ -112,7 +128,7 @@ public class ExceptionContext implements Serializable {
         /**
          * @return the ExceptionContext resulting from the different calls to this builder
          */
-        public ExceptionContext build(){
+        public ExceptionContext build() {
             return new ExceptionContext(this);
         }
     }

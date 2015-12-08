@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.daikon.exception.json;
 
 import java.util.Collection;
@@ -15,16 +27,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class JsonErrorCode implements ErrorCode {
 
-    private static final long   serialVersionUID = 2244078854888080512L;
+    private static final long serialVersionUID = 2244078854888080512L;
 
     @JsonProperty("code")
-    private String              code;
+    private String code;
 
     /** The error code context. */
     @JsonProperty("context")
-    private Map<String, Object> context          = Collections.emptyMap();
+    private Map<String, Object> context = Collections.emptyMap();
 
-    private int                 httpStatus;
+    private int httpStatus;
 
     /**
      * Default empty constructor needed for json parsing.
