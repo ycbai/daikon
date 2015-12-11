@@ -15,15 +15,12 @@ package org.talend.daikon.i18n;
 import java.util.Locale;
 
 /**
- * This provider will be used by {@link I18nMessages} in order to compute the local for every message to be
- * retreived.
+ * Provide a specific Locale for {@link I18nMessages}.
  */
 public interface LocaleProvider {
 
     /**
-     * This shall return the current Local at a given point in time or request.
-     * 
-     * @return the current local to be used by I18nMessages.
+     * @return the Locale to be used by {@link I18nMessages}.
      */
     Locale getLocale();
 }

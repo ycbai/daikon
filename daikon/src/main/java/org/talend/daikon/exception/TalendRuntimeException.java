@@ -33,7 +33,6 @@ public class TalendRuntimeException extends RuntimeException {
 
     private static final long serialVersionUID = -5306654994356243153L;
 
-    /** This class' logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(TalendRuntimeException.class);
 
     /** The error code for this exception. */
@@ -46,9 +45,7 @@ public class TalendRuntimeException extends RuntimeException {
     private final ExceptionContext context;
 
     /**
-     * Full constructor.
-     *
-     * @param code the error code that holds all the .
+     * @param code the error code, uniquely describing the error condition that occurred.
      * @param cause the root cause of this error.
      * @param context the context of the error when it occurred (used to detail the user error message in frontend).
      */

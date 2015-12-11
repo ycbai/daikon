@@ -16,7 +16,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 /**
- * Interface used to unify error message behaviour.
+ * An error code uniquely describes an error condition (for reference, documentation, UI, etc).
  */
 public interface ErrorCode extends Serializable {
 

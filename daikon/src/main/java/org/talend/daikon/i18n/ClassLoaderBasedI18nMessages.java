@@ -25,7 +25,7 @@ public class ClassLoaderBasedI18nMessages extends I18nMessages {
 
     private String baseName;
 
-    private String unknowKeyPrefix;
+    private String unknownKeyPrefix;
 
     transient private ClassLoader classLoader;
 
@@ -43,7 +43,7 @@ public class ClassLoaderBasedI18nMessages extends I18nMessages {
         super(localeProvider);
         this.classLoader = classloader;
         this.baseName = baseName;
-        this.unknowKeyPrefix = unknowKeyPrefix == null ? "" : unknowKeyPrefix; //$NON-NLS-1$
+        this.unknownKeyPrefix = unknowKeyPrefix == null ? "" : unknowKeyPrefix; //$NON-NLS-1$
     }
 
     /**
@@ -94,7 +94,7 @@ public class ClassLoaderBasedI18nMessages extends I18nMessages {
      * same as {@link I18nMessages#I18nMessages(String, String)} with unknowKeyPrefix set to null
      * 
      * @param baseName, used to create the underlying resource bundle, see {@link ResourceBundle#getBundle(String)}
-     * @param unknowKeyPrefix string used to prefix the returned key if the value was not found (default is empty)
+     * @param unknownKeyPrefix string used to prefix the returned key if the value was not found (default is empty)
      */
     public ClassLoaderBasedI18nMessages(String baseName) {
         this(baseName, null);
@@ -104,10 +104,10 @@ public class ClassLoaderBasedI18nMessages extends I18nMessages {
     public String getMessage(String key, Object... arguments) {
         // get the ResouceBundle Value
         try {
-            return getFormatedMessage(key, classLoader, baseName, arguments);
+            return getFormattedMessage(key, classLoader, baseName, arguments);
 
         } catch (MissingResourceException mre) {
-            return unknowKeyPrefix + key;
+            return unknownKeyPrefix + key;
         }
     }
 
