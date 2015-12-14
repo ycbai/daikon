@@ -15,11 +15,10 @@ package org.talend.daikon.i18n;
 import java.util.MissingResourceException;
 
 /**
- * This class look for i18n <b>.properties</b> file according to the following policy. <br>
+ * Look for a i18n <b>.properties</b> file according to the following policy. <br>
  * <ul>
  * <li>first the files with the name <b>clazz.getName() + "Messages.properties" </b> are searched.</li>w
- * <li>if none is found then the files named <b>clazz.getPackage().getName() + ".messages.properties"</b> are searched.
- * </li>
+ * <li>if none is found then the files named <b>clazz.getPackage().getName() + ".messages.properties"</b> are searched.</li>
  * </ul>
  * Not only it looks for the current class with the following policy but if nothing found it applies the policy above to
  * the super class until java.lang.Object is reached.
@@ -28,7 +27,7 @@ public class ClassBasedI18nMessages extends I18nMessages {
 
     transient private Class<?> clazz;
 
-    transient private String unknowKeyPrefix;
+    transient private String unknownKeyPrefix;
 
     /**
      * return the value associated to the key found in the bundle associated to the localeProvider and using the package
@@ -36,13 +35,13 @@ public class ClassBasedI18nMessages extends I18nMessages {
      *
      * @param localeProvider, if null the java.util.Locale.getDefault() shall be used
      * @param clazz, clazz used to find the resource based on the it name or package name.
-     * @param unknowKeyPrefix string used to prefix the returned key if the value was not found (if null then an empty
+     * @param unknownKeyPrefix string used to prefix the returned key if the value was not found (if null then an empty
      * String is used)
      */
-    public ClassBasedI18nMessages(LocaleProvider localeProvider, Class<?> clazz, String unknowKeyPrefix) {
+    public ClassBasedI18nMessages(LocaleProvider localeProvider, Class<?> clazz, String unknownKeyPrefix) {
         super(localeProvider);
         this.clazz = clazz;
-        this.unknowKeyPrefix = unknowKeyPrefix == null ? "" : unknowKeyPrefix; //$NON-NLS-1$
+        this.unknownKeyPrefix = unknownKeyPrefix == null ? "" : unknownKeyPrefix; //$NON-NLS-1$
     }
 
     /**
@@ -83,18 +82,18 @@ public class ClassBasedI18nMessages extends I18nMessages {
             // try first ClassNameMessage.properties
             String baseName = computeBaseName(currentClass, true);
             try {
-                return getFormatedMessage(key, currentClass.getClassLoader(), baseName, arguments);
+                return getFormattedMessage(key, currentClass.getClassLoader(), baseName, arguments);
             } catch (MissingResourceException mre) {
                 // try then PackageName.messages.properties
                 baseName = computeBaseName(currentClass, false);
                 try {
-                    return getFormatedMessage(key, currentClass.getClassLoader(), baseName, arguments);
+                    return getFormattedMessage(key, currentClass.getClassLoader(), baseName, arguments);
                 } catch (MissingResourceException mre2) {
                     currentClass = currentClass.getSuperclass();
                 }
             }
         }
-        return unknowKeyPrefix + key;
+        return unknownKeyPrefix + key;
     }
 
     /**

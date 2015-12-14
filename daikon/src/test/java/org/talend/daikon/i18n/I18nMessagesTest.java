@@ -43,7 +43,7 @@ public class I18nMessagesTest {
 
         @Override
         public String getMessage(String key, Object... arguments) {
-            return getFormatedMessage(key, this.getClass().getClassLoader(), baseName, arguments);
+            return getFormattedMessage(key, this.getClass().getClassLoader(), baseName, arguments);
         }
     }
 

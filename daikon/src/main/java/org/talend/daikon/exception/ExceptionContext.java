@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Exception context holds the exception context, e.g. additional information about TDPException when they occur.
+ * Additional context for {@link TalendRuntimeException}s when they occur, in the form of key/value pairs.
  */
 public class ExceptionContext implements Serializable {
 
@@ -44,7 +44,6 @@ public class ExceptionContext implements Serializable {
 
     /**
      * Put the given key/value into this context.
-     * 
      *
      * @param key the key entry.
      * @param value the value entry.

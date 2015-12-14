@@ -25,9 +25,7 @@ import javax.crypto.spec.PBEParameterSpec;
 import org.apache.commons.codec.binary.Base64;
 
 /**
- * @author scorreia
- * 
- * A class that helps to encrypt and decrypt strings.
+ * Encrypt and decrypt strings, encapsulating the cryptography algorithm and configured by a passphrase.
  */
 public class CryptoHelper {
 
@@ -49,8 +47,6 @@ public class CryptoHelper {
     public static final String PASSPHRASE = "99ZwBDt1L9yMX2ApJx fnv94o99OeHbCGuIHTy22 V9O6cZ2i374fVjdV76VX9g49DG1r3n90hT5c1"; //$NON-NLS-1$
 
     /**
-     * CryptoHelper constructor.
-     * 
      * @param passPhrase the pass phrase used to encrypt and decrypt strings.
      */
     public CryptoHelper(String passPhrase) {
@@ -72,6 +68,10 @@ public class CryptoHelper {
         }
     }
 
+    /**
+     * @param str The plaintext string to encrypt.
+     * @return The ecrypted string, or null if an error occurred.
+     */
     public String encrypt(String str) {
         if (str == null) {
             return null;
@@ -85,6 +85,10 @@ public class CryptoHelper {
         }
     }
 
+    /**
+     * @param str The encrypted string to decrypt.
+     * @return The plaintext string, or null if an error occurred.
+     */
     public String decrypt(String str) {
         if (str == null) {
             return null;
@@ -103,10 +107,8 @@ public class CryptoHelper {
     }
 
     /**
-     * Method "encode64".
-     * 
-     * @param str
-     * @return the encoded string
+     * @param str Binary data to encode.
+     * @return The string encoded in Base64, or "" if an encoding error occurred.
      */
     public static String encode64(byte[] str) {
         try {
@@ -117,10 +119,8 @@ public class CryptoHelper {
     }
 
     /**
-     * Method "decode64".
-     * 
-     * @param str
-     * @return the decoded string
+     * @param str A Base64 string to decode.
+     * @return The decoded binary data, or an empty array if a decoding error occurred.
      */
     public static byte[] decode64(String str) {
         try {

@@ -18,7 +18,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * created by sgandon on 16 nov. 2015
+ * A base class for tools that provide message translation services.
  */
 public abstract class I18nMessages {
 
@@ -26,9 +26,6 @@ public abstract class I18nMessages {
 
     transient LocaleProvider localeProvider;
 
-    /**
-     * DOC sgandon DynamicLocalFormatedI18n constructor comment.
-     */
     public I18nMessages(LocaleProvider localeProvider) {
         this.localeProvider = localeProvider;
     }
@@ -55,7 +52,7 @@ public abstract class I18nMessages {
      * @return the formatted message, never null
      * @exception MissingResourceException if not message was found with the key.
      */
-    protected String getFormatedMessage(String key, ClassLoader classLoader, String baseName, Object... arguments)
+    protected String getFormattedMessage(String key, ClassLoader classLoader, String baseName, Object... arguments)
             throws MissingResourceException {
         Locale locale = getLocale();
         ResourceBundle bundle = ResourceBundle.getBundle(baseName, locale, classLoader);
