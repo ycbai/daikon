@@ -29,11 +29,9 @@ Feel free to share your Talend components on [Talend Exchange](http://www.talend
 
 ## License
 
-Copyright (c) 2006-2015 Talend
+Copyright (c) 2006-2016 Talend
 
-Licensed under the Apache V2 License
+Licensed under the [Apache Licence v2](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
-## name origin
+## Name origin
 The Daikon is a root vegetable and since this project is supposed to be the root of many projects we thought is was a fun and appropriate name.
-
-
