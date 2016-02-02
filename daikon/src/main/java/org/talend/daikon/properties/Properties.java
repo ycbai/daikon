@@ -109,9 +109,9 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
     /**
      * Holder class for the results of a deserialization.
      */
-    public static class Deserialized {
+    public static class Deserialized<T extends Properties> {
 
-        public Properties properties;
+        public T properties;
 
         public MigrationInformation migration;
     }
@@ -136,14 +136,15 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
      * @param serialized created by {@link #toSerialized()}.
      * @return a {@code ComponentProperties} object represented by the {@code serialized} value.
      */
-    public static synchronized Deserialized fromSerialized(String serialized) {
-        Deserialized d = new Deserialized();
+    public static synchronized <T extends Properties> Deserialized<T> fromSerialized(String serialized,
+            Class<T> propertiesclass) {
+        Deserialized<T> d = new Deserialized<T>();
         d.migration = new MigrationInformationImpl();
         // this set the proper classloader for the JsonReader especially for OSGI
         ClassLoader originalContextClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(Properties.class.getClassLoader());
-            d.properties = (Properties) JsonReader.jsonToJava(serialized);
+            d.properties = (T) JsonReader.jsonToJava(serialized);
             d.properties.handlePropEncryption(!ENCRYPT);
             d.properties.setupPropertiesPostDeserialization();
         } finally {
@@ -155,7 +156,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
     /**
      * This will setup all ComponentProperties after the deserialization process. For now it will just setup i18N
      */
-    private void setupPropertiesPostDeserialization() {
+    void setupPropertiesPostDeserialization() {
         initLayout();
         List<NamedThing> properties = getProperties();
         for (NamedThing prop : properties) {

@@ -20,7 +20,7 @@ import org.talend.daikon.schema.Schema;
  *
  * FIXME - this is probably at the wrong level and will move
  */
-public interface Repository {
+public interface Repository<T extends Properties> {
 
     /**
      * Adds the specified {@link Properties} into the design environment.
@@ -32,6 +32,15 @@ public interface Repository {
      * @param schema an optional schema to be added at this location.
      * @return repositoryLocation, a String containing the location where this object was stored.
      */
-    public String storeProperties(Properties properties, String name, String repositoryLocation, Schema schema);
+    public String storeProperties(T properties, String name, String repositoryLocation, Schema schema);
+
+    /**
+     * Returns the {@link ComponentProperties} associated with the specified component Id in the current design scope,
+     * i.e. Job.
+     * 
+     * @param componentId the id of the component to find the properties for
+     * @return the {@link ComponentProperties} object.
+     */
+    public T getPropertiesForComponent(String componentId);
 
 }

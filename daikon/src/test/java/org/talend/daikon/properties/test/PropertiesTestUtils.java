@@ -22,6 +22,7 @@ import org.junit.rules.ErrorCollector;
 import org.talend.daikon.NamedThing;
 import org.talend.daikon.properties.AnyPropertyVisitor;
 import org.talend.daikon.properties.Properties;
+import org.talend.daikon.properties.Properties.Deserialized;
 import org.talend.daikon.properties.Property;
 import org.talend.daikon.properties.presentation.Form;
 
@@ -29,7 +30,7 @@ public class PropertiesTestUtils {
 
     public static Properties checkSerialize(Properties props, ErrorCollector errorCollector) {
         String s = props.toSerialized();
-        Properties.Deserialized d = Properties.fromSerialized(s);
+        Deserialized<Properties> d = Properties.fromSerialized(s, Properties.class);
         Properties deserProps = d.properties;
         checkAllI18N(deserProps, errorCollector);
         assertFalse(d.migration.isMigrated());

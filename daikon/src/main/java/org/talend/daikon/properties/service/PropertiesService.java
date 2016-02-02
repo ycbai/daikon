@@ -17,7 +17,7 @@ import org.talend.daikon.properties.Properties;
 /**
  * The Main service provided by this project to get access to all registered components and their properties.
  */
-public interface PropertiesService<T extends Properties> extends Repository {
+public interface PropertiesService<T extends Properties> extends Repository<T> {
 
     T makeFormCancelable(T properties, String formName);
 

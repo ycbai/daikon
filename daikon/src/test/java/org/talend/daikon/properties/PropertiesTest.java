@@ -283,7 +283,7 @@ public class PropertiesTest {
         props.initLater.setTaggedValue("foo", "fooValue");
         props.initLater.setTaggedValue("bar", "barValue");
         String s = props.toSerialized();
-        Properties desProp = Properties.fromSerialized(s).properties;
+        Properties desProp = Properties.fromSerialized(s, Properties.class).properties;
         assertEquals("fooValue", ((Property) desProp.getProperty("initLater")).getTaggedValue("foo"));
         assertEquals("barValue", ((Property) desProp.getProperty("initLater")).getTaggedValue("bar"));
     }
@@ -297,12 +297,12 @@ public class PropertiesTest {
 
             @Override
             public Object evaluate(Property property, Object storedValue) {
-                return System.getProperty((String) storedValue);
+                return storedValue != null ? System.getProperty((String) storedValue) : null;
             }
         });
         assertEquals(System.getProperty("java.io.tmpdir"), props.userId.getValue());
         String s = props.toSerialized();
-        TestProperties desProp = (TestProperties) Properties.fromSerialized(s).properties;
+        TestProperties desProp = Properties.fromSerialized(s, TestProperties.class).properties;
         assertEquals("java.io.tmpdir", desProp.userId.getValue());
 
     }
@@ -329,7 +329,7 @@ public class PropertiesTest {
         });
         assertEquals(System.getProperty("java.io.tmpdir"), props.userId.getValue());
         String s = props.toSerialized();
-        TestProperties desProp = (TestProperties) Properties.fromSerialized(s).properties;
+        TestProperties desProp = Properties.fromSerialized(s, TestProperties.class).properties;
         assertEquals("java.io.tmpdir", desProp.userId.getValue());
 
     }

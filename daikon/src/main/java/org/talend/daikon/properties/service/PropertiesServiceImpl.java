@@ -22,7 +22,7 @@ import org.talend.daikon.schema.Schema;
  */
 public class PropertiesServiceImpl<T extends Properties> implements PropertiesService<T> {
 
-    private Repository repository;
+    private Repository<T> repository;
 
     @Override
     public T makeFormCancelable(T properties, String formName) {
@@ -93,7 +93,7 @@ public class PropertiesServiceImpl<T extends Properties> implements PropertiesSe
     }
 
     @Override
-    public String storeProperties(Properties properties, String name, String repositoryLocation, Schema schema) {
+    public String storeProperties(T properties, String name, String repositoryLocation, Schema schema) {
         if (repository != null) {
             return repository.storeProperties(properties, name, repositoryLocation, schema);
         }
@@ -103,5 +103,13 @@ public class PropertiesServiceImpl<T extends Properties> implements PropertiesSe
     @Override
     public void setRepository(Repository repository) {
         this.repository = repository;
+    }
+
+    @Override
+    public T getPropertiesForComponent(String componentId) {
+        if (repository != null) {
+            return repository.getPropertiesForComponent(componentId);
+        }
+        return null;
     }
 }
