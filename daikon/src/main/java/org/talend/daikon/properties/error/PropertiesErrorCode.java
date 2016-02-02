@@ -10,7 +10,7 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.daikon.exception.error;
+package org.talend.daikon.properties.error;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,16 +19,18 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-public enum CommonErrorCodes implements ErrorCode {
-                                                   UNEXPECTED_EXCEPTION(HttpServletResponse.SC_INTERNAL_SERVER_ERROR), // 500
-                                                   MISSING_I18N_TRANSLATOR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "key", "baseName"), //$NON-NLS-1$ //$NON-NLS-2$
-                                                   UNABLE_TO_PARSE_JSON(HttpServletResponse.SC_INTERNAL_SERVER_ERROR),
-                                                   UNABLE_TO_WRITE_JSON(HttpServletResponse.SC_INTERNAL_SERVER_ERROR),
-                                                   UNABLE_TO_SERIALIZE_TO_JSON(HttpServletResponse.SC_INTERNAL_SERVER_ERROR),
-                                                   UNABLE_TO_READ_CONTENT(HttpServletResponse.SC_INTERNAL_SERVER_ERROR),
-                                                   UNABLE_TO_PARSE_REQUEST(HttpServletResponse.SC_BAD_REQUEST); // 400,
-                                                                                                                // e.g
-                                                                                                                // IllegalArgumentException
+import org.talend.daikon.exception.error.ErrorCode;
+
+/**
+ * Error codes for the Component service
+ */
+public enum PropertiesErrorCode implements ErrorCode {
+
+                                                      MISSING_I18N_TRANSLATOR(
+                                                                              HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                                                                              "key", //$NON-NLS-1$
+                                                                              "baseName"), //$NON-NLS-1$
+                                                      PROPERTIES_HAS_UNITIALIZED_PROPS(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "name", "field");
 
     /** The http status to use. */
     private int httpStatus;
@@ -36,22 +38,12 @@ public enum CommonErrorCodes implements ErrorCode {
     /** Expected entries to be in the context. */
     private List<String> expectedContextEntries;
 
-    /**
-     * default constructor.
-     * 
-     * @param httpStatus the http status to use.
-     */
-    CommonErrorCodes(int httpStatus) {
+    PropertiesErrorCode(int httpStatus) {
         this.httpStatus = httpStatus;
         this.expectedContextEntries = Collections.emptyList();
     }
 
-    /**
-     * default constructor.
-     *
-     * @param httpStatus the http status to use.
-     */
-    CommonErrorCodes(int httpStatus, String... contextEntries) {
+    PropertiesErrorCode(int httpStatus, String... contextEntries) {
         this.httpStatus = httpStatus;
         this.expectedContextEntries = Arrays.asList(contextEntries);
     }

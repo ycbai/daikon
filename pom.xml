@@ -51,6 +51,11 @@
 				<artifactId>slf4j-api</artifactId>
 				<version>1.7.12</version>
 			</dependency>
+            <dependency>
+                <groupId>com.cedarsoftware</groupId>
+                <artifactId>json-io</artifactId>
+                <version>4.1.10</version>
+            </dependency>
 		</dependencies>
 	</dependencyManagement>
 </project>
