@@ -105,11 +105,4 @@ public class PropertiesServiceImpl<T extends Properties> implements PropertiesSe
         this.repository = repository;
     }
 
-    @Override
-    public T getPropertiesForComponent(String componentId) {
-        if (repository != null) {
-            return repository.getPropertiesForComponent(componentId);
-        }
-        return null;
-    }
 }

@@ -34,13 +34,4 @@ public interface Repository<T extends Properties> {
      */
     public String storeProperties(T properties, String name, String repositoryLocation, Schema schema);
 
-    /**
-     * Returns the {@link ComponentProperties} associated with the specified component Id in the current design scope,
-     * i.e. Job.
-     * 
-     * @param componentId the id of the component to find the properties for
-     * @return the {@link ComponentProperties} object.
-     */
-    public T getPropertiesForComponent(String componentId);
-
 }
