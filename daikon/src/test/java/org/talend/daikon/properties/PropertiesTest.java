@@ -304,7 +304,9 @@ public class PropertiesTest {
         String s = props.toSerialized();
         TestProperties desProp = Properties.fromSerialized(s, TestProperties.class).properties;
         assertEquals("java.io.tmpdir", desProp.userId.getValue());
-
+        // check that nested properties has also the evaluator set
+        props.nestedInitLater.aGreatProperty.setValue("java.home");
+        assertEquals(System.getProperty("java.home"), props.nestedInitLater.aGreatProperty.getValue());
     }
 
     @Test
