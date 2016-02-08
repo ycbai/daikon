@@ -36,7 +36,7 @@ import com.cedarsoftware.util.io.JsonReader;
 import com.cedarsoftware.util.io.JsonWriter;
 
 /**
- * The {@code ComponentProperties} class contains the definitions of the properties associated with a component. These
+ * The {@code Properties} class contains the definitions of the properties associated with a component. These
  * definitions contain enough information to automatically construct a nice looking user interface (UI) to populate and
  * validate the properties. The objective is that no actual (graphical) UI code is included in the component's
  * definition and as well no custom graphical UI is required for most components. The types of UIs that can be defined
@@ -48,16 +48,15 @@ import com.cedarsoftware.util.io.JsonWriter;
  * decisions are made in code, methods can be added to the subclass to influence the flow of the user interface and help
  * with validation.
  * <p/>
- * Each property can be a Java type, both simple types and collections are permitted. In addition,
- * {@code ComponentProperties} classes can be composed allowing hierarchies of properties and collections of properties
- * to be reused.
+ * Each property can be a Java type, both simple types and collections are permitted. In addition, {@code Properties}
+ * classes can be composed allowing hierarchies of properties and collections of properties to be reused.
  * <p/>
  * A property is defined using a field in a subclass of this class. Each property field is initialized with one of the
  * following:
  * <ol>
  * <li>For a single property, a {@link Property} object, usually using a static method from the {@link PropertyFactory}.
  * </li>
- * <li>For a reference to other properties, a subclass of {@code ComponentProperties}.</li>
+ * <li>For a reference to other properties, a subclass of {@code Properties}.</li>
  * <li>For a presentation item that's not actually a property, but is necessary for the user interface, a
  * {@link PresentationItem}.</li>
  * </ol>
@@ -69,18 +68,30 @@ import com.cedarsoftware.util.io.JsonWriter;
  * Methods can be added in subclasses according to the conventions below to help direct the UI. These methods will be
  * automatically called by the UI code.
  * <ul>
- * <li>{@code before&lt;PropertyName&gt;} - Called before the property is presented in the UI. This can be used to
- * compute anything required to display the property.</li>
- * <li>{@code after&lt;PropertyName&gt;} - Called after the property is presented and validated in the UI. This can be
- * used to update the properties state to consider the changed in this property.</li>
- * <li>{@code validate&lt;PropertyName&gt;} - Called to validate the property value that has been entered in the UI.
- * This will return a {@link ValidationResult} object with any error information.</li>
- * <li>{@code beforeForm&lt;FormName&gt;} - Called before the form is displayed.</li>
+ * <li>{@code before<PropertyName>} - Called before the property is presented in the UI. This can be used to compute
+ * anything required to display the property.</li>
+ * <li>{@code after<PropertyName>} - Called after the property is presented and validated in the UI. This can be used to
+ * update the properties state to consider the changed in this property.</li>
+ * <li>{@code validate<PropertyName&>} - Called to validate the property value that has been entered in the UI. This
+ * will return a {@link ValidationResult} object with any error information.</li>
+ * <li>{@code beforeFormPresent<FormName>} - Called before the form is displayed.</li>
+ * </ul>
+ * wizard lifecycle related form methods are :
+ * <ul>
+ * <li>{@code afterFormBack<FormName>} - Called when the current edited form is &lt;FormName&gt; and when the user has
+ * pressed the back button.</li>
+ * <li>{@code afterFormNext<FormName>} - Called when the current edited form is &lt;FormName&gt; and when the user has
+ * pressed the next button.</li>
+ * <li>{@code afterFormFinish<FormName>} - Called when the current edited form is &lt;FormName&gt; and when the finish
+ * button is pressed.</li>
  * </ul>
  * <p/>
- * <b>WARNING</b> - A property shall be created as instance field before the constructor is called so that this abstract
- * constructor can attach i18n translator to the properties. If you want to create the property later you'll have to
- * call {@link SchemaElement#setI18nMessageFormater(I18nMessages)} manually.
+ * Once the Properties is create by the service, the {@link Properties#setupProperties()} and
+ * {@link Properties#setupLayout()} is called.
+ * <p/>
+ * <b>WARNING</b> - It is not recommanded to instanciate a Property field after {@link Properties#setupProperties()} is
+ * called. If you want to create the property later you'll have to call
+ * {@link SchemaElement#setI18nMessageFormater(I18nMessages)} manually.
  */
 
 public abstract class Properties extends TranslatableImpl implements AnyProperty, ToStringIndent {
@@ -131,10 +142,10 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
     }
 
     /**
-     * Returns the ComponentProperties object previously serialized.
+     * Returns the Properties object previously serialized.
      *
      * @param serialized created by {@link #toSerialized()}.
-     * @return a {@code ComponentProperties} object represented by the {@code serialized} value.
+     * @return a {@code Properties} object represented by the {@code serialized} value.
      */
     public static synchronized <T extends Properties> Deserialized<T> fromSerialized(String serialized,
             Class<T> propertiesclass) {
@@ -154,7 +165,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
     }
 
     /**
-     * This will setup all ComponentProperties after the deserialization process. For now it will just setup i18N
+     * This will setup all Properties after the deserialization process. For now it will just setup i18N
      */
     void setupPropertiesPostDeserialization() {
         initLayout();
@@ -254,7 +265,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
     /**
      * This shall set the value holder for all the properties, set the i18n formatter of this current class to the
      * properties so that the i18n values are computed agains this class message properties. This calls the
-     * initProperties for all field of type ComponentProperties
+     * initProperties for all field of type {@link Property}
      * 
      * @param f field to be initialized
      * @param value associated with this field, never null
@@ -266,9 +277,9 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
                     + "] should be named identically to the instance name [" + value.getName() + "]");
         }
         if (value instanceof Property) {
-            // Do not set the i18N for nested ComponentProperties, they already handle their i18n
+            // Do not set the i18N for nested Properties, they already handle their i18n
             value.setI18nMessageFormater(getI18nMessageFormater());
-        } else {// a Component property so setit up
+        } else {// a property so setit up
             ((Properties) value).initProperties();
         }
     }
@@ -436,9 +447,9 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
      * @exception IllegalArgumentException is the path before the last does not point to a CompoenentProperties
      */
     public NamedThing getProperty(String name) {
-        // TODO make the same behaviour if the nested ComponentProperties name is not found or the last properties is
+        // TODO make the same behaviour if the nested Properties name is not found or the last properties is
         // not found
-        // cause right now if the ComponentProperties is not foudnt an execpetion is thrown and if the last property is
+        // cause right now if the Properties is not foudnt an execpetion is thrown and if the last property is
         // not found null is returned.
         String[] propComps = name.split("\\.");
         Properties currentProps = this;
@@ -449,7 +460,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
             }
             NamedThing se = currentProps.getLocalProperty(prop);
             if (!(se instanceof Properties)) {
-                throw new IllegalArgumentException(prop + " is not a nested ComponentProperties. Processing: " + name);
+                throw new IllegalArgumentException(prop + " is not a nested Properties. Processing: " + name);
             } // else se is a CompoenetProperties so use it
             currentProps = (Properties) se;
         }
@@ -496,8 +507,8 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
     }
 
     /**
-     * Helper method to set the evaluator to all properties handled by this instance and all the nested
-     * ComponentProperties instances.
+     * Helper method to set the evaluator to all properties handled by this instance and all the nested Properties
+     * instances.
      * 
      * @param ve value evalurator to be used for evaluation.
      */

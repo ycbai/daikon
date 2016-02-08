@@ -18,25 +18,27 @@ import java.util.Map;
 import org.talend.daikon.NamedThing;
 import org.talend.daikon.strings.ToStringIndent;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  */
 public interface SchemaElement extends NamedThing, ToStringIndent {
 
     public enum Type {
-        STRING,
-        BOOLEAN,
-        INT,
-        DATE,
-        DATETIME,
-        DECIMAL,
-        FLOAT,
-        DOUBLE,
-        BYTE_ARRAY,
-        ENUM,
-        DYNAMIC,
-        GROUP,
-        SCHEMA
+                      STRING,
+                      BOOLEAN,
+                      INT,
+                      DATE,
+                      DATETIME,
+                      DECIMAL,
+                      FLOAT,
+                      DOUBLE,
+                      BYTE_ARRAY,
+                      ENUM,
+                      DYNAMIC,
+                      GROUP,
+                      SCHEMA
     }
 
     public static int INFINITE = -1;
@@ -99,6 +101,7 @@ public interface SchemaElement extends NamedThing, ToStringIndent {
 
     public SchemaElement setPossibleValues(List<?> possibleValues);
 
+    @JsonIgnore // I could not find any other way to prevent a swagger exception, I tried mixin but failed to work
     public SchemaElement setPossibleValues(Object... values);
 
     public List<SchemaElement> getChildren();
