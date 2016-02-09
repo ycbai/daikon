@@ -48,7 +48,7 @@ public abstract class AbstractSchemaElement extends SimpleNamedThing implements 
 
     private List<?> possibleValues;
 
-    protected List<SchemaElement> children;
+    protected List<SchemaElement> children = new ArrayList<>();;
 
     @Override
     public String getName() {
@@ -231,9 +231,6 @@ public abstract class AbstractSchemaElement extends SimpleNamedThing implements 
 
     @Override
     public SchemaElement addChild(SchemaElement child) {
-        if (children == null) {
-            children = new ArrayList<>();
-        }
         children.add(child);
         return this;
     }
