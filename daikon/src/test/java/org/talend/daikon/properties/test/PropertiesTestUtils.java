@@ -25,6 +25,7 @@ import org.talend.daikon.properties.Properties;
 import org.talend.daikon.properties.Properties.Deserialized;
 import org.talend.daikon.properties.Property;
 import org.talend.daikon.properties.presentation.Form;
+import org.talend.daikon.properties.presentation.Widget;
 
 public class PropertiesTestUtils {
 
@@ -47,18 +48,20 @@ public class PropertiesTestUtils {
             System.out.println("Form: " + form.getName());
             Form newForm = newForms.get(i++);
             assertEquals(form.getName(), form.getName());
-            for (NamedThing formChild : form.getChildren()) {
-                String name = formChild.getName();
-                if (formChild instanceof Form) {
-                    name = ((Form) formChild).getProperties().getName();
+            for (Widget widget : form.getWidgets()) {
+                for (NamedThing formChild : widget.getProperties()) {
+                    String name = formChild.getName();
+                    if (formChild instanceof Form) {
+                        name = ((Form) formChild).getProperties().getName();
+                    }
+                    System.out.println("  prop: " + formChild.getName() + " name to be used: " + name);
+                    NamedThing newChild = newForm.getWidget(name).getProperties()[0];
+                    String newName = newChild.getName();
+                    if (newChild instanceof Form) {
+                        newName = ((Form) newChild).getProperties().getName();
+                    }
+                    assertEquals(name, newName);
                 }
-                System.out.println("  prop: " + formChild.getName() + " name to be used: " + name);
-                NamedThing newChild = newForm.getChild(name);
-                String newName = newChild.getName();
-                if (newChild instanceof Form) {
-                    newName = ((Form) newChild).getProperties().getName();
-                }
-                assertEquals(name, newName);
             }
         }
         return deserProps;
