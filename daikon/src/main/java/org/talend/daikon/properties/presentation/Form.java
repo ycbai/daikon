@@ -72,7 +72,7 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
     @JsonBackReference
     protected Properties properties;
 
-    protected Map<String, NamedThing> children;
+    // protected Map<String, NamedThing> children;
 
     protected Map<String, Widget> widgetMap;
 
@@ -111,7 +111,7 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
 
     public Form(Properties props, String name, String displayName, String title) {
         super(name, displayName, title);
-        children = new HashMap<String, NamedThing>();
+        // children = new HashMap<String, NamedThing>();
         widgetMap = new HashMap<String, Widget>();
         widgets = new ArrayList<Widget>();
         props.addForm(this);
@@ -142,23 +142,23 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
         return GlobalI18N.getI18nMessageProvider().getI18nMessages(properties.getClass());
     }
 
-    public List<NamedThing> getChildren() {
-        List<NamedThing> l = new ArrayList<>();
-        l.addAll(children.values());
-        return l;
-    }
+    // public List<NamedThing> getChildren() {
+    // List<NamedThing> l = new ArrayList<>();
+    // l.addAll(children.values());
+    // return l;
+    // }
 
     public List<Widget> getWidgets() {
         return widgets;
     }
 
-    public NamedThing getChild(Class<?> cls) {
-        return getChild(cls.getSimpleName());
-    }
+    // public NamedThing getChild(Class<?> cls) {
+    // return getChild(cls.getSimpleName());
+    // }
 
-    public NamedThing getChild(String name) {
-        return children.get(name);
-    }
+    // public NamedThing getChild(String name) {
+    // return children.get(name);
+    // }
 
     public Properties getProperties() {
         return properties;
@@ -246,7 +246,7 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
                 throw new NullPointerException();
             }
             widgetMap.put(name, widget);
-            children.put(name, child);
+            // children.put(name, child);
             properties.setWidgetLayoutMethods(name, widget);
         }
     }
