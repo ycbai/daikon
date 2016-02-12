@@ -30,7 +30,11 @@ public enum PropertiesErrorCode implements ErrorCode {
                                                                               HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                                                                               "key", //$NON-NLS-1$
                                                                               "baseName"), //$NON-NLS-1$
-                                                      PROPERTIES_HAS_UNITIALIZED_PROPS(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "name", "field");
+                                                      PROPERTIES_HAS_UNITIALIZED_PROPS(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "name", "field"),
+                                                      FAILED_INVOKE_METHOD(
+                                                                           HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                                                                           "class",
+                                                                           "method");
 
     /** The http status to use. */
     private int httpStatus;

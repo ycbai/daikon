@@ -336,4 +336,13 @@ public class PropertiesTest {
 
     }
 
+    @Test
+    public void testAfterFormFinish() throws Throwable {
+        TestProperties props = (TestProperties) new TestProperties("test").init();
+        assertNull(props.getValidationResult());
+        PropertiesDynamicMethodHelper.afterFormFinish(props, Form.MAIN, null);
+        assertEquals(ValidationResult.Result.ERROR, props.getValidationResult().getStatus());
+
+    }
+
 }

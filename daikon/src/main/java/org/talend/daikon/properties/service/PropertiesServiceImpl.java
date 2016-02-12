@@ -13,6 +13,7 @@
 package org.talend.daikon.properties.service;
 
 import org.talend.daikon.properties.Properties;
+import org.talend.daikon.properties.PropertiesDynamicMethodHelper;
 import org.talend.daikon.properties.presentation.Form;
 import org.talend.daikon.schema.Schema;
 
@@ -46,49 +47,49 @@ public class PropertiesServiceImpl<T extends Properties> implements PropertiesSe
 
     @Override
     public T validateProperty(String propName, T properties) throws Throwable {
-        properties.validateProperty(propName);
+        PropertiesDynamicMethodHelper.validateProperty(properties, propName);
         return properties;
     }
 
     @Override
     public T beforePropertyActivate(String propName, T properties) throws Throwable {
-        properties.beforePropertyActivate(propName);
+        PropertiesDynamicMethodHelper.beforePropertyActivate(properties, propName);
         return properties;
     }
 
     @Override
     public T beforePropertyPresent(String propName, T properties) throws Throwable {
-        properties.beforePropertyPresent(propName);
+        PropertiesDynamicMethodHelper.beforePropertyPresent(properties, propName);
         return properties;
     }
 
     @Override
     public T afterProperty(String propName, T properties) throws Throwable {
-        properties.afterProperty(propName);
+        PropertiesDynamicMethodHelper.afterProperty(properties, propName);
         return properties;
     }
 
     @Override
     public T beforeFormPresent(String formName, T properties) throws Throwable {
-        properties.beforeFormPresent(formName);
+        PropertiesDynamicMethodHelper.beforeFormPresent(properties, formName);
         return properties;
     }
 
     @Override
     public T afterFormNext(String formName, T properties) throws Throwable {
-        properties.afterFormNext(formName);
+        PropertiesDynamicMethodHelper.afterFormNext(properties, formName);
         return properties;
     }
 
     @Override
     public T afterFormBack(String formName, T properties) throws Throwable {
-        properties.afterFormBack(formName);
+        PropertiesDynamicMethodHelper.afterFormBack(properties, formName);
         return properties;
     }
 
     @Override
     public T afterFormFinish(String formName, T properties) throws Throwable {
-        properties.afterFormFinish(formName);
+        PropertiesDynamicMethodHelper.afterFormFinish(properties, formName, repository);
         return properties;
     }
 

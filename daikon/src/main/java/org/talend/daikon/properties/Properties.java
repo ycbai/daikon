@@ -13,8 +13,6 @@
 package org.talend.daikon.properties;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,8 +80,9 @@ import com.cedarsoftware.util.io.JsonWriter;
  * pressed the back button.</li>
  * <li>{@code afterFormNext<FormName>} - Called when the current edited form is &lt;FormName&gt; and when the user has
  * pressed the next button.</li>
- * <li>{@code afterFormFinish<FormName>} - Called when the current edited form is &lt;FormName&gt; and when the finish
- * button is pressed.</li>
+ * <li>{@code afterFormFinish<FormName>(Repository<Properties> prop)} - Called when the current edited form is
+ * &lt;FormName&gt; and when the finish button is pressed. this method is supposed to serialize the current Properties
+ * instance and it's sub properties</li>
  * </ul>
  * <p/>
  * Once the Properties is create by the service, the {@link Properties#setupProperties()} and
@@ -115,7 +114,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
 
     private List<Form> forms = new ArrayList<>();
 
-    private ValidationResult validationResult;
+    ValidationResult validationResult;
 
     /**
      * Holder class for the results of a deserialization.
@@ -554,120 +553,6 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
         }
 
     }
-
-    // Internal - not API
-    public void setWidgetLayoutMethods(String property, Widget widget) {
-        Method m;
-        m = findMethod(METHOD_BEFORE, property, !REQUIRED);
-        if (m != null) {
-            widget.setCallBefore(true);
-        }
-        m = findMethod(METHOD_AFTER, property, !REQUIRED);
-        if (m != null) {
-            widget.setCallAfter(true);
-        }
-        m = findMethod(METHOD_VALIDATE, property, !REQUIRED);
-        if (m != null) {
-            widget.setCallValidate(true);
-        }
-    }
-
-    // Internal - not API
-    public void setFormLayoutMethods(String property, Form form) {
-        Method m;
-        m = findMethod(METHOD_BEFORE_FORM, property, !REQUIRED);
-        if (m != null) {
-            form.setCallBeforeFormPresent(true);
-        }
-        m = findMethod(METHOD_AFTER_FORM_BACK, property, !REQUIRED);
-        if (m != null) {
-            form.setCallAfterFormBack(true);
-        }
-        m = findMethod(METHOD_AFTER_FORM_NEXT, property, !REQUIRED);
-        if (m != null) {
-            form.setCallAfterFormNext(true);
-        }
-        m = findMethod(METHOD_AFTER_FORM_FINISH, property, !REQUIRED);
-        if (m != null) {
-            form.setCallAfterFormFinish(true);
-        }
-    }
-
-    private boolean REQUIRED = true;
-
-    Method findMethod(String type, String propName, boolean required) {
-        if (propName == null) {
-            throw new IllegalArgumentException(
-                    "The ComponentService was used to access a property with a null property name. Type: " + type
-                            + " Properties: " + this);
-        }
-        propName = propName.substring(0, 1).toUpperCase() + propName.substring(1);
-        String methodName = type + propName;
-        Method[] methods = getClass().getMethods();
-        for (Method m : methods) {
-            if (m.getName().equals(methodName)) {
-                return m;
-            }
-        }
-        if (required) {
-            throw new IllegalStateException("Method: " + methodName + " not found");
-        }
-        return null;
-    }
-
-    private void doInvoke(Method m) throws Throwable {
-        try {
-            Object result = m.invoke(this);
-            if (result instanceof ValidationResult && result != null) {
-                validationResult = (ValidationResult) result;
-            } else {
-                validationResult = ValidationResult.OK;
-            }
-        } catch (InvocationTargetException e) {
-            throw e.getTargetException();
-        }
-    }
-
-    public void validateProperty(String propName) throws Throwable {
-        Method m = findMethod(METHOD_VALIDATE, propName, REQUIRED);
-        try {
-            validationResult = (ValidationResult) m.invoke(this);
-        } catch (InvocationTargetException e) {
-            throw e.getTargetException();
-        }
-    }
-
-    public void beforePropertyActivate(String propName) throws Throwable {
-        doInvoke(findMethod(METHOD_BEFORE, propName, REQUIRED));
-    }
-
-    public void beforePropertyPresent(String propName) throws Throwable {
-        doInvoke(findMethod(METHOD_BEFORE, propName, REQUIRED));
-    }
-
-    public void afterProperty(String propName) throws Throwable {
-        doInvoke(findMethod(METHOD_AFTER, propName, REQUIRED));
-    }
-
-    public void beforeFormPresent(String formName) throws Throwable {
-        doInvoke(findMethod(METHOD_BEFORE_FORM, formName, REQUIRED));
-    }
-
-    public void afterFormNext(String formName) throws Throwable {
-        doInvoke(findMethod(METHOD_AFTER_FORM_NEXT, formName, REQUIRED));
-    }
-
-    public void afterFormBack(String formName) throws Throwable {
-        doInvoke(findMethod(METHOD_AFTER_FORM_BACK, formName, REQUIRED));
-    }
-
-    public void afterFormFinish(String formName) throws Throwable {
-        doInvoke(findMethod(METHOD_AFTER_FORM_FINISH, formName, REQUIRED));
-    }
-
-    /*
-     * Implementation required because we are a SchemaElement
-     */
 
     @Override
     public String getName() {

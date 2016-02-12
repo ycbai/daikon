@@ -28,6 +28,7 @@ import org.talend.daikon.properties.ValidationResult.Result;
 import org.talend.daikon.properties.presentation.Form;
 import org.talend.daikon.properties.presentation.Widget;
 import org.talend.daikon.properties.presentation.Widget.WidgetType;
+import org.talend.daikon.properties.service.Repository;
 import org.talend.daikon.properties.testproperties.nestedprop.NestedProperties;
 import org.talend.daikon.properties.testproperties.nestedprop.inherited.InheritedProperties;
 import org.talend.daikon.schema.SchemaElement.Type;
@@ -91,7 +92,7 @@ public class TestProperties extends Properties {
         nameListRef.setPossibleValues(values);
     }
 
-    public ValidationResult afterFormFinishMain() {
+    public ValidationResult afterFormFinishMain(Repository<Properties> repo) {
         return new ValidationResult().setStatus(Result.ERROR);
     }
 
