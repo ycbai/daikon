@@ -116,6 +116,10 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
 
     ValidationResult validationResult;
 
+    transient private boolean layoutAlreadyInitalized;
+
+    transient private boolean propsAlreadyInitialized;
+
     /**
      * Holder class for the results of a deserialization.
      */
@@ -212,41 +216,45 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
     }
 
     private void initProperties() {
-        List<Field> uninitializedProperties = new ArrayList<>();
-        Field[] fields = getClass().getFields();
-        for (Field f : fields) {
-            try {
-                if (isAPropertyType(f.getType())) {
-                    NamedThing se = (NamedThing) f.get(this);
+        if (!propsAlreadyInitialized) {
+            List<Field> uninitializedProperties = new ArrayList<>();
+            Field[] fields = getClass().getFields();
+            for (Field f : fields) {
+                try {
+                    if (isAPropertyType(f.getType())) {
+                        NamedThing se = (NamedThing) f.get(this);
+                        if (se != null) {
+                            initializeField(f, se);
+                        } else {// not yet initialized to record it
+                            uninitializedProperties.add(f);
+                        }
+                    } // else not a field that ought to be initialized
+                } catch (IllegalAccessException e) {
+                    throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+                }
+            }
+            setupProperties();
+            // initialize all the properties that where found and not initialized
+            // they must be initalized after the setup.
+            for (Field f : uninitializedProperties) {
+                NamedThing se;
+                try {
+                    se = (NamedThing) f.get(this);
                     if (se != null) {
                         initializeField(f, se);
-                    } else {// not yet initialized to record it
-                        uninitializedProperties.add(f);
+                    } else {// field not initilaized but is should be (except for returns field)
+                        if (!acceptUninitializedField(f)) {
+                            throw new TalendRuntimeException(PropertiesErrorCode.PROPERTIES_HAS_UNITIALIZED_PROPS,
+                                    ExceptionContext.withBuilder().put("name", this.getClass().getCanonicalName())
+                                            .put("field", f.getName()).build());
+                        } // else a returns field that may not be initialized
                     }
-                } // else not a field that ought to be initialized
-            } catch (IllegalAccessException e) {
-                throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
-            }
-        }
-        setupProperties();
-        // initialize all the properties that where found and not initialized
-        // they must be initalized after the setup.
-        for (Field f : uninitializedProperties) {
-            NamedThing se;
-            try {
-                se = (NamedThing) f.get(this);
-                if (se != null) {
-                    initializeField(f, se);
-                } else {// field not initilaized but is should be (except for returns field)
-                    if (!acceptUninitializedField(f)) {
-                        throw new TalendRuntimeException(PropertiesErrorCode.PROPERTIES_HAS_UNITIALIZED_PROPS, ExceptionContext
-                                .withBuilder().put("name", this.getClass().getCanonicalName()).put("field", f.getName()).build());
-                    } // else a returns field that may not be initialized
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
                 }
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
             }
-        }
+            propsAlreadyInitialized = true;
+        } // else already intialized
     }
 
     /**
@@ -284,16 +292,19 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
     }
 
     private void initLayout() {
-        List<NamedThing> properties = getProperties();
-        for (NamedThing prop : properties) {
-            if (prop instanceof Properties) {
-                ((Properties) prop).initLayout();
+        if (!layoutAlreadyInitalized) {// prevent 2 initialization if the same Props instance is used in 2 comps
+            List<NamedThing> properties = getProperties();
+            for (NamedThing prop : properties) {
+                if (prop instanceof Properties) {
+                    ((Properties) prop).initLayout();
+                }
             }
-        }
-        setupLayout();
-        for (Form form : getForms()) {
-            refreshLayout(form);
-        }
+            setupLayout();
+            for (Form form : getForms()) {
+                refreshLayout(form);
+            }
+            layoutAlreadyInitalized = true;
+        } // else already initialized
     }
 
     /**

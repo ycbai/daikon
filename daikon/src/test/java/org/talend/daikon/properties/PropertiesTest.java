@@ -26,6 +26,7 @@ import org.talend.daikon.properties.testproperties.PropertiesWithDefinedI18N;
 import org.talend.daikon.properties.testproperties.TestProperties;
 import org.talend.daikon.properties.testproperties.nestedprop.NestedProperties;
 import org.talend.daikon.properties.testproperties.nestedprop.inherited.InheritedProperties;
+import org.talend.daikon.properties.testproperties.references.MultipleRefProperties;
 
 public class PropertiesTest {
 
@@ -343,6 +344,13 @@ public class PropertiesTest {
         PropertiesDynamicMethodHelper.afterFormFinish(props, Form.MAIN, null);
         assertEquals(ValidationResult.Result.ERROR, props.getValidationResult().getStatus());
 
+    }
+
+    @Test
+    public void testNoDoubleMainForm() {
+        MultipleRefProperties props = (MultipleRefProperties) new MultipleRefProperties("test").init();
+        List<Form> forms = props.connection.getForms();
+        assertEquals(1, forms.size());
     }
 
 }
