@@ -73,7 +73,6 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
     @JsonBackReference
     protected Properties properties;
 
-
     protected Map<String, Widget> widgetMap;
 
     protected List<Widget> widgets;
@@ -141,11 +140,9 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
         return GlobalI18N.getI18nMessageProvider().getI18nMessages(properties.getClass());
     }
 
-
     public List<Widget> getWidgets() {
         return widgets;
     }
-
 
     public Properties getProperties() {
         return properties;
@@ -219,22 +216,21 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
     }
 
     private void fill(Widget widget) {
-        for (NamedThing child : widget.getProperties()) {
-            String name = child.getName();
-            /*
-             * We don't use the form name since that's not going to necessarily be unique within the form's list of
-             * properties. The Properties object associated with the form will have a unique name within the enclosing
-             * Properties (and therefore this Form).
-             */
-            if (child instanceof Form) {
-                name = ((Form) child).getProperties().getName();
-            }
-            if (name == null) {
-                throw new NullPointerException();
-            }
-            widgetMap.put(name, widget);
-            PropertiesDynamicMethodHelper.setWidgetLayoutMethods(properties, name, widget);
+        NamedThing child = widget.getContent();
+        String name = child.getName();
+        /*
+         * We don't use the form name since that's not going to necessarily be unique within the form's list of
+         * properties. The Properties object associated with the form will have a unique name within the enclosing
+         * Properties (and therefore this Form).
+         */
+        if (child instanceof Form) {
+            name = ((Form) child).getProperties().getName();
         }
+        if (name == null) {
+            throw new NullPointerException();
+        }
+        widgetMap.put(name, widget);
+        PropertiesDynamicMethodHelper.setWidgetLayoutMethods(properties, name, widget);
     }
 
     public Widget getWidget(String child) {
@@ -249,14 +245,13 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
      */
     public Widget getWidget(Class<?> childClass) {
         for (Widget w : widgets) {
-            for (NamedThing p : w.getProperties()) {
-                // See comment above in fill()
-                if (p instanceof Form) {
-                    p = ((Form) p).getProperties();
-                }
-                if (p.getClass() == childClass) {
-                    return w;
-                }
+            NamedThing p = w.getContent();
+            // See comment above in fill()
+            if (p instanceof Form) {
+                p = ((Form) p).getProperties();
+            }
+            if (p.getClass() == childClass) {
+                return w;
             }
         }
         return null;

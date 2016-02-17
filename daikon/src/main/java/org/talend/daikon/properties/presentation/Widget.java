@@ -131,22 +131,18 @@ public class Widget implements ToStringIndent {
      */
     private String referencedComponentName;
 
-    private NamedThing[] properties;
+    private NamedThing content;
 
-    public static Widget widget(NamedThing... properties) {
-        return new Widget(properties);
+    public static Widget widget(NamedThing content) {
+        return new Widget(content);
     }
 
-    public Widget(NamedThing... properties) {
-        setProperties(properties);
+    public Widget(NamedThing content) {
+        this.content = content;
     }
 
-    public void setProperties(NamedThing... properties) {
-        this.properties = properties;
-    }
-
-    public NamedThing[] getProperties() {
-        return properties;
+    public NamedThing getContent() {
+        return content;
     }
 
     public int getRow() {
@@ -260,25 +256,19 @@ public class Widget implements ToStringIndent {
         StringBuilder sb = new StringBuilder();
         String is = ToStringIndentUtil.indentString(indent);
         sb.append(is + "Widget: " + getWidgetType() + " " + getRow() + "/" + getOrder() + " ");
-        boolean firstTime = true;
-        for (NamedThing n : getProperties()) {
-            if (!firstTime) {
-                sb.append(", ");
+        NamedThing n = getContent();
+        if (n instanceof Form) {
+            sb.append("Form: ");
+        }
+        sb.append(n.getName());
+        if (n instanceof Form) {
+            sb.append(" (props: " + ((Form) n).getProperties().getName() + ")");
+        }
+        if (n instanceof SchemaElement) {
+            Collection values = ((SchemaElement) n).getPossibleValues();
+            if (values != null) {
+                sb.append(" Values: " + values);
             }
-            if (n instanceof Form) {
-                sb.append("Form: ");
-            }
-            sb.append(n.getName());
-            if (n instanceof Form) {
-                sb.append(" (props: " + ((Form) n).getProperties().getName() + ")");
-            }
-            if (n instanceof SchemaElement) {
-                Collection values = ((SchemaElement) n).getPossibleValues();
-                if (values != null) {
-                    sb.append(" Values: " + values);
-                }
-            }
-            firstTime = false;
         }
         if (isCallBeforeActivate()) {
             sb.append(" CALL_BEFORE_ACTIVATE");
