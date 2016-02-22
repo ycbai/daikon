@@ -70,10 +70,12 @@ import com.cedarsoftware.util.io.JsonWriter;
  * anything required to display the property.</li>
  * <li>{@code after<PropertyName>} - Called after the property is presented and validated in the UI. This can be used to
  * update the properties state to consider the changed in this property.</li>
- * <li>{@code validate<PropertyName&>} - Called to validate the property value that has been entered in the UI. This
- * will return a {@link ValidationResult} object with any error information.</li>
+ * <li>{@code validate<PropertyName>} - Called to validate the property value that has been entered in the UI. This will
+ * return a {@link ValidationResult} object with any error information.</li>
  * <li>{@code beforeFormPresent<FormName>} - Called before the form is displayed.</li>
  * </ul>
+ * {@code<PropertyName>} and {@code<FormName>} are the property or form name with their first in letter uppercase.
+ * </p>
  * wizard lifecycle related form methods are :
  * <ul>
  * <li>{@code afterFormBack<FormName>} - Called when the current edited form is &lt;FormName&gt; and when the user has
