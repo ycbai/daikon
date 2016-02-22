@@ -83,7 +83,7 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
 
     private boolean cancelable;
 
-    private Map<String, Object> cancelableValues;// stores the value temporarily in case the are canceled
+    private Map<String, Object> originalValues;// stores the value temporarily in case the are canceled
 
     private boolean callBeforeFormPresent;
 
@@ -257,13 +257,18 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
         return null;
     }
 
+    public Form getChildForm(String child) {
+        Widget w = getWidget(child);
+        return (Form) w.getContent();
+    }
+
     /**
      * Sets the value of the given property to the specified value.
      *
      * If the form is cancelable (see
      * {@link org.talend.daikon.properties.service.PropertiesService#makeFormCancelable(Properties, String)}) the values
-     * are stored with the this object and not into the underlying properties until
-     * {@link org.talend.daikon.properties.service.PropertiesService#commitFormValues(Properties, String)} is called.
+     * can be reset to the original values when
+     * {@link org.talend.daikon.properties.service.PropertiesService#cancelFormValues(Properties, String)} is called.
      * <p/>
      * FIXME - note we need to work out how this happens with the REST API.
      *
@@ -271,40 +276,53 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
      * @param value
      */
     public void setValue(String property, Object value) {
-        // FIXME handle cases of qualified property names
+        if (property.contains(".")) {
+            throw new IllegalArgumentException(
+                    "Cannot setValue on a qualified property: '" + property + "', use the Form associated with the property.");
+        }
         NamedThing se = getProperties().getProperty(property);
         if (!(se instanceof Property)) {
             throw new IllegalArgumentException("Attempted to set value on " + se + " which is not a Property");
         }
         Property p = (Property) se;
         if (cancelable) {
-            if (cancelableValues == null) {
-                throw new IllegalStateException("Cannot setValue on " + property + " after commitValues() has been called");
+            if (originalValues == null) {
+                throw new IllegalStateException("Cannot setValue on " + property + " after cancelValues() has been called");
             }
-            cancelableValues.put(property, value);
-        } else {
-            p.setValue(value);
+            if (!originalValues.containsKey(property))
+                originalValues.put(property, p.getValue());
         }
+        p.setValue(value);
     }
 
     // Not API - to be called by ComponentService only
     public void setCancelable(boolean cancelable) {
         this.cancelable = cancelable;
-        cancelableValues = null;
+        originalValues = null;
         if (cancelable) {
-            cancelableValues = new HashMap<>();
+            originalValues = new HashMap<>();
+        }
+        for (Widget w : widgets) {
+            NamedThing p = w.getContent();
+            if (p instanceof Form)
+                ((Form) p).setCancelable(cancelable);
         }
     }
 
     // Not API - to be called by ComponentService only
-    public void commitValues() {
-        if (cancelableValues == null) {
+    public void cancelValues() {
+        if (originalValues == null) {
             return;
         }
-        for (String key : cancelableValues.keySet()) {
-            ((Property) getProperties().getProperty(key)).setValue(cancelableValues.get(key));
+        for (String key : originalValues.keySet()) {
+            ((Property) getProperties().getProperty(key)).setValue(originalValues.get(key));
         }
-        cancelableValues = null;
+        originalValues = null;
+        for (Widget w : widgets) {
+            NamedThing p = w.getContent();
+            if (p instanceof Form)
+                ((Form) p).cancelValues();
+        }
     }
 
     public boolean isRefreshUI() {

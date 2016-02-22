@@ -36,12 +36,12 @@ public class PropertiesServiceImpl<T extends Properties> implements PropertiesSe
     }
 
     @Override
-    public T commitFormValues(T properties, String formName) {
+    public T cancelFormValues(T properties, String formName) {
         Form form = properties.getForm(formName);
         if (form == null) {
             throw new IllegalArgumentException("Form: " + formName + " not found");
         }
-        form.commitValues();
+        form.cancelValues();
         return properties;
     }
 

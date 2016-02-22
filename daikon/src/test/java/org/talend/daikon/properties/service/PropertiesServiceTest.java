@@ -14,6 +14,7 @@ package org.talend.daikon.properties.service;
 
 import static org.junit.Assert.*;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import org.junit.Before;
@@ -79,6 +80,7 @@ public class PropertiesServiceTest {
 
     @Test
     // TCOMP-15 Handle OK/Cancel button on advanced properties dialog from Wizard
+    // TCOMP-51 Make sure current values in the form are available until canceled
     public void testFormOkCancel() throws Throwable {
         TestProperties props = (TestProperties) new TestProperties(null).init();
 
@@ -89,6 +91,11 @@ public class PropertiesServiceTest {
         dateNow.setTime(System.currentTimeMillis());
         Date dateLater = new Date();
         dateLater.setTime(dateLater.getTime() + 10000);
+
+        Calendar calNow = Calendar.getInstance();
+        calNow.setTime(dateNow);
+        Calendar calLater = Calendar.getInstance();
+        calLater.setTime(dateLater);
 
         props.userId.setValue("userId");
         props.integer.setValue(1);
@@ -103,27 +110,31 @@ public class PropertiesServiceTest {
         Form form = props.getForm("restoreTest");
 
         form.setValue("userId", "userIdnew");
-        form.setValue("nestedProps.aGreatProperty", "propPrevious1new");
-
-        Date dateTimeLater = new Date();
+        form.getChildForm("nestedProps").setValue("aGreatProperty", "propPrevious1new");
 
         form.setValue("integer", 10);
         form.setValue("decimal", 20);
         form.setValue("date", dateLater);
         form.setValue("dateTime", dateLater);
 
-        assertEquals("userId", props.userId.getValue());
-        assertEquals("propPrevious1", props.nestedProps.aGreatProperty.getValue());
-        assertEquals(1, props.integer.getIntValue());
-        // FIXME - finish this
-        // assertEquals(2, props.getDecimalValue(props.decimal));
-        // assertEquals(dateNow, props.getCalendarValue(props.date));
+        assertEquals("userIdnew", props.userId.getValue());
+        assertEquals("propPrevious1new", props.nestedProps.aGreatProperty.getValue());
+        assertEquals(10, props.integer.getIntValue());
+        assertEquals(20, props.decimal.getIntValue());
+        assertEquals(calLater, props.date.getCalendarValue());
+        assertEquals(calLater, props.dateTime.getCalendarValue());
+
         assertTrue(props == savedProps);
         assertTrue(props.nestedProps == savedNested);
 
-        props = (TestProperties) propService.commitFormValues(props, "restoreTest");
-        assertEquals("userIdnew", props.userId.getValue());
-        assertEquals("propPrevious1new", props.nestedProps.aGreatProperty.getValue());
+        props = (TestProperties) propService.cancelFormValues(props, "restoreTest");
+
+        assertEquals("userId", props.userId.getValue());
+        assertEquals("propPrevious1", props.nestedProps.aGreatProperty.getValue());
+        assertEquals(1, props.integer.getIntValue());
+        assertEquals(2, props.decimal.getIntValue());
+        assertEquals(calNow, props.date.getCalendarValue());
+        assertEquals(calNow, props.dateTime.getCalendarValue());
     }
 
     @Test
