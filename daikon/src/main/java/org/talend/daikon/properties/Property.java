@@ -13,6 +13,7 @@
 package org.talend.daikon.properties;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -141,11 +142,16 @@ public class Property extends AbstractSchemaElement implements AnyProperty {
         return Integer.valueOf(String.valueOf(value));
     }
 
-    /**
-     * @return Cast the stored value to a Calendar.
-     */
     public Calendar getCalendarValue() {
-        return (Calendar) getValue();
+        Object value = getValue();
+        if (value instanceof Calendar)
+            return (Calendar) value;
+        if (value instanceof Date) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime((Date) value);
+            return calendar;
+        }
+        throw new IllegalStateException(this + " is not instance of Date nor Calendar");
     }
 
     @Override
