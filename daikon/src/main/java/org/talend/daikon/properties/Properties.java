@@ -20,12 +20,9 @@ import org.talend.daikon.NamedThing;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.exception.error.CommonErrorCodes;
-import org.talend.daikon.i18n.I18nMessages;
 import org.talend.daikon.i18n.TranslatableImpl;
 import org.talend.daikon.properties.error.PropertiesErrorCode;
 import org.talend.daikon.properties.presentation.Form;
-import org.talend.daikon.properties.presentation.Widget;
-import org.talend.daikon.schema.SchemaElement;
 import org.talend.daikon.security.CryptoHelper;
 import org.talend.daikon.strings.ToStringIndent;
 import org.talend.daikon.strings.ToStringIndentUtil;
@@ -95,6 +92,9 @@ import com.cedarsoftware.util.io.JsonWriter;
  * {@link SchemaElement#setI18nMessageFormater(I18nMessages)} manually.
  */
 
+/**
+ *
+ */
 public abstract class Properties extends TranslatableImpl implements AnyProperty, ToStringIndent {
 
     static final String METHOD_BEFORE = "before";
@@ -314,6 +314,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
      * WARNING : make sure to call super() first otherwise you may endup with NPE because of not initialised properties
      */
     public void setupProperties() {
+        // left empty for subclass to override
     }
 
     /**
@@ -321,6 +322,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
      * WARNING : make sure to call super() first otherwise you may endup with NPE because of not initialised layout
      */
     public void setupLayout() {
+        // left empty for subclass to override
     }
 
     /**
@@ -334,7 +336,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
         String ser = null;
         try {
             // The forms are recreated upon deserialization
-            forms = new ArrayList();
+            forms = new ArrayList<>();
             ser = JsonWriter.objectToJson(this);
         } finally {
             forms = currentForms;
@@ -408,11 +410,11 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
     public List<NamedThing> getProperties() {
         // TODO this should be changed to AnyProperty type but it as impact everywhere
         List<NamedThing> properties = new ArrayList<>();
-        Field[] fields = getClass().getFields();
-        for (Field f : fields) {
+        List<Field> propertyFields = getAnyPropertyFields();
+        for (Field f : propertyFields) {
             try {
-                Object fValue = f.get(this);
-                if (isAPropertyType(f.getType())) {
+                if (NamedThing.class.isAssignableFrom(f.getType())) {
+                    Object fValue = f.get(this);
                     if (fValue != null) {
                         NamedThing se = (NamedThing) fValue;
                         properties.add(se);
@@ -424,6 +426,20 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
             }
         }
         return properties;
+    }
+
+    /**
+     * @return a direct list of field assignable from AnyProperty
+     */
+    private List<Field> getAnyPropertyFields() {
+        List<Field> propertyFields = new ArrayList<>();
+        Field[] fields = getClass().getFields();
+        for (Field f : fields) {
+            if (isAPropertyType(f.getType())) {
+                propertyFields.add(f);
+            }
+        }
+        return propertyFields;
     }
 
     @Override
@@ -444,7 +460,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
      * @return true if the clazz inherites from Property or ComponenetProperties
      */
     protected boolean isAPropertyType(Class<?> clazz) {
-        return Properties.class.isAssignableFrom(clazz) || Property.class.isAssignableFrom(clazz);
+        return AnyProperty.class.isAssignableFrom(clazz);
     }
 
     /**
@@ -542,6 +558,45 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
      */
     public ValidationResult getValidationResult() {
         return validationResult;
+    }
+
+    /**
+     * This goes through all nested properties recusively and replace them with the newValueProperties given as
+     * parameters as long as they are assignable to the Properties type. <br/>
+     * Once the property is assigned it will not be recusively scanned. But if many nested Properties have the
+     * appropriate type they will all be assigned to the new value.
+     * 
+     * @param properties list of Properties to be assigned to this instance nested Properties
+     */
+    public void assignNestedProperties(Properties... newValueProperties) {
+        List<Field> propertyFields = getAnyPropertyFields();
+        for (Field propField : propertyFields) {
+            Class<?> propType = propField.getType();
+            if (Properties.class.isAssignableFrom(propType)) {
+                boolean isNewAssignment = false;
+                for (Properties newValue : newValueProperties) {
+                    if (propType.isAssignableFrom(newValue.getClass())) {
+                        try {
+                            propField.set(this, newValue);
+                        } catch (IllegalArgumentException | IllegalAccessException e) {
+                            throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+                        }
+                        isNewAssignment = true;
+                    } // else not a compatible type so keep looking
+                }
+                if (!isNewAssignment) {// recurse
+                    Properties prop;
+                    try {
+                        prop = (Properties) propField.get(this);
+                        if (prop != null) {
+                            prop.assignNestedProperties(newValueProperties);
+                        } // else prop value is null so we can't recurse. this should never happend
+                    } catch (IllegalArgumentException | IllegalAccessException e) {
+                        throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+                    } // cast is ok we check it was assignable before.
+                }
+            } // else not a nestedProperties so keep looking.
+        }
     }
 
     /**
