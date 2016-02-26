@@ -24,6 +24,7 @@ import org.talend.daikon.properties.presentation.Form;
 import org.talend.daikon.properties.test.PropertiesTestUtils;
 import org.talend.daikon.properties.testproperties.PropertiesWithDefinedI18N;
 import org.talend.daikon.properties.testproperties.TestProperties;
+import org.talend.daikon.properties.testproperties.nestedprop.NestedNestedProperties;
 import org.talend.daikon.properties.testproperties.nestedprop.NestedProperties;
 import org.talend.daikon.properties.testproperties.nestedprop.inherited.InheritedProperties;
 import org.talend.daikon.properties.testproperties.references.MultipleRefProperties;
@@ -197,7 +198,7 @@ public class PropertiesTest {
         List<NamedThing> pList = componentProperties.getProperties();
         System.out.println(pList);
         assertTrue(pList.get(0) != null);
-        assertEquals(3, pList.size());
+        assertEquals(4, pList.size());
     }
 
     @Test
@@ -206,16 +207,6 @@ public class PropertiesTest {
         Form f = componentProperties.getForm(Form.MAIN);
         assertTrue(f.getWidget("userId").isVisible());
     }
-
-    // @Test
-    // public void testGetPropFields() {
-    // TestProperties tProps = (TestProperties) new TestProperties("test").init();
-    // List<String> fieldNames = tProps.getPropertyFieldNames();
-    // System.out.println(fieldNames);
-    // assertEquals(11, fieldNames.size());
-    // assertTrue(tProps.userId == tProps.getPropertyByFieldName("userId"));
-    // assertTrue(tProps.nestedProps == tProps.getPropertyByFieldName("nestedProps"));
-    // }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetValuedProperties() {
@@ -351,6 +342,24 @@ public class PropertiesTest {
         MultipleRefProperties props = (MultipleRefProperties) new MultipleRefProperties("test").init();
         List<Form> forms = props.connection.getForms();
         assertEquals(1, forms.size());
+    }
+
+    @Test
+    public void testAssignedNewProperties() {
+        TestProperties props = (TestProperties) new TestProperties("test").init();
+        // use a sub class to check is assignement also works with sub classes
+        NestedNestedProperties nestedNestedProperties = new NestedNestedProperties("foo") {
+        };
+        props.assignNestedProperties(nestedNestedProperties);
+        assertEquals(nestedNestedProperties, props.nestedProps.nestedProp);
+        assertEquals(nestedNestedProperties, props.nestedInitLater.nestedProp);
+    }
+
+    // @Test
+    public void testJavaListOfNestedProperties() {
+        TestProperties props = (TestProperties) new TestProperties("test").init();
+        String javaCode = PropertiesTestUtils.generatedNestedComponentCompatibilitiesJavaCode(props);
+        System.out.println(javaCode);
     }
 
 }
