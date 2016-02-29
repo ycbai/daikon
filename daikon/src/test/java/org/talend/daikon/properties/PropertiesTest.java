@@ -121,6 +121,23 @@ public class PropertiesTest {
     }
 
     @Test
+    // TDKN-12 copyValues does not work if target has null property
+    public void testCopyValues2() {
+        TestProperties props = (TestProperties) new TestProperties("test1").init();
+        props.integer.setValue(1);
+        props.userId.setValue("User1");
+        ((Property) props.getProperty("nestedProps.aGreatProperty")).setValue("great1");
+
+        TestProperties props2 = (TestProperties) new TestProperties("test2").init();
+        props2.integer = null;
+        props2.userId = null;
+        props2.copyValuesFrom(props);
+        assertEquals(1, ((Property) props2.getProperty("integer")).getIntValue());
+        assertEquals("User1", ((Property) props2.getProperty("userId")).getStringValue());
+        assertEquals("great1", ((Property) props2.getProperty("nestedProps.aGreatProperty")).getStringValue());
+    }
+
+    @Test
     public void testWrongFieldAndPropertyName() {
         TestProperties props = (TestProperties) new TestProperties("test1").init();
         props.setValue("nestedProps.aGreatProperty", "great1");

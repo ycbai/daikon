@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.daikon.properties;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -328,7 +329,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
     /**
      * Returns a serialized version of this for storage in a repository.
      *
-     * @return the serialized {@code String}, use {@link #fromSerialized(String)} to materialize the object.
+     * @return the serialized {@code String}, use {@link #fromSerialized(String, Class)} to materialize the object.
      */
     public String toSerialized() {
         handlePropEncryption(ENCRYPT);
@@ -566,7 +567,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
      * Once the property is assigned it will not be recusively scanned. But if many nested Properties have the
      * appropriate type they will all be assigned to the new value.
      * 
-     * @param properties list of Properties to be assigned to this instance nested Properties
+     * @param newValueProperties list of Properties to be assigned to this instance nested Properties
      */
     public void assignNestedProperties(Properties... newValueProperties) {
         List<Field> propertyFields = getAnyPropertyFields();
@@ -606,20 +607,34 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
      * @param props
      */
     public void copyValuesFrom(Properties props) {
-        List<NamedThing> values = getProperties();
-        for (NamedThing se : values) {
-            NamedThing otherSe = props.getProperty(se.getName());
-            if (otherSe == null) {
-                continue;
+        for (NamedThing otherProp : props.getProperties()) {
+            NamedThing thisProp = getProperty(otherProp.getName());
+            if (thisProp == null) {
+                try {
+                    Class otherClass = otherProp.getClass();
+                    if (Properties.class.isAssignableFrom(otherClass)) {
+                        thisProp = (NamedThing) otherClass.newInstance();
+                    } else if (Property.class.isAssignableFrom(otherClass)) {
+                        // Look for the String constructor for Property which is the property name
+                        Constructor c = otherClass.getConstructor(String.class);
+                        thisProp = (NamedThing) c.newInstance(otherProp.getName());
+                    } else {
+                        TalendRuntimeException.unexpectedException(
+                                "Unexpected property class: " + otherProp.getClass() + " prop: " + otherProp);
+                    }
+                    Field f = getClass().getField(otherProp.getName());
+                    f.set(this, thisProp);
+                } catch (Exception e) {
+                    TalendRuntimeException.unexpectedException(e);
+                }
             }
-            if (se instanceof Properties) {
-                ((Properties) se).copyValuesFrom((Properties) otherSe);
+            if (otherProp instanceof Properties) {
+                ((Properties) thisProp).copyValuesFrom((Properties) otherProp);
             } else {
-                Object value = ((Property) otherSe).getStoredValue();
-                ((Property) se).setValue(value);
+                Object value = ((Property) otherProp).getStoredValue();
+                ((Property) thisProp).setValue(value);
             }
         }
-
     }
 
     @Override
