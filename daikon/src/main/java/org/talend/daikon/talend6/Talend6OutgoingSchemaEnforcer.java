@@ -21,6 +21,7 @@ import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
 import org.apache.avro.generic.IndexedRecord;
 import org.talend.daikon.avro.IndexedRecordAdapterFactory.UnmodifiableAdapterException;
+import org.talend.daikon.avro.util.SingleColumnIndexedRecordAdapterFactory;
 
 /**
  * This class acts as a wrapper around an arbitrary Avro {@link IndexedRecord} to coerce the output type to the exact
@@ -30,8 +31,7 @@ import org.talend.daikon.avro.IndexedRecordAdapterFactory.UnmodifiableAdapterExc
  * Schema constraints imposed by the Studio, including:
  * <ul>
  * <li>Coercing the types of the returned objects to *exactly* the type required by the Talend POJO.</li>
- * <li>Placing all of the unresolved columns between the wrapped schema and the output schema in the Dynamic column.
- * </li>
+ * <li>Placing all of the unresolved columns between the wrapped schema and the output schema in the Dynamic column.</li>
  * </ul>
  * 
  * One instance of this object can be created per outgoing schema and reused via the {@link #setWrapped(IndexedRecord)}
@@ -40,10 +40,10 @@ import org.talend.daikon.avro.IndexedRecordAdapterFactory.UnmodifiableAdapterExc
 public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6SchemaConstants {
 
     /** True if columns from the incoming schema are matched to the outgoing schema exclusively by position. */
-    final private boolean byIndex;
+    private boolean byIndex;
 
     /** The outgoing schema that determines which Java objects are produced. */
-    final private Schema outgoing;
+    private final Schema outgoing;
 
     /**
      * The incoming IndexedRecord currently wrapped by this enforcer. This can be swapped out for new data as long as
@@ -84,9 +84,14 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
     }
 
     /**
-     * @param wrapped Sets the internal, actual index record that needs to be coerced to the outgoing schema.
+     * @param wrapped The internal, actual data represented as an IndexedRecord.
      */
     public void setWrapped(IndexedRecord wrapped) {
+        // TODO: This matches the salesforce and file-input single output components. Is this sufficient logic
+        // for all components?
+        if (wrapped instanceof SingleColumnIndexedRecordAdapterFactory.PrimitiveAsIndexedRecordAdapter) {
+            byIndex = true;
+        }
         this.wrapped = wrapped;
     }
 
@@ -97,8 +102,9 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
 
     /** Return a copy of the outgoing schema without any dynamic column. */
     public Schema getSchemaWithoutDynamic() {
-        if (outgoingDynamicColumn == -1)
+        if (outgoingDynamicColumn == -1) {
             return outgoing;
+        }
 
         // Make an exact copy of the outgoing schema.
         Schema outgoingWithoutDynamic = Schema.createRecord(outgoing.getName(), outgoing.getDoc(), outgoing.getNamespace(),
@@ -131,8 +137,9 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
     public Object get(int i) {
 
         // We should never ask for an index outside of the outgoing schema.
-        if (i >= outgoing.getFields().size())
+        if (i >= outgoing.getFields().size()) {
             throw new ArrayIndexOutOfBoundsException(i);
+        }
 
         // If we are asking for the dynamic column, then all of the fields that don't match the outgoing schema are
         // added to a map.
@@ -150,7 +157,7 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
         // If we are not asking for the dynamic column, then get the input field that corresponds to the position.
         int wrappedIndex;
         if (byIndex) {
-            if (i > outgoingDynamicColumn) {
+            if (outgoingDynamicColumn != -1 && i > outgoingDynamicColumn) {
                 // If the requested index is after the dynamic column and we are matching by index, then the actual
                 // index should be counted from the end of the fields.
                 wrappedIndex = getSchema().getFields().size() - getNumberOfDynamicColumns() + i + 1;
@@ -158,15 +165,17 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
                 wrappedIndex = i;
             }
             // If the wrappedIndex is out of bounds, then return the default value.
-            if (wrappedIndex >= wrapped.getSchema().getFields().size())
+            if (wrappedIndex >= wrapped.getSchema().getFields().size()) {
                 return transformValue(null, null, outField);
+            }
             wrappedField = wrapped.getSchema().getFields().get(wrappedIndex);
         } else {
             // Matching fields by name.
             String fieldName = getSchema().getFields().get(i).name();
             wrappedField = wrapped.getSchema().getField(fieldName);
-            if (wrappedField == null)
+            if (wrappedField == null) {
                 return transformValue(null, null, outField);
+            }
             wrappedIndex = wrappedField.pos();
         }
 

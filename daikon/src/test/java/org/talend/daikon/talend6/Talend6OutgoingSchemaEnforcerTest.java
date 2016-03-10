@@ -1,10 +1,7 @@
 package org.talend.daikon.talend6;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import java.util.Map;
 
@@ -16,6 +13,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.talend.daikon.avro.util.SingleColumnIndexedRecordAdapterFactory;
 
 /**
  * Unit tests for {Talend6SchemaOutputEnforcer}.
@@ -55,10 +53,8 @@ public class Talend6OutgoingSchemaEnforcerTest {
     public void testDynamicColumn_ByIndex_DynamicColumnAtStart() {
         // The expected schema after enforcement.
         Schema talend6Schema = SchemaBuilder.builder().record("Record").fields() //
-                .name("dyn")
-                .prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, //
-                        Talend6OutgoingSchemaEnforcer.TALEND6_DYNAMIC_TYPE)
-                .type().bytesType().noDefault() //
+                .name("dyn").prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, //
+                        Talend6OutgoingSchemaEnforcer.TALEND6_DYNAMIC_TYPE).type().bytesType().noDefault() //
                 .name("out1").type().intType().noDefault() //
                 .name("out2").type().stringType().noDefault() //
                 .name("out3").type().intType().noDefault() //
@@ -77,9 +73,9 @@ public class Talend6OutgoingSchemaEnforcerTest {
         assertThat(enforcer.get(0), instanceOf(Map.class));
         Map<?, ?> unresolved = (Map<?, ?>) enforcer.get(0);
         assertThat(unresolved.keySet(), containsInAnyOrder((Object) "id", "name", "age"));
-        assertThat(unresolved.get("id"), is((Object) 1));
-        assertThat(unresolved.get("name"), is((Object) "User"));
-        assertThat(unresolved.get("age"), is((Object) 100));
+        assertThat(unresolved, hasEntry((Object) "id", (Object) 1));
+        assertThat(unresolved, hasEntry((Object) "age", (Object) 100));
+        assertThat(unresolved, hasEntry((Object) "name", (Object) "User"));
 
         Schema talend6SchemaWithoutDynamic = enforcer.getSchemaWithoutDynamic();
         assertThat(talend6SchemaWithoutDynamic.getFields(), hasSize(3));
@@ -93,10 +89,8 @@ public class Talend6OutgoingSchemaEnforcerTest {
         // The expected schema after enforcement.
         Schema talend6Schema = SchemaBuilder.builder().record("Record").fields() //
                 .name("out1").type().intType().noDefault() //
-                .name("dyn")
-                .prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, //
-                        Talend6OutgoingSchemaEnforcer.TALEND6_DYNAMIC_TYPE)
-                .type().bytesType().noDefault() //
+                .name("dyn").prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, //
+                        Talend6OutgoingSchemaEnforcer.TALEND6_DYNAMIC_TYPE).type().bytesType().noDefault() //
                 .name("out2").type().stringType().noDefault() //
                 .name("out3").type().intType().noDefault() //
                 .endRecord();
@@ -114,9 +108,9 @@ public class Talend6OutgoingSchemaEnforcerTest {
         assertThat(enforcer.get(1), instanceOf(Map.class));
         Map<?, ?> unresolved = (Map<?, ?>) enforcer.get(1);
         assertThat(unresolved.keySet(), containsInAnyOrder((Object) "name", "age", "valid"));
-        assertThat(unresolved.get("name"), is((Object) "User"));
-        assertThat(unresolved.get("age"), is((Object) 100));
-        assertThat(unresolved.get("valid"), is((Object) true));
+        assertThat(unresolved, hasEntry((Object) "name", (Object) "User"));
+        assertThat(unresolved, hasEntry((Object) "age", (Object) 100));
+        assertThat(unresolved, hasEntry((Object) "valid", (Object) true));
 
         Schema talend6SchemaWithoutDynamic = enforcer.getSchemaWithoutDynamic();
         assertThat(talend6SchemaWithoutDynamic.getFields(), hasSize(3));
@@ -132,10 +126,8 @@ public class Talend6OutgoingSchemaEnforcerTest {
                 .name("out1").type().intType().noDefault() //
                 .name("out2").type().stringType().noDefault() //
                 .name("out3").type().intType().noDefault() //
-                .name("dyn")
-                .prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, //
-                        Talend6OutgoingSchemaEnforcer.TALEND6_DYNAMIC_TYPE)
-                .type().bytesType().noDefault() //
+                .name("dyn").prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, //
+                        Talend6OutgoingSchemaEnforcer.TALEND6_DYNAMIC_TYPE).type().bytesType().noDefault() //
                 .endRecord();
 
         Talend6OutgoingSchemaEnforcer enforcer = new Talend6OutgoingSchemaEnforcer(talend6Schema, true);
@@ -151,9 +143,9 @@ public class Talend6OutgoingSchemaEnforcerTest {
         assertThat(enforcer.get(3), instanceOf(Map.class));
         Map<?, ?> unresolved = (Map<?, ?>) enforcer.get(3);
         assertThat(unresolved.keySet(), containsInAnyOrder((Object) "valid", "address", "comment"));
-        assertThat(unresolved.get("valid"), is((Object) true));
-        assertThat(unresolved.get("address"), is((Object) "Main Street"));
-        assertThat(unresolved.get("comment"), is((Object) "This is a record with six columns."));
+        assertThat(unresolved, hasEntry((Object) "valid", (Object) true));
+        assertThat(unresolved, hasEntry((Object) "address", (Object) "Main Street"));
+        assertThat(unresolved, hasEntry((Object) "comment", (Object) "This is a record with six columns."));
 
         Schema talend6SchemaWithoutDynamic = enforcer.getSchemaWithoutDynamic();
         assertThat(talend6SchemaWithoutDynamic.getFields(), hasSize(3));
@@ -166,10 +158,8 @@ public class Talend6OutgoingSchemaEnforcerTest {
     public void testDynamicColumn_ByName_DynamicColumnAtStart() {
         // The expected schema after enforcement.
         Schema talend6Schema = SchemaBuilder.builder().record("Record").fields() //
-                .name("dyn")
-                .prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, //
-                        Talend6OutgoingSchemaEnforcer.TALEND6_DYNAMIC_TYPE)
-                .type().bytesType().noDefault() //
+                .name("dyn").prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, //
+                        Talend6OutgoingSchemaEnforcer.TALEND6_DYNAMIC_TYPE).type().bytesType().noDefault() //
                 .name("id").type().intType().noDefault() //
                 .name("name").type().stringType().noDefault() //
                 .name("age").type().intType().noDefault() //
@@ -188,9 +178,9 @@ public class Talend6OutgoingSchemaEnforcerTest {
         assertThat(enforcer.get(0), instanceOf(Map.class));
         Map<?, ?> unresolved = (Map<?, ?>) enforcer.get(0);
         assertThat(unresolved.keySet(), containsInAnyOrder((Object) "valid", "address", "comment"));
-        assertThat(unresolved.get("valid"), is((Object) true));
-        assertThat(unresolved.get("address"), is((Object) "Main Street"));
-        assertThat(unresolved.get("comment"), is((Object) "This is a record with six columns."));
+        assertThat(unresolved, hasEntry((Object) "valid", (Object) true));
+        assertThat(unresolved, hasEntry((Object) "address", (Object) "Main Street"));
+        assertThat(unresolved, hasEntry((Object) "comment", (Object) "This is a record with six columns."));
 
         Schema talend6SchemaWithoutDynamic = enforcer.getSchemaWithoutDynamic();
         assertThat(talend6SchemaWithoutDynamic.getFields(), hasSize(3));
@@ -204,10 +194,8 @@ public class Talend6OutgoingSchemaEnforcerTest {
         // The expected schema after enforcement.
         Schema talend6Schema = SchemaBuilder.builder().record("Record").fields() //
                 .name("id").type().intType().noDefault() //
-                .name("dyn")
-                .prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, //
-                        Talend6OutgoingSchemaEnforcer.TALEND6_DYNAMIC_TYPE)
-                .type().bytesType().noDefault() //
+                .name("dyn").prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, //
+                        Talend6OutgoingSchemaEnforcer.TALEND6_DYNAMIC_TYPE).type().bytesType().noDefault() //
                 .name("name").type().stringType().noDefault() //
                 .name("age").type().intType().noDefault() //
                 .endRecord();
@@ -225,9 +213,9 @@ public class Talend6OutgoingSchemaEnforcerTest {
         assertThat(enforcer.get(1), instanceOf(Map.class));
         Map<?, ?> unresolved = (Map<?, ?>) enforcer.get(1);
         assertThat(unresolved.keySet(), containsInAnyOrder((Object) "valid", "address", "comment"));
-        assertThat(unresolved.get("valid"), is((Object) true));
-        assertThat(unresolved.get("address"), is((Object) "Main Street"));
-        assertThat(unresolved.get("comment"), is((Object) "This is a record with six columns."));
+        assertThat(unresolved, hasEntry((Object) "valid", (Object) true));
+        assertThat(unresolved, hasEntry((Object) "address", (Object) "Main Street"));
+        assertThat(unresolved, hasEntry((Object) "comment", (Object) "This is a record with six columns."));
 
         Schema talend6SchemaWithoutDynamic = enforcer.getSchemaWithoutDynamic();
         assertThat(talend6SchemaWithoutDynamic.getFields(), hasSize(3));
@@ -243,10 +231,8 @@ public class Talend6OutgoingSchemaEnforcerTest {
                 .name("id").type().intType().noDefault() //
                 .name("name").type().stringType().noDefault() //
                 .name("age").type().intType().noDefault() //
-                .name("dyn")
-                .prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, //
-                        Talend6OutgoingSchemaEnforcer.TALEND6_DYNAMIC_TYPE)
-                .type().bytesType().noDefault() //
+                .name("dyn").prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, //
+                        Talend6OutgoingSchemaEnforcer.TALEND6_DYNAMIC_TYPE).type().bytesType().noDefault() //
                 .endRecord();
 
         Talend6OutgoingSchemaEnforcer enforcer = new Talend6OutgoingSchemaEnforcer(talend6Schema, false);
@@ -262,9 +248,9 @@ public class Talend6OutgoingSchemaEnforcerTest {
         assertThat(enforcer.get(3), instanceOf(Map.class));
         Map<?, ?> unresolved = (Map<?, ?>) enforcer.get(3);
         assertThat(unresolved.keySet(), containsInAnyOrder((Object) "valid", "address", "comment"));
-        assertThat(unresolved.get("valid"), is((Object) true));
-        assertThat(unresolved.get("address"), is((Object) "Main Street"));
-        assertThat(unresolved.get("comment"), is((Object) "This is a record with six columns."));
+        assertThat(unresolved, hasEntry((Object) "valid", (Object) true));
+        assertThat(unresolved, hasEntry((Object) "address", (Object) "Main Street"));
+        assertThat(unresolved, hasEntry((Object) "comment", (Object) "This is a record with six columns."));
 
         Schema talend6SchemaWithoutDynamic = enforcer.getSchemaWithoutDynamic();
         assertThat(talend6SchemaWithoutDynamic.getFields(), hasSize(3));
@@ -287,4 +273,40 @@ public class Talend6OutgoingSchemaEnforcerTest {
         enforcer.get(1); // Only one field available.
     }
 
+    @Test
+    public void testWrappedSingleColumnIndexedRecord() {
+        // The expected schema after enforcement.
+        Schema talend6Schema = SchemaBuilder.builder().record("Record").fields() //
+                .name("name").type().stringType().noDefault() //
+                .endRecord();
+
+        Talend6OutgoingSchemaEnforcer enforcer = new Talend6OutgoingSchemaEnforcer(talend6Schema, false);
+
+        SingleColumnIndexedRecordAdapterFactory<String> factory = new SingleColumnIndexedRecordAdapterFactory<>(String.class,
+                Schema.create(Schema.Type.STRING));
+
+        enforcer.setWrapped(factory.convertToAvro("one"));
+
+        assertThat(enforcer.get(0), is((Object) "one"));
+    }
+
+    @Test
+    public void testWrappedSingleColumnIndexedRecord_Dynamic() {
+        // The expected schema after enforcement.
+        Schema talend6Schema = SchemaBuilder.builder().record("Record").fields() //
+                .name("dyn").prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, //
+                        Talend6OutgoingSchemaEnforcer.TALEND6_DYNAMIC_TYPE).type().bytesType().noDefault() //
+                .endRecord();
+
+        Talend6OutgoingSchemaEnforcer enforcer = new Talend6OutgoingSchemaEnforcer(talend6Schema, false);
+
+        SingleColumnIndexedRecordAdapterFactory<String> factory = new SingleColumnIndexedRecordAdapterFactory<>(String.class,
+                Schema.create(Schema.Type.STRING));
+
+        enforcer.setWrapped(factory.convertToAvro("one"));
+
+        assertThat(enforcer.get(0), instanceOf(Map.class));
+        Map<?, ?> unresolved = (Map<?, ?>) enforcer.get(0);
+        assertThat(unresolved, hasEntry(anything(), is((Object) "one")));
+    }
 }
