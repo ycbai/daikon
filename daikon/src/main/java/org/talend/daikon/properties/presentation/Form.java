@@ -214,6 +214,15 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
         return this;
     }
 
+    /**
+     * Change the visibility status of all of the form's widgets.
+     */
+    public void setVisible(boolean visible) {
+        for (Widget w : getWidgets()) {
+            w.setVisible(visible);
+        }
+    }
+
     private void fill(Widget widget) {
         NamedThing child = widget.getContent();
         String name = child.getName();

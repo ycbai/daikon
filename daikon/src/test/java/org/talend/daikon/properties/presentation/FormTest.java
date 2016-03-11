@@ -13,13 +13,12 @@
 package org.talend.daikon.properties.presentation;
 
 import static org.junit.Assert.*;
+import static org.talend.daikon.properties.PropertyFactory.newString;
+import static org.talend.daikon.properties.presentation.Widget.widget;
 
 import org.junit.Test;
 import org.talend.daikon.properties.Properties;
 
-/**
- * created by sgandon on 14 déc. 2015
- */
 public class FormTest {
 
     @Test
@@ -50,6 +49,26 @@ public class FormTest {
         assertEquals(displayName, form.getDisplayName());
         assertEquals(title, form.getTitle());
         assertEquals(subTitle, form.getSubtitle());
+    }
+
+    @Test
+    public void testSetVisible() {
+        Form form = new Form(new Properties("bar") { //$NON-NLS-1$
+        }, "foo"); //$NON-NLS-1$
+        form.addRow(widget(newString("w1")));
+        form.addRow(widget(newString("w2")));
+        form.addRow(widget(newString("w3")));
+        assertTrue(form.getWidget("w1").isVisible());
+        assertTrue(form.getWidget("w2").isVisible());
+        assertTrue(form.getWidget("w3").isVisible());
+        form.setVisible(false);
+        assertFalse(form.getWidget("w1").isVisible());
+        assertFalse(form.getWidget("w2").isVisible());
+        assertFalse(form.getWidget("w3").isVisible());
+        form.setVisible(true);
+        assertTrue(form.getWidget("w1").isVisible());
+        assertTrue(form.getWidget("w2").isVisible());
+        assertTrue(form.getWidget("w3").isVisible());
     }
 
 }
