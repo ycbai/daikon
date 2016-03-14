@@ -98,20 +98,11 @@
 				<extensions>true</extensions>
 				<executions>
 					<execution>
-						<id>bundle-jar</id>
-						<phase>package</phase>
+						<id>bundle-manifest</id>
+						<phase>process-classes</phase>
 						<goals>
-							<goal>bundle</goal>
+							<goal>manifest</goal>
 						</goals>
-						<configuration>
-							<classifier>bundle</classifier>
-							<instructions>
-                                <DynamicImport-Package>*</DynamicImport-Package>							
-								<Service-Component>*</Service-Component>
-								<Embed-Transitive>true</Embed-Transitive>
-								<Embed-Dependency>*;artifactId=paranamer|snappy-java|commons-compress|xz;inline=true</Embed-Dependency>
-							</instructions>
-						</configuration>
 					</execution>
 					<execution>
 						<id>lib-jar</id>
@@ -123,6 +114,7 @@
 							<instructions>
 								<Bundle-SymbolicName>org.talend.daikon</Bundle-SymbolicName>
 								<Bundle-Name>${project.name} lib</Bundle-Name>
+                                <DynamicImport-Package>*</DynamicImport-Package>
 							</instructions>
 						</configuration>
 					</execution>
@@ -151,9 +143,23 @@
 							</instructions>
 						</configuration>
 					</execution>
-
+					<execution>
+						<id>bundle-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>bundle</goal>
+						</goals>
+						<configuration>
+							<classifier>bundle</classifier>
+							<instructions>
+								<DynamicImport-Package>*</DynamicImport-Package>
+								<Service-Component>*</Service-Component>
+								<Embed-Transitive>true</Embed-Transitive>
+								<Embed-Dependency>*;artifactId=paranamer|snappy-java|commons-compress|xz;inline=true</Embed-Dependency>
+							</instructions>
+						</configuration>
+					</execution>
 				</executions>
-
 			</plugin>
 		</plugins>
 	</build>
