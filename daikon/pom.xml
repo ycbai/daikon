@@ -112,7 +112,7 @@
 						</goals>
 						<configuration>
 							<instructions>
-								<Bundle-SymbolicName>org.talend.daikon</Bundle-SymbolicName>
+								<Bundle-SymbolicName>org.talend.daikon.lib</Bundle-SymbolicName>
 								<Bundle-Name>${project.name} lib</Bundle-Name>
                                 <DynamicImport-Package>*</DynamicImport-Package>
 							</instructions>
@@ -133,6 +133,7 @@
 								<Import-Package>org.talend*,org.junit*,org.hamcrest*</Import-Package>
 								-->
 								<Bundle-SymbolicName>org.talend.daikon.test</Bundle-SymbolicName>
+                                <Bundle-Name>${project.name} test</Bundle-Name>
 								<Fragment-Host>org.talend.daikon</Fragment-Host>
 								<Embed-Transitive>true</Embed-Transitive>
 								<Embed-Dependency>*;scope=test;artifactId=!hamcrest-core|junit</Embed-Dependency>
@@ -152,6 +153,7 @@
 						<configuration>
 							<classifier>bundle</classifier>
 							<instructions>
+                                <Bundle-SymbolicName>org.talend.daikon</Bundle-SymbolicName>
 								<DynamicImport-Package>*</DynamicImport-Package>
 								<Service-Component>*</Service-Component>
 								<Embed-Transitive>true</Embed-Transitive>
