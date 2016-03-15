@@ -25,7 +25,7 @@ public class AvroUtils {
         }
         if (schema.getType() == Schema.Type.UNION) {
             for (Schema unionType : schema.getTypes()) {
-                if (schema.getType() == Schema.Type.NULL) {
+                if (unionType.getType() == Schema.Type.NULL) {
                     return true;
                 }
             }
