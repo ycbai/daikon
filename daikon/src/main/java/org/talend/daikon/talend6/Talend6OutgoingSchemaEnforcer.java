@@ -13,6 +13,7 @@
 package org.talend.daikon.talend6;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -199,6 +200,8 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
         // TODO(rskraba): A full list of type conversion to coerce to Talend-compatible types.
         if ("id_Short".equals(talendType)) { //$NON-NLS-1$
             return value instanceof Number ? ((Number) value).shortValue() : Short.parseShort(String.valueOf(value));
+        } else if ("id_Date".equals(talendType)) { //$NON-NLS-1$
+            return new Date((Long) value);
         } else if ("id_Byte".equals(talendType)) { //$NON-NLS-1$
             return value instanceof Number ? ((Number) value).byteValue() : Byte.parseByte(String.valueOf(value));
         }

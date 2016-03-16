@@ -3,6 +3,7 @@ package org.talend.daikon.talend6;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.avro.Schema;
@@ -291,22 +292,24 @@ public class Talend6OutgoingSchemaEnforcerTest {
     }
 
     @Test
-    public void testWrappedSingleColumnIndexedRecord_Dynamic() {
+    public void testValueConversion_toDate() {
         // The expected schema after enforcement.
         Schema talend6Schema = SchemaBuilder.builder().record("Record").fields() //
-                .name("dyn").prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, //
-                        Talend6OutgoingSchemaEnforcer.TALEND6_DYNAMIC_TYPE).type().bytesType().noDefault() //
+                .name("d").prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, //
+                        "id_Date").type().longType().noDefault() //
                 .endRecord();
 
+        // The enforcer to test.
         Talend6OutgoingSchemaEnforcer enforcer = new Talend6OutgoingSchemaEnforcer(talend6Schema, false);
 
-        SingleColumnIndexedRecordAdapterFactory<String> factory = new SingleColumnIndexedRecordAdapterFactory<>(String.class,
-                Schema.create(Schema.Type.STRING));
+        // Use this factory to create a one-column indexed record.
+        SingleColumnIndexedRecordAdapterFactory<Long> factory = new SingleColumnIndexedRecordAdapterFactory<>(Long.class,
+                Schema.create(Schema.Type.LONG));
+        IndexedRecord testData = factory.convertToAvro(1L);
 
-        enforcer.setWrapped(factory.convertToAvro("one"));
+        enforcer.setWrapped(testData);
 
-        assertThat(enforcer.get(0), instanceOf(Map.class));
-        Map<?, ?> unresolved = (Map<?, ?>) enforcer.get(0);
-        assertThat(unresolved, hasEntry(anything(), is((Object) "one")));
+        assertThat(enforcer.get(0), instanceOf(Date.class));
+        assertThat(enforcer.get(0), is((Object) new Date(1L)));
     }
 }
