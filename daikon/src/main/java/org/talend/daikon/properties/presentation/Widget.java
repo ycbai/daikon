@@ -25,61 +25,60 @@ import org.talend.daikon.strings.ToStringIndentUtil;
 public class Widget implements ToStringIndent {
 
     public enum WidgetType {
-                            /**
-                             * No special widget is requested, the default for the property's type is to be used.
-                             */
+        /**
+         * No special widget is requested, the default for the property's type is to be used.
+         */
         DEFAULT,
 
-                            /**
-                             * Presentation of a schema editor.
-                             */
+        /**
+         * Presentation of a schema editor.
+         */
         SCHEMA_EDITOR,
 
-                            /**
-                             * Presentation of a reference to a schema on one line. This shows the name of the schema
-                             * and provides a button to open the schema editor/viewer in a dialog.
-                             */
+        /**
+         * Presentation of a reference to a schema on one line. This shows the name of the schema and provides a button
+         * to open the schema editor/viewer in a dialog.
+         */
         SCHEMA_REFERENCE,
 
-                            /**
-                             * Provides a means of selecting a name or name/description from a set of names, possibly
-                             * arranged in a hierarchy. This is to be used for a large number of names, as this has
-                             * search capability.
-                             *
-                             * The NAME_SELECTION_AREA will operate on a property whose occur max times is -1, and whose
-                             * value is a {@code List<NameAndLabel>}. It will show everything on the list and then once
-                             * complete will set the values of the list only to those that are selected.
-                             */
+        /**
+         * Provides a means of selecting a name or name/description from a set of names, possibly arranged in a
+         * hierarchy. This is to be used for a large number of names, as this has search capability.
+         *
+         * The NAME_SELECTION_AREA will operate on a property whose occur max times is -1, and whose value is a
+         * {@code List<NameAndLabel>}. It will show everything on the list and then once complete will set the values of
+         * the list only to those that are selected.
+         */
         NAME_SELECTION_AREA,
 
-                            /**
-                             * A reference to a named selection. This just shows the selected name and a button to get a
-                             * dialog that has the {@link #NAME_SELECTION_AREA}.
-                             */
+        /**
+         * A reference to a named selection. This just shows the selected name and a button to get a dialog that has the
+         * {@link #NAME_SELECTION_AREA}.
+         */
         NAME_SELECTION_REFERENCE,
 
-                            /**
-                             * A reference to a component. This could be a reference to this component, another single
-                             * component in the enclosing scope's type, or a specified component instance. This is
-                             * rendered as a single line with the type of reference in a combo box.
-                             */
+        /**
+         * A reference to a component. This could be a reference to this component, another single component in the
+         * enclosing scope's type, or a specified component instance. This is rendered as a single line with the type of
+         * reference in a combo box. This is only used with the components system in conjunction with the
+         * {@code ComponentReferenceProperties}.
+         */
         COMPONENT_REFERENCE,
 
-                            /**
-                             * A button
-                             */
+        /**
+         * A button
+         */
         BUTTON,
 
-                            /*
-                             * A table, the children of this {@link SchemaElement} will be the columns for the table.
-                             * The maximum occurrence value of this {@code SchemaElement} is the number of possible rows
-                             * in the table.
-                             */
-                            TABLE,
-                            /*
-                             * a Text editable widget that hides the text to the user, mainly used for passwords.
-                             */
-                            HIDDEN_TEXT
+        /*
+         * A table, the children of this {@link SchemaElement} will be the columns for the table. The maximum occurrence
+         * value of this {@code SchemaElement} is the number of possible rows in the table.
+         */
+        TABLE,
+        /*
+         * a Text editable widget that hides the text to the user, mainly used for passwords.
+         */
+        HIDDEN_TEXT
 
     }
 
@@ -124,12 +123,6 @@ public class Widget implements ToStringIndent {
     private boolean callValidate;
 
     private boolean callAfter;
-
-    /**
-     * Used for the {@link WidgetType#COMPONENT_REFERENCE} to give the name of the components to search for in the
-     * referenced environment, i.e. the job.
-     */
-    private String referencedComponentName;
 
     private NamedThing content;
 
@@ -199,17 +192,8 @@ public class Widget implements ToStringIndent {
         return this;
     }
 
-    public String getReferencedComponentName() {
-        return referencedComponentName;
-    }
-
-    public void setReferencedComponentName(String referencedComponentName) {
-        this.referencedComponentName = referencedComponentName;
-    }
-
     //
-    // These are automatically set by the component framework; they
-    // are not to be specified by the user.
+    // These are automatically set by this framework; they are not to be specified by the user.
     //
 
     public boolean isCallBeforeActivate() {
