@@ -68,7 +68,12 @@ public class Property extends SimpleNamedThing implements AnyProperty {
         /**
          * Don't log this value in any logs.
          */
-        SUPPRESS_LOGGING;
+        SUPPRESS_LOGGING,
+        /**
+         * Used only at design time, not necessary for runtime.
+         */
+        DESIGN_TIME_ONLY;
+
     };
 
     private Type type;
