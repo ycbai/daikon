@@ -74,9 +74,9 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
 
     protected LinkedHashMap<String, Widget> widgetMap;
 
-    private int currentRow;
+    transient private int lastRow;
 
-    private int currentColumn;
+    transient private int lastColumn;
 
     private boolean cancelable;
 
@@ -193,9 +193,9 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
      * @return
      */
     public Form addRow(Widget widget) {
-        currentColumn = 1;
+        lastColumn = 1;
         String widgetName = getWidgetContentName(widget);
-        widgetMap.put(widgetName, widget.setRow(++currentRow).setOrder(currentColumn));
+        widgetMap.put(widgetName, widget.setRow(++lastRow).setOrder(lastColumn));
         PropertiesDynamicMethodHelper.setWidgetLayoutMethods(properties, widgetName, widget);
         return this;
     }
@@ -208,7 +208,7 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
      */
     public Form addColumn(Widget widget) {
         String widgetName = getWidgetContentName(widget);
-        widgetMap.put(widgetName, widget.setRow(currentRow).setOrder(++currentColumn));
+        widgetMap.put(widgetName, widget.setRow(lastRow).setOrder(++lastColumn));
         PropertiesDynamicMethodHelper.setWidgetLayoutMethods(properties, widgetName, widget);
         return this;
     }
