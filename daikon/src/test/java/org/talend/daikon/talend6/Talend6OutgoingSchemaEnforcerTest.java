@@ -1,11 +1,5 @@
 package org.talend.daikon.talend6;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-
-import java.util.Date;
-import java.util.Map;
-
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
 import org.apache.avro.generic.GenericData;
@@ -15,6 +9,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.talend.daikon.avro.util.SingleColumnIndexedRecordAdapterFactory;
+
+import java.util.Date;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * Unit tests for {Talend6SchemaOutputEnforcer}.
@@ -65,6 +65,12 @@ public class Talend6OutgoingSchemaEnforcerTest {
 
         enforcer.setWrapped(componentRecord);
 
+        Schema outgoingDynamicRuntimeSchema = enforcer.getOutgoingDynamicRuntimeSchema();
+        assertThat(outgoingDynamicRuntimeSchema.getFields().size(), is(3));
+        assertThat(outgoingDynamicRuntimeSchema.getField("id").schema().getType(), is(Schema.Type.INT));
+        assertThat(outgoingDynamicRuntimeSchema.getField("name").schema().getType(), is(Schema.Type.STRING));
+        assertThat(outgoingDynamicRuntimeSchema.getField("age").schema().getType(), is(Schema.Type.INT));
+
         // Check the resolved fields.
         assertThat(enforcer.get(1), is((Object) true));
         assertThat(enforcer.get(2), is((Object) "Main Street"));
@@ -99,6 +105,12 @@ public class Talend6OutgoingSchemaEnforcerTest {
         Talend6OutgoingSchemaEnforcer enforcer = new Talend6OutgoingSchemaEnforcer(talend6Schema, true);
 
         enforcer.setWrapped(componentRecord);
+
+        Schema outgoingDynamicRuntimeSchema = enforcer.getOutgoingDynamicRuntimeSchema();
+        assertThat(outgoingDynamicRuntimeSchema.getFields().size(), is(3));
+        assertThat(outgoingDynamicRuntimeSchema.getField("name").schema().getType(), is(Schema.Type.STRING));
+        assertThat(outgoingDynamicRuntimeSchema.getField("age").schema().getType(), is(Schema.Type.INT));
+        assertThat(outgoingDynamicRuntimeSchema.getField("valid").schema().getType(), is(Schema.Type.BOOLEAN));
 
         // Check the resolved fields.
         assertThat(enforcer.get(0), is((Object) 1));
@@ -135,6 +147,12 @@ public class Talend6OutgoingSchemaEnforcerTest {
 
         enforcer.setWrapped(componentRecord);
 
+        Schema outgoingDynamicRuntimeSchema = enforcer.getOutgoingDynamicRuntimeSchema();
+        assertThat(outgoingDynamicRuntimeSchema.getFields().size(), is(3));
+        assertThat(outgoingDynamicRuntimeSchema.getField("valid").schema().getType(), is(Schema.Type.BOOLEAN));
+        assertThat(outgoingDynamicRuntimeSchema.getField("address").schema().getType(), is(Schema.Type.STRING));
+        assertThat(outgoingDynamicRuntimeSchema.getField("comment").schema().getType(), is(Schema.Type.STRING));
+
         // Check the resolved fields.
         assertThat(enforcer.get(0), is((Object) 1));
         assertThat(enforcer.get(1), is((Object) "User"));
@@ -169,6 +187,12 @@ public class Talend6OutgoingSchemaEnforcerTest {
         Talend6OutgoingSchemaEnforcer enforcer = new Talend6OutgoingSchemaEnforcer(talend6Schema, false);
 
         enforcer.setWrapped(componentRecord);
+
+        Schema outgoingDynamicRuntimeSchema = enforcer.getOutgoingDynamicRuntimeSchema();
+        assertThat(outgoingDynamicRuntimeSchema.getFields().size(), is(3));
+        assertThat(outgoingDynamicRuntimeSchema.getField("valid").schema().getType(), is(Schema.Type.BOOLEAN));
+        assertThat(outgoingDynamicRuntimeSchema.getField("address").schema().getType(), is(Schema.Type.STRING));
+        assertThat(outgoingDynamicRuntimeSchema.getField("comment").schema().getType(), is(Schema.Type.STRING));
 
         // Check the resolved fields.
         assertThat(enforcer.get(1), is((Object) 1));
@@ -205,6 +229,12 @@ public class Talend6OutgoingSchemaEnforcerTest {
 
         enforcer.setWrapped(componentRecord);
 
+        Schema outgoingDynamicRuntimeSchema = enforcer.getOutgoingDynamicRuntimeSchema();
+        assertThat(outgoingDynamicRuntimeSchema.getFields().size(), is(3));
+        assertThat(outgoingDynamicRuntimeSchema.getField("valid").schema().getType(), is(Schema.Type.BOOLEAN));
+        assertThat(outgoingDynamicRuntimeSchema.getField("address").schema().getType(), is(Schema.Type.STRING));
+        assertThat(outgoingDynamicRuntimeSchema.getField("comment").schema().getType(), is(Schema.Type.STRING));
+
         // Check the resolved fields.
         assertThat(enforcer.get(0), is((Object) 1));
         assertThat(enforcer.get(2), is((Object) "User"));
@@ -239,6 +269,12 @@ public class Talend6OutgoingSchemaEnforcerTest {
         Talend6OutgoingSchemaEnforcer enforcer = new Talend6OutgoingSchemaEnforcer(talend6Schema, false);
 
         enforcer.setWrapped(componentRecord);
+
+        Schema outgoingDynamicRuntimeSchema = enforcer.getOutgoingDynamicRuntimeSchema();
+        assertThat(outgoingDynamicRuntimeSchema.getFields().size(), is(3));
+        assertThat(outgoingDynamicRuntimeSchema.getField("valid").schema().getType(), is(Schema.Type.BOOLEAN));
+        assertThat(outgoingDynamicRuntimeSchema.getField("address").schema().getType(), is(Schema.Type.STRING));
+        assertThat(outgoingDynamicRuntimeSchema.getField("comment").schema().getType(), is(Schema.Type.STRING));
 
         // Check the resolved fields.
         assertThat(enforcer.get(0), is((Object) 1));
