@@ -3,8 +3,6 @@ package org.talend.daikon.number;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,9 +27,6 @@ public class BigDecimalParser {
     private static final Pattern TWO_DIFFERENT_SEPARATORS_PATTERN = Pattern.compile(".*\\d+([. ])\\d+[,]\\d+[)]?");
 
     public static final DecimalFormat US_DECIMAL_PATTERN = new DecimalFormat("#,##0.##", DecimalFormatSymbols.getInstance(Locale.US));
-
-    public static final DecimalFormat US_DECIMAL_PATTERN_ALT = new DecimalFormat("#,##0.##;(#)",
-            DecimalFormatSymbols.getInstance(Locale.US));
 
     public static final DecimalFormat EU_DECIMAL_PATTERN = new DecimalFormat("#,##0.##",
             DecimalFormatSymbols.getInstance(Locale.FRENCH));
@@ -89,18 +84,14 @@ public class BigDecimalParser {
         // Remove spaces:
         from = from.replaceAll(" ", "");
 
+        // Detect and transform alternative negative pattern:
+        if (from.startsWith("(") && from.endsWith(")")) {
+            from = "-" + from.substring(1, from.length() - 1);
+        }
+
         try {
             return new BigDecimal(from);
         } catch (NumberFormatException e) {
-            for (final DecimalFormat format : Arrays.asList(US_DECIMAL_PATTERN, US_DECIMAL_PATTERN_ALT)) {
-                synchronized (format) { // Each value of 'format' is a constant, safe to use in synchronized.
-                    try {
-                        return toBigDecimal(format.parse(from));
-                    } catch (ParseException e1) {
-                        // nothing to do, just test next format
-                    }
-                }
-            }
             throw new NumberFormatException("'" + from + "' can not parsed as a number");
         }
     }
