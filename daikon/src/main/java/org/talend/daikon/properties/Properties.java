@@ -492,7 +492,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
     }
 
     /**
-     * same as {@link Properties#getProperties()} but returns null if the Property is not of type Property.
+     * same as {@link Properties#getProperty(String)} but returns null if the Property is not of type Property.
      */
     public Property getValuedProperty(String propPath) {
         NamedThing prop = getProperty(propPath);
@@ -500,7 +500,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
     }
 
     /**
-     * same as {@link Properties#getProperties()} but returns null if the Property is not of type ComponentProperty.
+     * same as {@link Properties#getProperty(String)} but returns null if the Property is not of type ComponentProperty.
      */
     public Properties getProperties(String propPath) {
         NamedThing prop = getProperty(propPath);

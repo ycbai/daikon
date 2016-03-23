@@ -34,6 +34,17 @@ public class BigDecimalParserTest {
         BigDecimalParser.toBigDecimal("");
     }
 
+
+    @Test(expected = NumberFormatException.class)
+    public void testInvalidNumber_1() throws Exception {
+        BigDecimalParser.toBigDecimal("5.5k");
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void testInvalidNumber_2() throws Exception {
+        BigDecimalParser.toBigDecimal("tagada");
+    }
+
     @Test(expected = NumberFormatException.class)
     public void testNullString() throws Exception {
         BigDecimalParser.toBigDecimal(null);
