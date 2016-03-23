@@ -1,9 +1,15 @@
 package org.talend.daikon.avro;
 
 /**
- * Constants to be used to augment the Avro schema
+ * Constants to be used to augment the Avro schema.
  */
 public class SchemaConstants {
+
+    /**
+     * If a schema is used as an input specification, and the record includes this property (with ANY value), then the
+     * actual schema return should be expanded to include all possible fields that the input component can find.
+     */
+    public static final String INCLUDE_ALL_FIELDS = "include-all-fields"; //$NON-NLS-1$
 
     /**
      * A dynamic schema field. The Avro type for this is Type.BYTES
