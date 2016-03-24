@@ -17,14 +17,14 @@ public class BigDecimalParser {
     /**
      * Patterns used to check different cases in guessSeparators(String):
      */
-    private static final Pattern ENDS_BY_NOT_3_DIGITS_PATTERN = Pattern.compile("^[(-]?\\d+([,.])(?:\\d{0,2}|\\d{4,})[)]?");
+    private static final Pattern ENDS_BY_NOT_3_DIGITS_PATTERN = Pattern.compile("^[(-]?\\d+([,.'])(?:\\d{0,2}|\\d{4,})[)]?");
 
     private static final Pattern STARTS_WITH_DECIMAL_SEPARATOR_PATTERN = Pattern
             .compile("^[(-]?(?:\\d{3,}|\\d{0})([,.])\\d+[)]?");
 
-    private static final Pattern FEW_GROUP_SEP_PATTERN = Pattern.compile("^[(-]?\\d+([., ]\\d{3}){2,}[)]?");
+    private static final Pattern FEW_GROUP_SEP_PATTERN = Pattern.compile("^[(-]?\\d+([., ']\\d{3}){2,}[)]?");
 
-    private static final Pattern TWO_DIFFERENT_SEPARATORS_PATTERN = Pattern.compile(".*\\d+([. ])\\d+[,]\\d+[)]?");
+    private static final Pattern TWO_DIFFERENT_SEPARATORS_PATTERN = Pattern.compile(".*\\d+([. '])\\d+([,.])\\d+[)]?");
 
     public static final DecimalFormat US_DECIMAL_PATTERN = new DecimalFormat("#,##0.##", DecimalFormatSymbols.getInstance(Locale.US));
 
@@ -107,8 +107,10 @@ public class BigDecimalParser {
          */
         Matcher matcher = TWO_DIFFERENT_SEPARATORS_PATTERN.matcher(from);
         if (matcher.matches()) {
-            toReturn.setDecimalSeparator(',');
-            toReturn.setGroupingSeparator(matcher.group(1).charAt(0));
+            if (matcher.groupCount() >= 2) {
+                toReturn.setGroupingSeparator(matcher.group(1).charAt(0));
+                toReturn.setDecimalSeparator(matcher.group(2).charAt(0));
+            }
         }
 
         /*

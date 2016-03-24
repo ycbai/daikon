@@ -34,7 +34,6 @@ public class BigDecimalParserTest {
         BigDecimalParser.toBigDecimal("");
     }
 
-
     @Test(expected = NumberFormatException.class)
     public void testInvalidNumber_1() throws Exception {
         BigDecimalParser.toBigDecimal("5.5k");
@@ -53,6 +52,11 @@ public class BigDecimalParserTest {
     @Test
     public void testToBigDecimal_US() throws Exception {
         assertFewLocales(new BigDecimal("12.5"), BigDecimalParser.toBigDecimal("0012.5"));
+    }
+
+    @Test
+    public void testToBigDecimal_CH() throws Exception {
+        assertFewLocales(new BigDecimal("1012.5"), BigDecimalParser.toBigDecimal("1'012.5"));
     }
 
     @Test(expected = NumberFormatException.class)
@@ -89,6 +93,14 @@ public class BigDecimalParserTest {
     }
 
     @Test
+    public void testToBigDecimal_CH_thousand_group() throws Exception {
+        assertFewLocales(new BigDecimal("10012.5"), BigDecimalParser.toBigDecimal("10'012.5", '.', '\''));
+        assertFewLocales(new BigDecimal("10012.5"), BigDecimalParser.toBigDecimal("10012.5", '.', '\''));
+        assertFewLocales(new BigDecimal("1010012.5"), BigDecimalParser.toBigDecimal("1'010'012.5", '.', '\''));
+        assertFewLocales(new BigDecimal("10012"), BigDecimalParser.toBigDecimal("10 012", '.', '\''));
+    }
+
+    @Test
     public void testToBigDecimal_EU_thousand_group() throws Exception {
         assertFewLocales(new BigDecimal("10012.5"), BigDecimalParser.toBigDecimal("10 012,5", ',', ' '));
         assertFewLocales(new BigDecimal("10012.5"), BigDecimalParser.toBigDecimal("10012,5", ',', ' '));
@@ -120,10 +132,12 @@ public class BigDecimalParserTest {
         testGuessSeparators("1,045.5", '.', ',');
         testGuessSeparators("1 045,5", ',', ' ');
         testGuessSeparators("1.045,5", ',', '.');
+        testGuessSeparators("1'045,5", ',', '\'');
 
         testGuessSeparators("2.051.045,5", ',', '.');
         testGuessSeparators("2 051 045,5", ',', ' ');
         testGuessSeparators("2,051,045.5", '.', ',');
+        testGuessSeparators("2'051'045.5", '.', '\'');
     }
 
     @Test
@@ -131,6 +145,7 @@ public class BigDecimalParserTest {
         testGuessSeparators("2.051.045", ',', '.');
         testGuessSeparators("2 051 045", '.', ' ');
         testGuessSeparators("2,051,045", '.', ',');
+        testGuessSeparators("2'051'045", '.', '\'');
     }
 
     @Test
