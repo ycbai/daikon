@@ -26,10 +26,16 @@ public class PropertyFactory {
     }
 
     public static Property newProperty(Property.Type type, String name, String title) {
+        if (type == Property.Type.SCHEMA) {
+            return new SchemaProperty(name, title);
+        }
         return new Property(type, name, title);
     }
 
     public static Property newProperty(Property.Type type, String name) {
+        if (type == Property.Type.SCHEMA) {
+            return newSchema(name);
+        }
         return new Property(type, name);
     }
 
@@ -110,6 +116,11 @@ public class PropertyFactory {
     public static Property newEnum(String name, Object... values) {
         Property property = new Property(Property.Type.ENUM, name);
         property.setPossibleValues(values);
+        return property;
+    }
+
+    public static Property newSchema(String name) {
+        Property property = new SchemaProperty(name);
         return property;
     }
 

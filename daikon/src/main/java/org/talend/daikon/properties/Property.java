@@ -12,12 +12,19 @@
 // ============================================================================
 package org.talend.daikon.properties;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.avro.Schema;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.talend.daikon.SimpleNamedThing;
 import org.talend.daikon.strings.ToStringIndentUtil;
 
-import java.util.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * A property that is part of a {@link Properties}.
@@ -48,9 +55,9 @@ public class Property extends SimpleNamedThing implements AnyProperty {
 
     private Map<String, Object> taggedValues = new HashMap<>();
 
-    private Object storedValue;
+    protected Object storedValue;
 
-    transient private PropertyValueEvaluator propertyValueEvaluator;
+    transient protected PropertyValueEvaluator propertyValueEvaluator;
 
     public enum Flags {
         /**
@@ -292,11 +299,7 @@ public class Property extends SimpleNamedThing implements AnyProperty {
     }
 
     public void setValue(Object value) {
-        Object valueToSet = value;
-        if (value != null && getType() == Type.SCHEMA && value instanceof Schema) {
-            valueToSet = value.toString();
-        }
-        storedValue = valueToSet;
+        storedValue = value;
     }
 
     public Object getStoredValue() {
