@@ -12,38 +12,39 @@
 // ============================================================================
 package org.talend.daikon.talend6;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
 import org.apache.avro.generic.IndexedRecord;
 import org.talend.daikon.avro.IndexedRecordAdapterFactory.UnmodifiableAdapterException;
+import org.talend.daikon.avro.util.AvroUtils;
 import org.talend.daikon.avro.util.SingleColumnIndexedRecordAdapterFactory;
+
+import java.util.*;
 
 /**
  * This class acts as a wrapper around an arbitrary Avro {@link IndexedRecord} to coerce the output type to the exact
  * Java objects expected by the Talend 6 Studio (which will copy the fields into a POJO in generated code).
- * 
+ * <p>
  * A wrapper like this should be attached to an input component, for example, to ensure that its outgoing data meets the
  * Schema constraints imposed by the Studio, including:
  * <ul>
  * <li>Coercing the types of the returned objects to *exactly* the type required by the Talend POJO.</li>
  * <li>Placing all of the unresolved columns between the wrapped schema and the output schema in the Dynamic column.</li>
  * </ul>
- * 
+ * <p>
  * One instance of this object can be created per outgoing schema and reused via the {@link #setWrapped(IndexedRecord)}
  * method.
  */
 public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6SchemaConstants {
 
-    /** True if columns from the incoming schema are matched to the outgoing schema exclusively by position. */
+    /**
+     * True if columns from the incoming schema are matched to the outgoing schema exclusively by position.
+     */
     private boolean byIndex;
 
-    /** The outgoing schema that determines which Java objects are produced. */
+    /**
+     * The outgoing schema that determines which Java objects are produced.
+     */
     private final Schema outgoing;
 
     /**
@@ -59,29 +60,23 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
     private final int outgoingDynamicColumn;
 
     /**
+     * The {@link Schema} of dynamic column, it will be calculated only once and be used for initial routines.system.DynamicMetadata
+     */
+    private Schema outgoingDynamicRuntimeSchema;
+    /**
      * The name and position of fields in the wrapped record that need to be put into the dynamic column of the output
      * record.
      */
     private Map<String, Integer> dynamicColumnSources;
-
-    public static final String TALEND6_DYNAMIC_TYPE = "id_Dynamic"; //$NON-NLS-1$
 
     public Talend6OutgoingSchemaEnforcer(Schema outgoing, boolean byIndex) {
         this.outgoing = outgoing;
         this.byIndex = byIndex;
 
         // Find the dynamic column, if any.
-        int dynamic = -1;
-        for (Field f : outgoing.getFields()) {
-            if (TALEND6_DYNAMIC_TYPE.equals(f.getProp(TALEND6_COLUMN_TALEND_TYPE))) {
-                if (dynamic != -1) {
-                    // This is enforced by the Studio.
-                    throw new UnsupportedOperationException("Too many dynamic columns."); //$NON-NLS-1$
-                }
-                dynamic = f.pos();
-            }
-        }
-        outgoingDynamicColumn = dynamic;
+        outgoingDynamicColumn = AvroUtils.isIncludeAllFields(outgoing)
+                ? Integer.valueOf(outgoing.getProp(Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION))
+                : -1;
     }
 
     /**
@@ -94,6 +89,17 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
             byIndex = true;
         }
         this.wrapped = wrapped;
+        if (outgoingDynamicRuntimeSchema == null && outgoingDynamicColumn != -1) {
+            List<Schema.Field> copyFieldList = null;
+            if (byIndex) {
+                copyFieldList = getDynamicSchemaByIndex();
+            } else {
+                copyFieldList = getDynamicSchemaByName();
+            }
+            outgoingDynamicRuntimeSchema = Schema.createRecord("dynamic", null, null,
+                    false);
+            outgoingDynamicRuntimeSchema.setFields(copyFieldList);
+        }
     }
 
     @Override
@@ -101,32 +107,8 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
         return outgoing;
     }
 
-    /** Return a copy of the outgoing schema without any dynamic column. */
-    public Schema getSchemaWithoutDynamic() {
-        if (outgoingDynamicColumn == -1) {
-            return outgoing;
-        }
-
-        // Make an exact copy of the outgoing schema.
-        Schema outgoingWithoutDynamic = Schema.createRecord(outgoing.getName(), outgoing.getDoc(), outgoing.getNamespace(),
-                outgoing.isError());
-        outgoingWithoutDynamic.getObjectProps().putAll(outgoing.getObjectProps());
-
-        // But only use the non-dynamic fields.
-        List<Schema.Field> fields = new ArrayList<>();
-        boolean skipped = false;
-        for (Schema.Field f : outgoing.getFields()) {
-            if (!skipped && fields.size() == outgoingDynamicColumn) {
-                skipped = true;
-                continue;
-            }
-            Schema.Field copy = new Schema.Field(f.name(), f.schema(), f.doc(), f.defaultVal());
-            copy.getObjectProps().putAll(f.getObjectProps());
-            fields.add(copy);
-        }
-        outgoingWithoutDynamic.setFields(fields);
-
-        return outgoingWithoutDynamic;
+    public Schema getOutgoingDynamicRuntimeSchema() {
+        return outgoingDynamicRuntimeSchema;
     }
 
     @Override
@@ -136,20 +118,25 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
 
     @Override
     public Object get(int i) {
+        if (outgoingDynamicColumn != -1) {
+            // If we are asking for the dynamic column, then all of the fields that don't match the outgoing schema are
+            // added to a map.
+            if (i == outgoingDynamicColumn) {
+                if (byIndex) {
+                    return getDynamicMapByIndex();
+                } else {
+                    return getDynamicMapByName();
+                }
+            }
+
+            if (i > outgoingDynamicColumn) {
+                i--;
+            }
+        }
 
         // We should never ask for an index outside of the outgoing schema.
         if (i >= outgoing.getFields().size()) {
             throw new ArrayIndexOutOfBoundsException(i);
-        }
-
-        // If we are asking for the dynamic column, then all of the fields that don't match the outgoing schema are
-        // added to a map.
-        if (i == outgoingDynamicColumn) {
-            if (byIndex) {
-                return getDynamicMapByIndex();
-            } else {
-                return getDynamicMapByName();
-            }
         }
 
         Field outField = getSchema().getFields().get(i);
@@ -158,10 +145,10 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
         // If we are not asking for the dynamic column, then get the input field that corresponds to the position.
         int wrappedIndex;
         if (byIndex) {
-            if (outgoingDynamicColumn != -1 && i > outgoingDynamicColumn) {
+            if (outgoingDynamicColumn != -1 && i >= outgoingDynamicColumn) {
                 // If the requested index is after the dynamic column and we are matching by index, then the actual
                 // index should be counted from the end of the fields.
-                wrappedIndex = getSchema().getFields().size() - getNumberOfDynamicColumns() + i + 1;
+                wrappedIndex = getNumberOfDynamicColumns() + i;
             } else {
                 wrappedIndex = i;
             }
@@ -172,8 +159,7 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
             wrappedField = wrapped.getSchema().getFields().get(wrappedIndex);
         } else {
             // Matching fields by name.
-            String fieldName = getSchema().getFields().get(i).name();
-            wrappedField = wrapped.getSchema().getField(fieldName);
+            wrappedField = wrapped.getSchema().getField(outField.name());
             if (wrappedField == null) {
                 return transformValue(null, null, outField);
             }
@@ -185,11 +171,11 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
     }
 
     /**
-     * @param value The incoming value for the field. This can be null when null is a valid value, or if there is no
-     * corresponding wrapped field.
+     * @param value        The incoming value for the field. This can be null when null is a valid value, or if there is no
+     *                     corresponding wrapped field.
      * @param wrappedField The incoming field description (a valid Avro Schema). This can be null if there is no
-     * corresponding wrapped field.
-     * @param outField The outgoing field description that must be enforced. This must not be null.
+     *                     corresponding wrapped field.
+     * @param outField     The outgoing field description that must be enforced. This must not be null.
      * @return
      */
     private Object transformValue(Object value, Field wrappedField, Field outField) {
@@ -208,9 +194,11 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
         return value;
     }
 
-    /** @return the number of columns that will be placed in the dynamic holder. */
+    /**
+     * @return the number of columns that will be placed in the dynamic holder.
+     */
     private int getNumberOfDynamicColumns() {
-        int dynColN = wrapped.getSchema().getFields().size() - getSchema().getFields().size() + 1;
+        int dynColN = wrapped.getSchema().getFields().size() - getSchema().getFields().size();
         if (dynColN < 0) {
             throw new UnsupportedOperationException(
                     "The incoming data does not have sufficient columns to create a dynamic column."); //$NON-NLS-1$
@@ -233,6 +221,21 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
     }
 
     /**
+     * @return A list of all of the unresolved columns's schema, when the unresolved columns are determined by the position of the
+     * Dynamic column in enforced schema.
+     */
+    private List<Schema.Field> getDynamicSchemaByIndex() {
+        List<Schema.Field> fields = new ArrayList<>();
+        int dynColN = getNumberOfDynamicColumns();
+        for (int j = 0; j < dynColN; j++) {
+            Schema.Field se = wrapped.getSchema().getFields().get(outgoingDynamicColumn + j);
+            fields.add(new Schema.Field(se.name(), se.schema(), se.doc(), se.defaultVal()));
+        }
+        return fields;
+    }
+
+
+    /**
      * @return A map of all of the unresolved columns, when the unresolved columns are determined by the names of the
      * resolved column in enforced schema.
      */
@@ -242,7 +245,7 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
             dynamicColumnSources = new HashMap<>();
             for (Schema.Field wrappedField : wrapped.getSchema().getFields()) {
                 Schema.Field outField = getSchema().getField(wrappedField.name());
-                if (outField == null || outField.pos() == outgoingDynamicColumn) {
+                if (outField == null) {
                     dynamicColumnSources.put(wrappedField.name(), wrappedField.pos());
                 }
             }
@@ -256,9 +259,24 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
     }
 
     /**
-     * @Return true if the Avro Field has been tagged with a type, and the type is DYNAMIC.
+     * @return A list of all of the unresolved columns's schema, when the unresolved columns are determined by the names of the
+     * resolved column in enforced schema.
      */
-    public static boolean isDynamic(Field f) {
-        return TALEND6_DYNAMIC_TYPE.equals(f.getProp(TALEND6_COLUMN_TALEND_TYPE));
+    private List<Schema.Field> getDynamicSchemaByName() {
+        List<Schema.Field> fields = new ArrayList<>();
+        List<String> designColumnsName = new ArrayList<>();
+        for (Schema.Field se : outgoing.getFields()) {
+            designColumnsName.add(se.name());
+        }
+        Schema runtimeSchema = wrapped.getSchema();
+        for (Schema.Field se : runtimeSchema.getFields()) {
+            if (designColumnsName.contains(se.name())) {
+                continue;
+            }
+            fields.add(new Schema.Field(se.name(), se.schema(), se.doc(), se.defaultVal()));
+        }
+        return fields;
     }
+
+
 }

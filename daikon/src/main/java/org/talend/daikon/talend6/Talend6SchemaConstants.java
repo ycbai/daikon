@@ -18,7 +18,7 @@ import org.talend.daikon.avro.SchemaConstants;
 /**
  * Constants that can be used as keys in an Avro {@link Schema} properties in order to remain feature-equivalent to the
  * existing Talend 6 IMetadataTable.
- * 
+ *
  * Values that are null are always omitted from the properties. The type of the value is always String.
  */
 public interface Talend6SchemaConstants {
@@ -46,9 +46,6 @@ public interface Talend6SchemaConstants {
     public final static String TALEND6_TABLE_NAME = "talend6.table.name"; //$NON-NLS-1$
 
     public final static String TALEND6_TABLE_TYPE = "talend6.table.type"; //$NON-NLS-1$
-
-    /** Value is the label of the dynamic column. */
-    public final static String TALEND6_TABLE_DYNAMIC_COLUMN = "talend6.table.dynamicColumn"; //$NON-NLS-1$
 
     /*
      * Column custom properties. --------------------------------------------
@@ -82,5 +79,19 @@ public interface Talend6SchemaConstants {
     public final static String TALEND6_COLUMN_RELATED_ENTITY = "talend6.column.relatedEntity"; //$NON-NLS-1$
 
     public final static String TALEND6_COLUMN_RELATIONSHIP_TYPE = "talend6.column.relationshipType"; //$NON-NLS-1$
+
+    public final static String TALEND6_DYNAMIC_COLUMN_POSITION = "talend6.dynamic.column.position"; //$NON-NLS-1$
+
+    public final static String TALEND6_DYNAMIC_COLUMN_NAME = "talend6.dynamic.column.name"; //$NON-NLS-1$
+
+    public final static String TALEND6_DYNAMIC_COLUMN_ID = "talend6.dynamic.column.id"; //$NON-NLS-1$
+
+    public final static String TALEND6_DYNAMIC_COLUMN_COMMENT = "talend6.dynamic.column.comment"; //$NON-NLS-1$
+
+    /** Property is present if readonly, otherwise not present. */
+    public final static String TALEND6_DYNAMIC_IS_READ_ONLY = "talend6.dynamic.readOnly"; //$NON-NLS-1$
+
+    /** The key will have this as a prefix, pointing to the value. */
+    public final static String TALEND6_DYNAMIC_ADDITIONAL_PROPERTIES = "talend6.dynamic.prop."; //$NON-NLS-1$
 
 }

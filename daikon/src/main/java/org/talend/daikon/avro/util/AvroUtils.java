@@ -1,15 +1,14 @@
 package org.talend.daikon.avro.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.avro.LogicalType;
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Type;
 import org.apache.avro.SchemaBuilder;
 import org.talend.daikon.avro.SchemaConstants;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Helper methods for accessing Avro {@link Schema} and Avro-compatible objects.
@@ -84,15 +83,60 @@ public class AvroUtils {
         return map;
     }
 
-    public static boolean isDynamic(Schema schema) {
-        return schema.getType() == Type.BYTES && schema.getLogicalType().getName().equals(SchemaConstants.LOGICAL_DYNAMIC);
+    /**
+     * Schema don't support overwrite property's value, so have to clone it then put the new value
+     *
+     * @param schema
+     * @param key
+     * @param value
+     * @return schema with the new value for the property: key
+     */
+    public static Schema setProperty(Schema schema, String key, String value) {
+        Schema newSchema = schema;
+        if (schema.getProp(key) != null) {
+            if (schema.getType() == Type.RECORD) {
+                newSchema = Schema.createRecord(schema.getName(), schema.getDoc(), schema.getNamespace(), schema.isError());
+                List<Schema.Field> copyFieldList = new ArrayList<>();
+                for (Schema.Field se : schema.getFields()) {
+                    copyFieldList.add(new Schema.Field(se.name(), se.schema(), se.doc(), se.defaultVal()));
+                }
+                newSchema.setFields(copyFieldList);
+                Map<String, Object> props = schema.getObjectProps();
+                for (String propKey : props.keySet()) {
+                    if (propKey.equals(key)) {
+                        newSchema.addProp(key, value);
+                    } else {
+                        newSchema.addProp(propKey, props.get(propKey));
+                    }
+                }
+            } else {//FIXME for other type
+                throw new RuntimeException("Not support this type " + newSchema.getType() + " now, need to implement");
+            }
+        } else {
+            schema.addProp(key, value);
+        }
+        return newSchema;
     }
 
-    public static Schema.Field setFieldDynamic(Schema.Field field) {
-        LogicalType lt = new LogicalType(SchemaConstants.LOGICAL_DYNAMIC);
-        Schema fs = field.schema();
-        lt.addToSchema(fs);
-        return field;
+    /**
+     * @param schema
+     * @return the value of the property include-all-fields, false if there is no this property
+     */
+    public static boolean isIncludeAllFields(Schema schema) {
+        String prop = schema.getProp(SchemaConstants.INCLUDE_ALL_FIELDS);
+        if (prop == null || !Boolean.valueOf(prop)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param schema
+     * @param value
+     * @return set boolean value for the property include-all-fields
+     */
+    public static Schema setIncludeAllFields(Schema schema, boolean value) {
+        return setProperty(schema, SchemaConstants.INCLUDE_ALL_FIELDS, String.valueOf(value));
     }
 
 }

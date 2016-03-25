@@ -1,15 +1,14 @@
 package org.talend.daikon.avro.util;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-
-import org.apache.avro.LogicalType;
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
 import org.junit.Test;
-import org.talend.daikon.avro.SchemaConstants;
 
 import java.util.Map;
+
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.*;
 
 /**
  * Unit tests for {AvroUtils}.
@@ -59,13 +58,6 @@ public class AvroUtilsTest {
     }
 
     @Test
-    public void testIsDynamic() {
-        Schema s = SchemaBuilder.record("dynamic").fields().name("field1").type().bytesType().noDefault().endRecord();
-        Schema fs = AvroUtils.setFieldDynamic(s.getField("field1")).schema();
-        assertTrue(AvroUtils.isDynamic(fs));
-    }
-
-    @Test
     public void testMakeFieldMap() {
 
         Schema s = SchemaBuilder.record("test")
@@ -74,8 +66,35 @@ public class AvroUtilsTest {
                 .name("field2").type().stringType().noDefault()
                 .endRecord();
         Map map = AvroUtils.makeFieldMap(s);
-        assertEquals("field1", ((Schema.Field)map.get("field1")).name());
-        assertEquals("field2", ((Schema.Field)map.get("field2")).name());
+        assertEquals("field1", ((Schema.Field) map.get("field1")).name());
+        assertEquals("field2", ((Schema.Field) map.get("field2")).name());
+    }
+
+    @Test
+    public void testSetProperty() {
+        Schema s = SchemaBuilder.record("test")
+                .fields()
+                .name("field1").type().booleanType().noDefault()
+                .name("field2").type().stringType().noDefault()
+                .endRecord();
+        s = AvroUtils.setProperty(s, "where", "here");
+        assertThat(s.getProp("where"), is("here"));
+        s = AvroUtils.setProperty(s, "where", "there");
+        assertThat(s.getProp("where"), is("there"));
+    }
+
+    @Test
+    public void testIsIncludeAllFields() {
+        Schema s = SchemaBuilder.record("test")
+                .fields()
+                .name("field1").type().booleanType().noDefault()
+                .name("field2").type().stringType().noDefault()
+                .endRecord();
+        assertFalse(AvroUtils.isIncludeAllFields(s));
+        s = AvroUtils.setIncludeAllFields(s, true);
+        assertTrue(AvroUtils.isIncludeAllFields(s));
+        s = AvroUtils.setIncludeAllFields(s, false);
+        assertFalse(AvroUtils.isIncludeAllFields(s));
     }
 
 }

@@ -11,11 +11,6 @@ public class SchemaConstants {
      */
     public static final String INCLUDE_ALL_FIELDS = "include-all-fields"; //$NON-NLS-1$
 
-    /**
-     * A dynamic schema field. The Avro type for this is Type.BYTES
-     */
-    public static final String LOGICAL_DYNAMIC = "dynamic";
-
     public final static String TALEND_COLUMN_DB_TYPE = "talend.column.sourceType"; //$NON-NLS-1$
 
     public final static String TALEND_COLUMN_PATTERN = "talend.column.pattern"; //$NON-NLS-1$
