@@ -225,6 +225,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
             for (Field f : fields) {
                 try {
                     if (isAPropertyType(f.getType())) {
+                        f.setAccessible(true);
                         NamedThing se = (NamedThing) f.get(this);
                         if (se != null) {
                             initializeField(f, se);
@@ -242,6 +243,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
             for (Field f : uninitializedProperties) {
                 NamedThing se;
                 try {
+                    f.setAccessible(true);
                     se = (NamedThing) f.get(this);
                     if (se != null) {
                         initializeField(f, se);
@@ -415,6 +417,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
         for (Field f : propertyFields) {
             try {
                 if (NamedThing.class.isAssignableFrom(f.getType())) {
+                    f.setAccessible(true);
                     Object fValue = f.get(this);
                     if (fValue != null) {
                         NamedThing se = (NamedThing) fValue;

@@ -17,14 +17,10 @@ public class SchemaConstants {
 
     public final static String TALEND_COLUMN_DB_COLUMN_NAME = "talend.column.dbColumnName"; //$NON-NLS-1$
 
-    /**
-     * String representation of an int.
-     */
+    /** String representation of an int. */
     public final static String TALEND_COLUMN_DB_LENGTH = "talend.column.length"; //$NON-NLS-1$
 
-    /**
-     * String representation of an int.
-     */
+    /** String representation of an int. */
     public final static String TALEND_COLUMN_PRECISION = "talend.column.precision"; //$NON-NLS-1$
 
     public final static String TALEND_COLUMN_SCALE = "talend.column.scale"; //$NON-NLS-1$
