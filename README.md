@@ -1,4 +1,6 @@
 # Talend Daikon
+
+[![Join the chat at https://gitter.im/Talend/daikon](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Talend/daikon?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 http://www.talend.com
 
 
