@@ -1,6 +1,7 @@
 # Talend Daikon
 
-[![Join the chat at https://gitter.im/Talend/daikon](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Talend/daikon?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/Talend/daikon](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Talend/daikon?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![alt](https://codenvy.com/factory/resources/factory-white.png)](http://beta.codenvy.com/f?name=daikon-factory&user=sgandon)
+
 http://www.talend.com
 
 
