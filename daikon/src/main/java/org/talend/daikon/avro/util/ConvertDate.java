@@ -1,19 +1,17 @@
 package org.talend.daikon.avro.util;
 
+import org.apache.avro.Schema;
+import org.apache.avro.SchemaBuilder;
+import org.talend.daikon.avro.AvroConverter;
+import org.talend.daikon.avro.SchemaConstants;
+
 import java.util.Date;
 
-import org.apache.avro.Schema;
-import org.apache.avro.Schema.Type;
-import org.talend.daikon.avro.AvroConverter;
-
-/**
- * TODO(rskraba): Use the logical type here? Or just leave it as long for processing...?
- */
 public class ConvertDate implements AvroConverter<Date, Long> {
 
     @Override
     public Schema getSchema() {
-        return Schema.create(Type.LONG);
+        return SchemaBuilder.builder().longBuilder().prop(SchemaConstants.JAVA_CLASS_FLAG, getDatumClass().getCanonicalName()).endLong();
     }
 
     @Override

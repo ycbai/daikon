@@ -1,17 +1,18 @@
 package org.talend.daikon.avro.util;
 
+import org.apache.avro.Schema;
+import org.apache.avro.SchemaBuilder;
+import org.talend.daikon.avro.AvroConverter;
+import org.talend.daikon.avro.SchemaConstants;
+
 import java.math.BigDecimal;
 
-import org.apache.avro.Schema;
-import org.apache.avro.Schema.Type;
-import org.talend.daikon.avro.AvroConverter;
-
-/** TODO(rskraba): Use the logical type correctly here! */
 public class ConvertBigDecimal implements AvroConverter<BigDecimal, String> {
 
     @Override
     public Schema getSchema() {
-        return Schema.create(Type.STRING);
+        //TODO is it ok to use string type rather than logical decimal type? logical type need two parameters, precision and scale
+        return SchemaBuilder.builder().stringBuilder().prop(SchemaConstants.JAVA_CLASS_FLAG, getDatumClass().getCanonicalName()).endString();
     }
 
     @Override
