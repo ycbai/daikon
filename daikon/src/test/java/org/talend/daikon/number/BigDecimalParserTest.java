@@ -117,6 +117,16 @@ public class BigDecimalParserTest {
     }
 
     @Test
+    public void test_non_breaking_space() throws Exception {
+        assertFewLocales(new BigDecimal("10012.5"), BigDecimalParser.toBigDecimal("10" + ((char) 160) + "012,5")); // char(160) is non-breaking space
+        assertFewLocales(new BigDecimal("268435000000000000"), BigDecimalParser.toBigDecimal("268 435 000 000 000 000"));
+        assertFewLocales(new BigDecimal("268435000000000000"), BigDecimalParser.toBigDecimal("268" + ((char) 160) + "435" + ((char) 160) + "000" + ((char) 160) + "000" + ((char) 160) + "000" + ((char) 160) + "000")); // char(160) is non-breaking space
+
+        // we want the non-breaking space to be managed even if the classical space is defined as grouping separator:
+        assertFewLocales(new BigDecimal("10012.5"), BigDecimalParser.toBigDecimal("10" + ((char) 160) + "012,5", ',', ' '));
+    }
+
+    @Test
     public void testToBigDecimal_EU_negative() throws Exception {
         assertFewLocales(new BigDecimal("-12.5"), BigDecimalParser.toBigDecimal("-12,5", ',', ' '));
     }
@@ -131,11 +141,13 @@ public class BigDecimalParserTest {
     public void testGuessSeparators_two_different_separators_present() {
         testGuessSeparators("1,045.5", '.', ',');
         testGuessSeparators("1 045,5", ',', ' ');
+        testGuessSeparators("1" + ((char) 160) + "045,5", ',', ((char) 160)); // char(160) is non-breaking space
         testGuessSeparators("1.045,5", ',', '.');
         testGuessSeparators("1'045,5", ',', '\'');
 
         testGuessSeparators("2.051.045,5", ',', '.');
         testGuessSeparators("2 051 045,5", ',', ' ');
+        testGuessSeparators("2" + ((char) 160) + "051" + ((char) 160) + "045,5", ',', ((char) 160)); // char(160) is non-breaking space
         testGuessSeparators("2,051,045.5", '.', ',');
         testGuessSeparators("2'051'045.5", '.', '\'');
     }
@@ -144,6 +156,7 @@ public class BigDecimalParserTest {
     public void testGuessSeparators_many_group_sep() {
         testGuessSeparators("2.051.045", ',', '.');
         testGuessSeparators("2 051 045", '.', ' ');
+        testGuessSeparators("2" + ((char) 160) + "051" + ((char) 160) + "045", '.', ((char) 160)); // char(160) is non-breaking space
         testGuessSeparators("2,051,045", '.', ',');
         testGuessSeparators("2'051'045", '.', '\'');
     }
@@ -166,6 +179,8 @@ public class BigDecimalParserTest {
         testGuessSeparators("45,5", ',', '.');
         testGuessSeparators("45,55", ',', '.');
         testGuessSeparators("45,5555", ',', '.');
+        testGuessSeparators("45.5555", '.', ',');
+        testGuessSeparators("45" + ((char) 160) + "555,5", ',', ((char) 160)); // char(160) is non-breaking space
     }
 
     private void testGuessSeparators(String value, char expectedDecimalSeparator, char expectedGroupingSeparator) {
