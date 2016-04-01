@@ -135,6 +135,11 @@ public class BigDecimalParserTest {
     public void testToBigDecimal_scientific() throws Exception {
         assertFewLocales(new BigDecimal("1230").toString(), BigDecimalParser.toBigDecimal("1.23E+3").toPlainString());
         assertFewLocales(new BigDecimal("1235.2").toString(), BigDecimalParser.toBigDecimal("1.2352E+3").toPlainString());
+
+        // TDP-1356:
+        assertFewLocales(new BigDecimal("10000").toString(), BigDecimalParser.toBigDecimal("1 E+4").toPlainString());
+        assertFewLocales(new BigDecimal("10000").toString(), BigDecimalParser.toBigDecimal("1" + ((char) 160) + "E+4").toPlainString()); // char(160) is non-breaking space
+        assertFewLocales(new BigDecimal("10000").toString(), BigDecimalParser.toBigDecimal("1 e+4").toPlainString());
     }
 
     @Test
