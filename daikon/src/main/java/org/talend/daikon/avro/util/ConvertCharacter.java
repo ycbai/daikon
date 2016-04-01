@@ -5,27 +5,24 @@ import org.apache.avro.SchemaBuilder;
 import org.talend.daikon.avro.AvroConverter;
 import org.talend.daikon.avro.SchemaConstants;
 
-import java.util.UUID;
-
-public class ConvertUUID implements AvroConverter<UUID, String> {
-
+public class ConvertCharacter implements AvroConverter<Character, String> {
     @Override
     public Schema getSchema() {
         return SchemaBuilder.builder().stringBuilder().prop(SchemaConstants.JAVA_CLASS_FLAG, getDatumClass().getCanonicalName()).endString();
     }
 
     @Override
-    public Class<UUID> getDatumClass() {
-        return UUID.class;
+    public Class<Character> getDatumClass() {
+        return Character.class;
     }
 
     @Override
-    public UUID convertToDatum(String value) {
-        return value == null ? null : UUID.fromString(value);
+    public Character convertToDatum(String value) {
+        return null;
     }
 
     @Override
-    public String convertToAvro(UUID value) {
-        return value == null ? null : value.toString();
+    public String convertToAvro(Character value) {
+        return null;
     }
 }

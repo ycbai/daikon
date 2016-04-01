@@ -1,19 +1,22 @@
 package org.talend.daikon.avro.util;
 
+import org.apache.avro.Schema;
+import org.apache.avro.SchemaBuilder;
+import org.talend.daikon.avro.AvroConverter;
+import org.talend.daikon.avro.SchemaConstants;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Arrays;
-
-import org.apache.avro.Schema;
-import org.talend.daikon.avro.AvroConverter;
 
 public class ConvertInetAddress implements AvroConverter<InetAddress, byte[]> {
 
     @Override
     public Schema getSchema() {
-        return Schema.createUnion( //
-                Arrays.asList(Schema.createFixed("Inet4", null, null, 4), // //$NON-NLS-1$
-                        Schema.createFixed("Inet6", null, null, 16))); //$NON-NLS-1$
+        return SchemaBuilder.unionOf().array()
+                .prop(SchemaConstants.JAVA_CLASS_FLAG, getDatumClass().getCanonicalName())
+                .items()
+                .fixed("Inet4").size(4)
+                .and().fixed("Inet6").size(16).endUnion();
     }
 
     @Override

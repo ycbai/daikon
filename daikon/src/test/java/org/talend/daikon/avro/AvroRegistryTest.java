@@ -1,10 +1,5 @@
 package org.talend.daikon.avro;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-
-import java.util.UUID;
-
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
 import org.apache.avro.generic.GenericData;
@@ -12,6 +7,11 @@ import org.apache.avro.generic.IndexedRecord;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.util.UUID;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * Unit tests for {AvroRegistry}.
@@ -26,8 +26,7 @@ public class AvroRegistryTest {
     public void testBasic() {
         // Some basic cases for the AvroRegistry.
         AvroRegistry registry = new AvroRegistry();
-        assertThat(registry.inferSchema(UUID.fromString("12341234-1234-1234-1234-123412341234")), is(SchemaBuilder.builder()
-                .stringType()));
+        assertThat(registry.inferSchema(UUID.fromString("12341234-1234-1234-1234-123412341234")), is(SchemaBuilder.builder().stringBuilder().prop(SchemaConstants.JAVA_CLASS_FLAG, UUID.class.getCanonicalName()).endString()));
     }
 
     @Test
