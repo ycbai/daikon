@@ -21,9 +21,11 @@ import org.talend.daikon.NamedThing;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.exception.error.CommonErrorCodes;
+import org.talend.daikon.i18n.I18nMessages;
 import org.talend.daikon.i18n.TranslatableImpl;
 import org.talend.daikon.properties.error.PropertiesErrorCode;
 import org.talend.daikon.properties.presentation.Form;
+import org.talend.daikon.properties.presentation.Widget;
 import org.talend.daikon.security.CryptoHelper;
 import org.talend.daikon.strings.ToStringIndent;
 import org.talend.daikon.strings.ToStringIndentUtil;
@@ -91,10 +93,6 @@ import com.cedarsoftware.util.io.JsonWriter;
  * <b>WARNING</b> - It is not recommanded to instanciate a Property field after {@link Properties#setupProperties()} is
  * called. If you want to create the property later you'll have to call
  * {@link SchemaElement#setI18nMessageFormater(I18nMessages)} manually.
- */
-
-/**
- *
  */
 public abstract class Properties extends TranslatableImpl implements AnyProperty, ToStringIndent {
 
