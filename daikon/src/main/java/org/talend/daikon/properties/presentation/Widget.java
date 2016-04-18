@@ -78,7 +78,11 @@ public class Widget implements ToStringIndent {
         /*
          * a Text editable widget that hides the text to the user, mainly used for passwords.
          */
-        HIDDEN_TEXT
+        HIDDEN_TEXT,
+        /*
+         * a File widget.
+         */
+        FILE
 
     }
 
