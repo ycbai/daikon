@@ -35,4 +35,9 @@ public class SchemaConstants {
     public final static String TALEND_COLUMN_SCALE = "talend.column.scale"; //$NON-NLS-1$
 
     public final static String TALEND_COLUMN_DEFAULT = "talend.column.default"; //$NON-NLS-1$
+
+    /**
+     * Use this property to indicate the column is a key, normally when the output component has ability to create table, should need this property
+     */
+    public final static String TALEND_COLUMN_IS_KEY = "talend.column.isKey"; //$NON-NLS-1$
 }
