@@ -52,7 +52,7 @@ public interface Talend6SchemaConstants {
      */
 
     /** Property is present if key, otherwise not present. */
-    public final static String TALEND6_COLUMN_IS_KEY = "talend6.column.isKey"; //$NON-NLS-1$
+    public final static String TALEND6_COLUMN_IS_KEY = SchemaConstants.TALEND_COLUMN_IS_KEY; //$NON-NLS-1$
 
     public final static String TALEND6_COLUMN_SOURCE_TYPE = SchemaConstants.TALEND_COLUMN_DB_TYPE;
 
