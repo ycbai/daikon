@@ -74,7 +74,10 @@ public class MappedValueMap<KeyT, InT, OutT> extends AbstractMap<KeyT, OutT> {
 
         @Override
         public java.util.Map.Entry<KeyT, InT> apply(java.util.Map.Entry<KeyT, OutT> t) {
-            return ((MappedValueEntry) t).getWrapped();
+            if (t instanceof MappedValueMap.MappedValueEntry)
+                return ((MappedValueEntry) t).getWrapped();
+            else
+                return new AbstractMap.SimpleEntry<>(t.getKey(), mOutFunction.apply(t.getValue()));
         }
 
     }
@@ -108,9 +111,18 @@ public class MappedValueMap<KeyT, InT, OutT> extends AbstractMap<KeyT, OutT> {
 
         @Override
         public int hashCode() {
-            // The definition of an Entry.
+            // The hashCode() for Map.Entry is defined as this:
             return (getKey() == null ? 0 : getKey().hashCode()) ^ (getValue() == null ? 0 : getValue().hashCode());
         }
 
+        @Override
+        public boolean equals(Object other) {
+            if (other == null || !(other instanceof Map.Entry<?, ?>))
+                return false;
+            // The hashCode() for Map.Entry is defined as this:
+            Map.Entry<?, ?> e2 = (Map.Entry<?, ?>) other;
+            return (getKey() == null ? e2.getKey() == null : getKey().equals(e2.getKey()))
+                    && (getValue() == null ? e2.getValue() == null : getValue().equals(e2.getValue()));
+        }
     }
 }
