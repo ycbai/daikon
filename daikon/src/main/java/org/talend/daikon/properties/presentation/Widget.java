@@ -15,6 +15,7 @@ package org.talend.daikon.properties.presentation;
 import java.util.Collection;
 
 import org.talend.daikon.NamedThing;
+import org.talend.daikon.properties.Properties;
 import org.talend.daikon.properties.Property;
 import org.talend.daikon.strings.ToStringIndent;
 import org.talend.daikon.strings.ToStringIndentUtil;
@@ -70,9 +71,14 @@ public class Widget implements ToStringIndent {
          */
         BUTTON,
 
-        /*
-         * A table, the children of this {@link SchemaElement} will be the columns for the table. The maximum occurrence
-         * value of this {@code SchemaElement} is the number of possible rows in the table.
+        /**
+         * A table, the widget content shall be a {@link Properties} that will provide a MAIN form (see
+         * {@link Form#MAIN}). The main form shall contain a list of widget that will represent each table column and
+         * which content should be a Property. Each Property is going to be used as the column definition, the
+         * {@link Property#getDisplayName()} shall be used as the Column header. Each Property (=column) has a value of
+         * type List<T> in which the first element is the first row element for this column and the second in the list
+         * is the second row value for this column.
+         * 
          */
         TABLE,
         /*
