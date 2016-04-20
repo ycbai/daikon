@@ -373,10 +373,12 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
     }
 
     /**
-     * This is called every time the presentation of the components properties needs to be updated.
+     * This is called by within the execution of actions associated with {@code Properties}
+     * when the presentation of the properties needs to be updated due to some value change.
+     * The main reason for calling this is to allow the visibility of properties to be changed
+     * when values change.
      *
-     * Note: This is automatically called at startup after all of the setupLayout() calls are done. It only needs to be
-     * called after that when the layout has been changed.
+     * Note: This is automatically called at startup after all of the setupLayout() calls are done.
      */
     public void refreshLayout(Form form) {
         form.setRefreshUI(true);
