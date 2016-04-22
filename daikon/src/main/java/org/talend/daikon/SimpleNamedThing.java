@@ -19,12 +19,6 @@ import org.talend.daikon.i18n.TranslatableImpl;
  */
 public class SimpleNamedThing extends TranslatableImpl implements NamedThing {
 
-    /* suffix used for i18N to compute displayName key */
-    public static final String I18N_DISPLAY_NAME_SUFFIX = ".displayName"; //$NON-NLS-1$
-
-    /* suffix used for i18N to compute displayName key */
-    public static final String I18N_TITLE_NAME_SUFFIX = ".title"; //$NON-NLS-1$
-
     protected String name;
 
     protected String displayName;
@@ -32,16 +26,20 @@ public class SimpleNamedThing extends TranslatableImpl implements NamedThing {
     protected String title;
 
     public SimpleNamedThing() {
+        this(null, null, null);
+    }
+
+    public SimpleNamedThing(String name) {
+        this(name, null, null);
     }
 
     public SimpleNamedThing(String name, String displayName) {
-        this();
-        this.name = name;
-        this.displayName = displayName;
+        this(name, displayName, null);
     }
 
     public SimpleNamedThing(String name, String displayName, String title) {
-        this(name, displayName);
+        this.name = name;
+        this.displayName = displayName;
         this.title = title;
     }
 

@@ -20,6 +20,11 @@ import org.talend.daikon.i18n.Translatable;
  */
 public interface NamedThing extends Translatable {
 
+    /* suffix used for i18N to compute displayName key */
+    String I18N_DISPLAY_NAME_SUFFIX = ".displayName"; //$NON-NLS-1$
+    /* suffix used for i18N to compute displayName key */
+    String I18N_TITLE_NAME_SUFFIX = ".title"; //$NON-NLS-1$
+
     /**
      * This is a technical name that shall be unique to identify the thing
      * 

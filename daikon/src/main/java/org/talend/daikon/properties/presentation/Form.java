@@ -170,7 +170,7 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
 
     /**
      * If no title was specified then the i18n key : {@value Form#I18N_FORM_PREFIX}.{@link Form#getName()}.
-     * {@value SimpleNamedThing#I18N_TITLE_NAME_SUFFIX} to find the value from the i18n.
+     * {@value NamedThing#I18N_TITLE_NAME_SUFFIX} to find the value from the i18n.
      */
     public String getSubtitle() {
         return subtitle != null ? subtitle : getI18nMessage(I18N_FORM_PREFIX + name + I18N_SUBTITLE_NAME_SUFFIX);
@@ -407,20 +407,20 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
 
     /**
      * If no title was specified then the i18n key : {@value Form#I18N_FORM_PREFIX}.{@link Form#getName()}.
-     * {@value SimpleNamedThing#I18N_TITLE_NAME_SUFFIX} to find the value from the i18n.
+     * {@value NamedThing#I18N_TITLE_NAME_SUFFIX} to find the value from the i18n.
      */
     @Override
     public String getTitle() {
-        return title != null ? title : getI18nMessage(I18N_FORM_PREFIX + name + I18N_TITLE_NAME_SUFFIX);
+        return title != null ? title : getI18nMessage(I18N_FORM_PREFIX + name + NamedThing.I18N_TITLE_NAME_SUFFIX);
     }
 
     /**
      * If no displayName was specified then the i18n key : {@value Form#I18N_FORM_PREFIX}.{@link Form#getName()}.
-     * {@value SimpleNamedThing#I18N_DISPLAY_NAME_SUFFIX} to find the value from the i18n.
+     * {@value NamedThing#I18N_DISPLAY_NAME_SUFFIX} to find the value from the i18n.
      */
     @Override
     public String getDisplayName() {
-        return displayName != null ? displayName : getI18nMessage(I18N_FORM_PREFIX + name + I18N_DISPLAY_NAME_SUFFIX);
+        return displayName != null ? displayName : getI18nMessage(I18N_FORM_PREFIX + name + NamedThing.I18N_DISPLAY_NAME_SUFFIX);
     }
 
     @Override
