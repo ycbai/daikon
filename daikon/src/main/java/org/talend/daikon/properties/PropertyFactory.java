@@ -37,60 +37,66 @@ public class PropertyFactory {
         return new Property(Property.Type.STRING, name);
     }
 
+    public static Property newString(String name, String initialValue) {
+        Property property = newString(name);
+        property.setValue(initialValue);
+        return property;
+    }
+
     public static Property newInteger(String name) {
         return new Property(Property.Type.INT, name);
     }
 
-    public static Property newInteger(String name, String defaultValue) {
-        Property property = newInteger(name);
-        property.setDefaultValue(defaultValue);
-        return property;
+    public static Property newInteger(String name, String initialValue) {
+        return newInteger(name, Integer.valueOf(initialValue));
     }
 
-    public static Property newInteger(String name, Integer defaultValue) {
-        return newInteger(name, defaultValue.toString());
+    public static Property newInteger(String name, Integer initialValue) {
+        Property property = newInteger(name);
+        property.setValue(initialValue);
+        return property;
     }
 
     public static Property newDouble(String name) {
         return new Property(Property.Type.DOUBLE, name);
     }
 
-    public static Property newDouble(String name, String defaultValue) {
-        Property property = newDouble(name);
-        property.setDefaultValue(defaultValue);
-        return property;
+    public static Property newDouble(String name, String initialValue) {
+        return newDouble(name, Double.valueOf(initialValue));
     }
 
-    public static Property newDouble(String name, Double defaultValue) {
-        return newDouble(name, defaultValue.toString());
+    public static Property newDouble(String name, Double initialValue) {
+        Property property = newDouble(name);
+        property.setValue(initialValue);
+        return property;
     }
 
     public static Property newFloat(String name) {
         return new Property(Property.Type.FLOAT, name);
     }
 
-    public static Property newFloat(String name, String defaultValue) {
-        Property property = newFloat(name);
-        property.setDefaultValue(defaultValue);
-        return property;
+    public static Property newFloat(String name, String initialValue) {
+        return newFloat(name, Float.valueOf(initialValue));
     }
 
-    public static Property newFloat(String name, Float defaultValue) {
-        return newFloat(name, defaultValue.toString());
+    public static Property newFloat(String name, Float initialValue) {
+        Property property = newFloat(name);
+        property.setValue(initialValue);
+        return property;
     }
 
     public static Property newBoolean(String name) {
         return new Property(Property.Type.BOOLEAN, name);
     }
 
-    public static Property newBoolean(String name, String defaultValue) {
-        Property property = newBoolean(name);
-        property.setDefaultValue(defaultValue);
-        return property;
+    public static Property newBoolean(String name, String initialValue) {
+        return newBoolean(name, Boolean.valueOf(initialValue));
     }
 
-    public static Property newBoolean(String name, Boolean defaultValue) {
-        return newBoolean(name, defaultValue.toString());
+    public static Property newBoolean(String name, Boolean initialValue) {
+        Property property = newBoolean(name);
+        property.setValue(initialValue);
+        return property;
     }
 
     public static Property newDate(String name) {
