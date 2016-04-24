@@ -76,6 +76,8 @@ public interface Talend6SchemaConstants {
     public final static String TALEND6_COLUMN_SCALE = SchemaConstants.TALEND_COLUMN_SCALE;
 
     public final static String TALEND6_COLUMN_DEFAULT = SchemaConstants.TALEND_COLUMN_DEFAULT;
+    
+    public final static String TALEND6_COLUMN_CUSTOM = "talend6.column.custom"; //$NON-NLS-1$
 
     public final static String TALEND6_COLUMN_ORIGINAL_DB_COLUMN_NAME = SchemaConstants.TALEND_COLUMN_DB_COLUMN_NAME;
 
