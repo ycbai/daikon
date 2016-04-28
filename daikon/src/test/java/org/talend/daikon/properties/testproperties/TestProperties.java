@@ -23,6 +23,7 @@ import java.util.List;
 import org.talend.daikon.properties.PresentationItem;
 import org.talend.daikon.properties.Properties;
 import org.talend.daikon.properties.Property;
+import org.talend.daikon.properties.Property.Type;
 import org.talend.daikon.properties.ValidationResult;
 import org.talend.daikon.properties.ValidationResult.Result;
 import org.talend.daikon.properties.presentation.Form;
@@ -31,7 +32,6 @@ import org.talend.daikon.properties.presentation.Widget.WidgetType;
 import org.talend.daikon.properties.service.Repository;
 import org.talend.daikon.properties.testproperties.nestedprop.NestedProperties;
 import org.talend.daikon.properties.testproperties.nestedprop.inherited.InheritedProperties;
-import org.talend.daikon.properties.Property.Type;
 
 public class TestProperties extends Properties {
 
@@ -43,9 +43,9 @@ public class TestProperties extends Properties {
 
     public PresentationItem testPI = new PresentationItem("testPI", "testPI display name");
 
-    public Property userId = (Property) newProperty(USER_ID_PROP_NAME).setRequired(true);
+    public Property userId = newProperty(USER_ID_PROP_NAME).setRequired(true);
 
-    public Property password = ((Property) newProperty("password").setRequired(true))
+    public Property password = newProperty("password").setRequired(true)
             .setFlags(EnumSet.of(Property.Flags.ENCRYPT, Property.Flags.SUPPRESS_LOGGING));
 
     public Property nameList = newProperty("nameList");
@@ -110,7 +110,7 @@ public class TestProperties extends Properties {
     @Override
     public void setupLayout() {
         super.setupLayout();
-        Form form = Form.create(this, Form.MAIN, "Test Component");
+        Form form = Form.create(this, Form.MAIN);
         mainForm = form;
         form.addRow(userId);
         form.addRow(widget(password).setWidgetType(WidgetType.HIDDEN_TEXT));
@@ -118,7 +118,7 @@ public class TestProperties extends Properties {
         form.addRow(widget(nameList).setWidgetType(Widget.WidgetType.NAME_SELECTION_AREA));
         form.addRow(widget(nameListRef).setWidgetType(Widget.WidgetType.NAME_SELECTION_REFERENCE));
 
-        form = Form.create(this, "restoreTest", "Restore Test");
+        form = Form.create(this, "restoreTest");
         restoreForm = form;
         form.addRow(userId);
         form.addRow(nameList);

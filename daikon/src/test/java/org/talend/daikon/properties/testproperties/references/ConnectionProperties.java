@@ -27,7 +27,7 @@ public class ConnectionProperties extends Properties {
     @Override
     public void setupLayout() {
         super.setupLayout();
-        Form form = Form.create(this, Form.MAIN, "referenced");
+        Form form = Form.create(this, Form.MAIN);
         form.addRow(presItem);
     }
 

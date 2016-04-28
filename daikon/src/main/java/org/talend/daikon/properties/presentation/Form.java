@@ -105,8 +105,8 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
     public Form() {
     }
 
-    public Form(Properties props, String name, String displayName, String title) {
-        super(name, displayName, title);
+    public Form(Properties props, String name, String displayName) {
+        super(name, displayName);
         widgetMap = new LinkedHashMap<>();
         props.addForm(this);
         properties = props;
@@ -121,11 +121,11 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
      * @param name, form technical name.
      */
     public Form(Properties props, String name) {
-        this(props, name, name, null);
+        this(props, name, name);
     }
 
-    public static Form create(Properties props, String name, String title) {
-        return new Form(props, name, name, null);
+    public static Form create(Properties props, String name) {
+        return new Form(props, name, name);
     }
 
     /*
