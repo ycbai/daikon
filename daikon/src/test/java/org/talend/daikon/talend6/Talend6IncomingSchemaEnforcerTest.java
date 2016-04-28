@@ -3,6 +3,7 @@ package org.talend.daikon.talend6;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 
 import org.apache.avro.Schema;
@@ -49,13 +50,60 @@ public class Talend6IncomingSchemaEnforcerTest {
         componentRecord.put(5, "This is a record with six columns.");
     }
 
+    private void checkEnforcerWithComponentRecordData(Talend6IncomingSchemaEnforcer enforcer) {
+        // The enforcer must be ready to receive values.
+        assertThat(enforcer.needsInitDynamicColumns(), is(false));
+
+        // Put values into the enforcer and get them as an IndexedRecord.
+        enforcer.put(0, 1);
+        enforcer.put(1, "User");
+        enforcer.put(2, 100);
+        enforcer.put(3, true);
+        enforcer.put(4, "Main Street");
+        enforcer.put(5, "This is a record with six columns.");
+        IndexedRecord adapted = enforcer.createIndexedRecord();
+
+        // Ensure that the result is the same as the expected component record.
+        assertThat(adapted, is(componentRecord));
+
+        // Ensure that we create a new instance when we give it another value.
+        enforcer.put("id", 2);
+        enforcer.put("name", "User2");
+        enforcer.put("age", 200);
+        enforcer.put("valid", false);
+        enforcer.put("address", "2 Main Street");
+        enforcer.put("comment", "2 This is a record with six columns.");
+        IndexedRecord adapted2 = enforcer.createIndexedRecord();
+
+        // It should have the same schema, but not be the same instance.
+        assertThat(adapted2.getSchema(), sameInstance(adapted.getSchema()));
+        assertThat(adapted2, not(sameInstance(adapted)));
+        assertThat(adapted2.get(0), is((Object) 2));
+        assertThat(adapted2.get(1), is((Object) "User2"));
+        assertThat(adapted2.get(2), is((Object) 200));
+        assertThat(adapted2.get(3), is((Object) false));
+        assertThat(adapted2.get(4), is((Object) "2 Main Street"));
+        assertThat(adapted2.get(5), is((Object) "2 This is a record with six columns."));
+    }
+
+    @Test
+    public void testNonDynamic() {
+        // The design time schema should be the same as the runtime schema.
+        Schema talend6Schema = componentRecord.getSchema();
+        Talend6IncomingSchemaEnforcer enforcer = new Talend6IncomingSchemaEnforcer(talend6Schema);
+
+        // The enforcer is immediately usable
+        assertThat(enforcer.getDesignSchema(), is(talend6Schema));
+        assertThat(enforcer.getRuntimeSchema(), is(talend6Schema));
+        assertThat(enforcer.needsInitDynamicColumns(), is(false));
+    }
+
     @Test
     public void testDynamicColumn_DynamicColumnAtStart() {
-        // The design time schema after enforcement.
         Schema talend6Schema = SchemaBuilder.builder().record("Record").fields() //
-                .name("out1").type().bytesType().noDefault() //
-                .name("out2").type().stringType().noDefault() //
-                .name("out3").type().stringType().noDefault() //
+                .name("valid").type().booleanType().noDefault() //
+                .name("address").type().stringType().noDefault() //
+                .name("comment").type().stringType().noDefault() //
                 .endRecord();
         talend6Schema = AvroUtils.setIncludeAllFields(talend6Schema, true);
         talend6Schema = AvroUtils.setProperty(talend6Schema, Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION, "0");
@@ -65,75 +113,85 @@ public class Talend6IncomingSchemaEnforcerTest {
         // The enforcer isn't usable yet.
         assertThat(enforcer.getDesignSchema(), is(talend6Schema));
         assertThat(enforcer.needsInitDynamicColumns(), is(true));
-        assertThat(enforcer.getSchema(), nullValue());
+        assertThat(enforcer.getRuntimeSchema(), nullValue());
 
-        enforcer.initDynamicColumn("id", null, "id_String", null, 0, 0, 0, null, null, false, false, null, null);
+        enforcer.initDynamicColumn("id", null, "id_Integer", null, 0, 0, 0, null, null, false, false, null, null);
         enforcer.initDynamicColumn("name", null, "id_String", null, 0, 0, 0, null, null, false, false, null, null);
-        enforcer.initDynamicColumn("age", null, "id_String", null, 0, 0, 0, null, null, false, false, null, null);
-        enforcer.initDynamicColumn("valid", null, "id_String", null, 0, 0, 0, null, null, false, false, null, null);
+        enforcer.initDynamicColumn("age", null, "id_Integer", null, 0, 0, 0, null, null, false, false, null, null);
         assertThat(enforcer.needsInitDynamicColumns(), is(true));
         enforcer.initDynamicColumnsFinished();
         assertThat(enforcer.needsInitDynamicColumns(), is(false));
 
-        // Check the run-time schema
+        // Check the run-time schema was created.
         assertThat(enforcer.getDesignSchema(), is(talend6Schema));
-        assertThat(enforcer.getSchema(), not(nullValue()));
+        assertThat(enforcer.getRuntimeSchema(), not(nullValue()));
 
-        // TODO: other than string... other than non-nullable.
-
-        Schema incomingDynamicRuntimeSchema = enforcer.getSchema();
-        assertThat(incomingDynamicRuntimeSchema.getFields().size(), is(6));
-        assertThat(incomingDynamicRuntimeSchema.getField("id").schema().getType(), is(Schema.Type.STRING));
-        assertThat(incomingDynamicRuntimeSchema.getField("name").schema().getType(), is(Schema.Type.STRING));
-        assertThat(incomingDynamicRuntimeSchema.getField("age").schema().getType(), is(Schema.Type.STRING));
-        assertThat(incomingDynamicRuntimeSchema.getField("valid").schema().getType(), is(Schema.Type.STRING));
-
-        // TODO: check copied properties
+        // Put values into the enforcer and get them as an IndexedRecord.
+        checkEnforcerWithComponentRecordData(enforcer);
     }
 
     @Test
     public void testDynamicColumn_DynamicColumnAtMiddle() {
-        // The expected schema after enforcement.
         Schema talend6Schema = SchemaBuilder.builder().record("Record").fields() //
-                .name("out1").type().intType().noDefault() //
-                .name("out2").type().bytesType().noDefault() //
-                .name("out3").type().stringType().noDefault() //
+                .name("id").type().intType().noDefault() //
+                .name("address").type().stringType().noDefault() //
+                .name("comment").type().stringType().noDefault() //
                 .endRecord();
         talend6Schema = AvroUtils.setIncludeAllFields(talend6Schema, true);
         talend6Schema = AvroUtils.setProperty(talend6Schema, Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION, "1");
 
         Talend6IncomingSchemaEnforcer enforcer = new Talend6IncomingSchemaEnforcer(talend6Schema);
 
-        // TODO
+        // The enforcer isn't usable yet.
+        assertThat(enforcer.getDesignSchema(), is(talend6Schema));
+        assertThat(enforcer.needsInitDynamicColumns(), is(true));
+        assertThat(enforcer.getRuntimeSchema(), nullValue());
+
+        enforcer.initDynamicColumn("name", null, "id_String", null, 0, 0, 0, null, null, false, false, null, null);
+        enforcer.initDynamicColumn("age", null, "id_Integer", null, 0, 0, 0, null, null, false, false, null, null);
+        enforcer.initDynamicColumn("valid", null, "id_Boolean", null, 0, 0, 0, null, null, false, false, null, null);
+        assertThat(enforcer.needsInitDynamicColumns(), is(true));
+        enforcer.initDynamicColumnsFinished();
+        assertThat(enforcer.needsInitDynamicColumns(), is(false));
+
+        // Check the run-time schema was created.
+        assertThat(enforcer.getDesignSchema(), is(talend6Schema));
+        assertThat(enforcer.getRuntimeSchema(), not(nullValue()));
+
+        // Put values into the enforcer and get them as an IndexedRecord.
+        checkEnforcerWithComponentRecordData(enforcer);
     }
 
     @Test
     public void testDynamicColumn_DynamicColumnAtEnd() {
         // The expected schema after enforcement.
         Schema talend6Schema = SchemaBuilder.builder().record("Record").fields() //
-                .name("out1").type().intType().noDefault() //
-                .name("out2").type().stringType().noDefault() //
-                .name("out3").type().bytesType().noDefault() //
+                .name("id").type().intType().noDefault() //
+                .name("name").type().stringType().noDefault() //
+                .name("age").type().intType().noDefault() //
                 .endRecord();
         talend6Schema = AvroUtils.setIncludeAllFields(talend6Schema, true);
         talend6Schema = AvroUtils.setProperty(talend6Schema, Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION, "3");
 
         Talend6IncomingSchemaEnforcer enforcer = new Talend6IncomingSchemaEnforcer(talend6Schema);
 
-        // TODO
-    }
+        // The enforcer isn't usable yet.
+        assertThat(enforcer.getDesignSchema(), is(talend6Schema));
+        assertThat(enforcer.needsInitDynamicColumns(), is(true));
+        assertThat(enforcer.getRuntimeSchema(), nullValue());
 
-    @Test
-    public void testDynamicColumn_getOutOfBounds() {
-        Schema talend6Schema = SchemaBuilder.builder().record("Record").fields() //
-                .name("id").type().intType().noDefault() //
-                .endRecord();
-        Talend6OutgoingSchemaEnforcer enforcer = new Talend6OutgoingSchemaEnforcer(talend6Schema, false);
-        enforcer.setWrapped(componentRecord);
+        enforcer.initDynamicColumn("valid", null, "id_Boolean", null, 0, 0, 0, null, null, false, false, null, null);
+        enforcer.initDynamicColumn("address", null, "id_String", null, 0, 0, 0, null, null, false, false, null, null);
+        enforcer.initDynamicColumn("comment", null, "id_String", null, 0, 0, 0, null, null, false, false, null, null);
+        assertThat(enforcer.needsInitDynamicColumns(), is(true));
+        enforcer.initDynamicColumnsFinished();
+        assertThat(enforcer.needsInitDynamicColumns(), is(false));
 
-        assertThat(enforcer.get(0), is((Object) 1));
+        // Check the run-time schema was created.
+        assertThat(enforcer.getDesignSchema(), is(talend6Schema));
+        assertThat(enforcer.getRuntimeSchema(), not(nullValue()));
 
-        thrown.expect(ArrayIndexOutOfBoundsException.class);
-        enforcer.get(1); // Only one field available.
+        // Put values into the enforcer and get them as an IndexedRecord.
+        checkEnforcerWithComponentRecordData(enforcer);
     }
 }

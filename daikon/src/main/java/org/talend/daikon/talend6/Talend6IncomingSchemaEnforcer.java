@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
+import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.IndexedRecord;
 import org.talend.daikon.avro.util.AvroUtils;
 
@@ -37,12 +38,12 @@ import org.talend.daikon.avro.util.AvroUtils;
  * <p>
  * One instance of this object can be created per incoming schema and reused.
  */
-public class Talend6IncomingSchemaEnforcer implements IndexedRecord, Talend6SchemaConstants {
+public class Talend6IncomingSchemaEnforcer implements Talend6SchemaConstants {
 
     /**
      * The design-time schema from the Studio that determines how incoming java column data will be interpreted.
      */
-    private final Schema incomingDesignTimeSchema;
+    private final Schema incomingDesignSchema;
 
     /**
      * The position of the dynamic column in the incoming schema. This is -1 if there is no dynamic column. There can be
@@ -60,7 +61,7 @@ public class Talend6IncomingSchemaEnforcer implements IndexedRecord, Talend6Sche
     private List<Schema.Field> fieldsFromDynamicColumns = null;
 
     /** The values wrapped by this object. */
-    private Object[] wrapped = null;
+    private GenericData.Record wrapped = null;
 
     /**
      * Access the indexed fields by their name. We should prefer accessing them by index for performance, but this
@@ -69,7 +70,7 @@ public class Talend6IncomingSchemaEnforcer implements IndexedRecord, Talend6Sche
     private final Map<String, Integer> columnToFieldIndex = new HashMap<>();
 
     public Talend6IncomingSchemaEnforcer(Schema incoming) {
-        this.incomingDesignTimeSchema = incoming;
+        this.incomingDesignSchema = incoming;
         this.incomingRuntimeSchema = incoming;
 
         // Find the dynamic column, if any.
@@ -97,8 +98,22 @@ public class Talend6IncomingSchemaEnforcer implements IndexedRecord, Talend6Sche
             return;
 
         // Add each column to the field index and the incoming runtime schema.
-        // TODO(rskraba): do something other than STRING!
-        Schema fieldSchema = Schema.create(Schema.Type.STRING);
+        // TODO(rskraba): validate all types coming from the studio and add annotations.
+        Schema fieldSchema = null;
+        if ("id_String".equals(type)) {
+            fieldSchema = Schema.create(Schema.Type.STRING);
+        } else if ("id_Boolean".equals(type)) {
+            fieldSchema = Schema.create(Schema.Type.BOOLEAN);
+        } else if ("id_Integer".equals(type)) {
+            fieldSchema = Schema.create(Schema.Type.INT);
+        } else if ("id_Long".equals(type)) {
+            fieldSchema = Schema.create(Schema.Type.LONG);
+        } else if ("id_Double".equals(type)) {
+            fieldSchema = Schema.create(Schema.Type.DOUBLE);
+        } else if ("id_Float".equals(type)) {
+            fieldSchema = Schema.create(Schema.Type.FLOAT);
+        }
+
         if (isNullable) {
             fieldSchema = SchemaBuilder.nullable().type(fieldSchema);
         }
@@ -114,23 +129,28 @@ public class Talend6IncomingSchemaEnforcer implements IndexedRecord, Talend6Sche
             return;
 
         // Copy all of the fields that were initialized from dynamic columns into the runtime Schema.
+        boolean dynamicFieldsAdded = false;
         List<Schema.Field> fields = new ArrayList<Schema.Field>();
-        for (Schema.Field designField : incomingDesignTimeSchema.getFields()) {
+        for (Schema.Field designField : incomingDesignSchema.getFields()) {
             // Replace the dynamic column by all of its contents.
             if (designField.pos() == incomingDynamicColumn) {
                 fields.addAll(fieldsFromDynamicColumns);
-            } else {
-                // Make a complete copy of the field (it can't be reused).
-                Schema.Field designFieldCopy = new Schema.Field(designField.name(), designField.schema(), designField.doc(),
-                        designField.defaultVal());
-                for (Map.Entry<String, Object> e : designField.getObjectProps().entrySet()) {
-                    designFieldCopy.addProp(e.getKey(), e.getValue());
-                }
-                fields.add(designFieldCopy);
+                dynamicFieldsAdded = true;
             }
+            // Make a complete copy of the field (it can't be reused).
+            Schema.Field designFieldCopy = new Schema.Field(designField.name(), designField.schema(), designField.doc(),
+                    designField.defaultVal());
+            for (Map.Entry<String, Object> e : designField.getObjectProps().entrySet()) {
+                designFieldCopy.addProp(e.getKey(), e.getValue());
+            }
+            fields.add(designFieldCopy);
         }
-        incomingRuntimeSchema = Schema.createRecord(incomingDesignTimeSchema.getName(), incomingDesignTimeSchema.getDoc(),
-                incomingDesignTimeSchema.getNamespace(), incomingDesignTimeSchema.isError());
+        if (!dynamicFieldsAdded) {
+            fields.addAll(fieldsFromDynamicColumns);
+        }
+
+        incomingRuntimeSchema = Schema.createRecord(incomingDesignSchema.getName(), incomingDesignSchema.getDoc(),
+                incomingDesignSchema.getNamespace(), incomingDesignSchema.isError());
         incomingRuntimeSchema.setFields(fields);
 
         // Map all of the fields from the runtime Schema to their index.
@@ -150,30 +170,100 @@ public class Talend6IncomingSchemaEnforcer implements IndexedRecord, Talend6Sche
         return fieldsFromDynamicColumns != null;
     }
 
-    @Override
-    public Schema getSchema() {
+    public Schema getRuntimeSchema() {
         return incomingRuntimeSchema;
     }
 
     public Schema getDesignSchema() {
-        return incomingDesignTimeSchema;
+        return incomingDesignSchema;
     }
 
     public void put(String name, Object v) {
         put(columnToFieldIndex.get(name), v);
     }
 
-    @Override
     public void put(int i, Object v) {
         if (wrapped == null)
-            wrapped = new Object[incomingRuntimeSchema.getFields().size()];
+            wrapped = new GenericData.Record(getRuntimeSchema());
 
-        // TODO(rskraba): do something other than STRING!
-        wrapped[i] = v == null ? v : String.valueOf(v);
+        if (v == null) {
+            wrapped.put(i, null);
+            return;
+        }
+
+        // TODO(rskraba): check type validation for correctness with studio objects.
+        Schema.Field f = incomingRuntimeSchema.getFields().get(i);
+        Schema fieldSchema = AvroUtils.unwrapIfNullable(f.schema());
+
+        Object datum = null;
+
+        switch (fieldSchema.getType()) {
+        case ARRAY:
+            break;
+        case BOOLEAN:
+            if (v instanceof Boolean)
+                datum = (Boolean) v;
+            else
+                datum = Boolean.valueOf(String.valueOf(v));
+            break;
+        case FIXED:
+        case BYTES:
+            if (v instanceof byte[])
+                datum = (byte[]) v;
+            else
+                datum = String.valueOf(v).getBytes();
+            break;
+        case DOUBLE:
+            if (v instanceof Number)
+                datum = ((Number) v).doubleValue();
+            else
+                datum = Double.valueOf(String.valueOf(v));
+            break;
+        case ENUM:
+            break;
+        case FLOAT:
+            if (v instanceof Number)
+                datum = ((Number) v).floatValue();
+            else
+                datum = Float.valueOf(String.valueOf(v));
+            break;
+        case INT:
+            if (v instanceof Number)
+                datum = ((Number) v).intValue();
+            else
+                datum = Integer.valueOf(String.valueOf(v));
+            break;
+        case LONG:
+            if (v instanceof Number)
+                datum = ((Number) v).longValue();
+            else
+                datum = Long.valueOf(String.valueOf(v));
+            break;
+        case MAP:
+            break;
+        case NULL:
+            datum = null;
+        case RECORD:
+            break;
+        case STRING:
+            datum = String.valueOf(v);
+            break;
+        case UNION:
+            break;
+        default:
+            break;
+        }
+
+        wrapped.put(i, datum);
     }
 
-    @Override
-    public Object get(int i) {
-        return wrapped[i];
+    /**
+     * @return An IndexedRecord created from the values stored in this enforcer and clears out any existing values.
+     */
+    public IndexedRecord createIndexedRecord() {
+        // Send the data to a new instance of IndexedRecord and clear out the existing values.
+        IndexedRecord copy = wrapped;
+        wrapped = null;
+        return copy;
     }
 }

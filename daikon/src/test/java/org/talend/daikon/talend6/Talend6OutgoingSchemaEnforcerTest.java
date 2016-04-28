@@ -60,7 +60,7 @@ public class Talend6OutgoingSchemaEnforcerTest {
                 .name("out3").type().intType().noDefault() //
                 .endRecord();
         talend6Schema = AvroUtils.setIncludeAllFields(talend6Schema, true);
-        talend6Schema = AvroUtils.setProperty(talend6Schema,Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION, "0");
+        talend6Schema = AvroUtils.setProperty(talend6Schema, Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION, "0");
 
         Talend6OutgoingSchemaEnforcer enforcer = new Talend6OutgoingSchemaEnforcer(talend6Schema, true);
 
@@ -101,8 +101,7 @@ public class Talend6OutgoingSchemaEnforcerTest {
                 .name("out3").type().intType().noDefault() //
                 .endRecord();
         talend6Schema = AvroUtils.setIncludeAllFields(talend6Schema, true);
-        talend6Schema = AvroUtils.setProperty(talend6Schema,Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION, "1");
-
+        talend6Schema = AvroUtils.setProperty(talend6Schema, Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION, "1");
 
         Talend6OutgoingSchemaEnforcer enforcer = new Talend6OutgoingSchemaEnforcer(talend6Schema, true);
 
@@ -143,8 +142,7 @@ public class Talend6OutgoingSchemaEnforcerTest {
                 .name("out3").type().intType().noDefault() //
                 .endRecord();
         talend6Schema = AvroUtils.setIncludeAllFields(talend6Schema, true);
-        talend6Schema = AvroUtils.setProperty(talend6Schema,Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION, "3");
-
+        talend6Schema = AvroUtils.setProperty(talend6Schema, Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION, "3");
 
         Talend6OutgoingSchemaEnforcer enforcer = new Talend6OutgoingSchemaEnforcer(talend6Schema, true);
 
@@ -185,8 +183,7 @@ public class Talend6OutgoingSchemaEnforcerTest {
                 .name("age").type().intType().noDefault() //
                 .endRecord();
         talend6Schema = AvroUtils.setIncludeAllFields(talend6Schema, true);
-        talend6Schema = AvroUtils.setProperty(talend6Schema,Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION, "0");
-
+        talend6Schema = AvroUtils.setProperty(talend6Schema, Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION, "0");
 
         Talend6OutgoingSchemaEnforcer enforcer = new Talend6OutgoingSchemaEnforcer(talend6Schema, false);
 
@@ -227,8 +224,7 @@ public class Talend6OutgoingSchemaEnforcerTest {
                 .name("age").type().intType().noDefault() //
                 .endRecord();
         talend6Schema = AvroUtils.setIncludeAllFields(talend6Schema, true);
-        talend6Schema = AvroUtils.setProperty(talend6Schema,Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION, "1");
-
+        talend6Schema = AvroUtils.setProperty(talend6Schema, Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION, "1");
 
         Talend6OutgoingSchemaEnforcer enforcer = new Talend6OutgoingSchemaEnforcer(talend6Schema, false);
 
@@ -269,8 +265,7 @@ public class Talend6OutgoingSchemaEnforcerTest {
                 .name("age").type().intType().noDefault() //
                 .endRecord();
         talend6Schema = AvroUtils.setIncludeAllFields(talend6Schema, true);
-        talend6Schema = AvroUtils.setProperty(talend6Schema,Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION, "3");
-
+        talend6Schema = AvroUtils.setProperty(talend6Schema, Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION, "3");
 
         Talend6OutgoingSchemaEnforcer enforcer = new Talend6OutgoingSchemaEnforcer(talend6Schema, false);
 

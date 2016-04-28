@@ -60,9 +60,11 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
     private final int outgoingDynamicColumn;
 
     /**
-     * The {@link Schema} of dynamic column, it will be calculated only once and be used for initial routines.system.DynamicMetadata
+     * The {@link Schema} of dynamic column, it will be calculated only once and be used for initial
+     * routines.system.DynamicMetadata
      */
     private Schema outgoingDynamicRuntimeSchema;
+
     /**
      * The name and position of fields in the wrapped record that need to be put into the dynamic column of the output
      * record.
@@ -74,9 +76,8 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
         this.byIndex = byIndex;
 
         // Find the dynamic column, if any.
-        outgoingDynamicColumn = AvroUtils.isIncludeAllFields(outgoing)
-                ? Integer.valueOf(outgoing.getProp(Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION))
-                : -1;
+        outgoingDynamicColumn = AvroUtils.isIncludeAllFields(outgoing) ? Integer.valueOf(outgoing
+                .getProp(Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION)) : -1;
     }
 
     /**
@@ -96,8 +97,7 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
             } else {
                 copyFieldList = getDynamicSchemaByName();
             }
-            outgoingDynamicRuntimeSchema = Schema.createRecord("dynamic", null, null,
-                    false);
+            outgoingDynamicRuntimeSchema = Schema.createRecord("dynamic", null, null, false);
             outgoingDynamicRuntimeSchema.setFields(copyFieldList);
         }
     }
@@ -171,11 +171,11 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
     }
 
     /**
-     * @param value        The incoming value for the field. This can be null when null is a valid value, or if there is no
-     *                     corresponding wrapped field.
+     * @param value The incoming value for the field. This can be null when null is a valid value, or if there is no
+     * corresponding wrapped field.
      * @param wrappedField The incoming field description (a valid Avro Schema). This can be null if there is no
-     *                     corresponding wrapped field.
-     * @param outField     The outgoing field description that must be enforced. This must not be null.
+     * corresponding wrapped field.
+     * @param outField The outgoing field description that must be enforced. This must not be null.
      * @return
      */
     private Object transformValue(Object value, Field wrappedField, Field outField) {
@@ -221,8 +221,8 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
     }
 
     /**
-     * @return A list of all of the unresolved columns's schema, when the unresolved columns are determined by the position of the
-     * Dynamic column in enforced schema.
+     * @return A list of all of the unresolved columns's schema, when the unresolved columns are determined by the
+     * position of the Dynamic column in enforced schema.
      */
     private List<Schema.Field> getDynamicSchemaByIndex() {
         List<Schema.Field> fields = new ArrayList<>();
@@ -233,7 +233,6 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
         }
         return fields;
     }
-
 
     /**
      * @return A map of all of the unresolved columns, when the unresolved columns are determined by the names of the
@@ -259,8 +258,8 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
     }
 
     /**
-     * @return A list of all of the unresolved columns's schema, when the unresolved columns are determined by the names of the
-     * resolved column in enforced schema.
+     * @return A list of all of the unresolved columns's schema, when the unresolved columns are determined by the names
+     * of the resolved column in enforced schema.
      */
     private List<Schema.Field> getDynamicSchemaByName() {
         List<Schema.Field> fields = new ArrayList<>();
@@ -277,6 +276,5 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
         }
         return fields;
     }
-
 
 }
