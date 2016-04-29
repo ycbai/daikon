@@ -70,4 +70,23 @@ public class FormTest {
         assertTrue(form.getWidget("w3").isVisible());
     }
 
+    @Test
+    public void testSetVisibleForNestedForms() {
+        Form form = new Form(new Properties("bar") { //$NON-NLS-1$
+        }, "foo"); //$NON-NLS-1$
+        Form nestedForm = new Form(new Properties("foo") { //$NON-NLS-1$
+        }, "bar"); //$NON-NLS-1$
+        form.addRow(widget(newString("w1")));
+        form.addRow(widget(nestedForm));
+        nestedForm.addRow(widget(newString("w3")));
+        assertTrue(form.getWidget("w1").isVisible());
+        assertTrue(nestedForm.getWidget("w3").isVisible());
+        form.setVisible(false);
+        assertFalse(form.getWidget("w1").isVisible());
+        assertFalse(nestedForm.getWidget("w3").isVisible());
+        form.setVisible(true);
+        assertTrue(form.getWidget("w1").isVisible());
+        assertTrue(nestedForm.getWidget("w3").isVisible());
+    }
+
 }
