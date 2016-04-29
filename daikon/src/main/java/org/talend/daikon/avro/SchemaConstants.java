@@ -6,7 +6,8 @@ package org.talend.daikon.avro;
 public class SchemaConstants {
 
     /**
-     * If Schema.Type can't represent this java type, then use JAVA_CLASS_FLAG as the property key and the real class name as the value
+     * If Schema.Type can't represent this java type, then use JAVA_CLASS_FLAG as the property key and the real class
+     * name as the value
      */
     public static final String JAVA_CLASS_FLAG = "java-class";
 
@@ -15,6 +16,17 @@ public class SchemaConstants {
      * actual schema return should be expanded to include all possible fields that the input component can find.
      */
     public static final String INCLUDE_ALL_FIELDS = "include-all-fields"; //$NON-NLS-1$
+
+    /**
+     * When a component provides a Schema to be used, it can normally still be modified at design-time.
+     * 
+     * If a record Schema has this property, no fields can be added, reordered or removed or modified at design-time.
+     * 
+     * If a field has this property, it can't be modified at design-time.
+     * 
+     * A record Schema can be locked, but individual fields unlocked by setting this value to false.
+     */
+    public final static String TALEND_IS_LOCKED = "talend.isLocked"; //$NON-NLS-1$
 
     public final static String TALEND_COLUMN_DB_TYPE = "talend.column.sourceType"; //$NON-NLS-1$
 
@@ -37,7 +49,8 @@ public class SchemaConstants {
     public final static String TALEND_COLUMN_DEFAULT = "talend.column.default"; //$NON-NLS-1$
 
     /**
-     * Use this property to indicate the column is a key, normally when the output component has ability to create table, should need this property
+     * Use this property to indicate the column is a key, normally when the output component has ability to create
+     * table, should need this property
      */
     public final static String TALEND_COLUMN_IS_KEY = "talend.column.isKey"; //$NON-NLS-1$
 }

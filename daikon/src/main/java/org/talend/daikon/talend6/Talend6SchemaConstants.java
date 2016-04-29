@@ -34,7 +34,7 @@ public interface Talend6SchemaConstants {
     public final static String TALEND6_LABEL = "talend6.table.label"; //$NON-NLS-1$
 
     /** Property is present if readonly, otherwise not present. */
-    public final static String TALEND6_IS_READ_ONLY = "talend6.table.readOnly"; //$NON-NLS-1$
+    public final static String TALEND6_IS_READ_ONLY = SchemaConstants.TALEND_IS_LOCKED; //$NON-NLS-1$
 
     /** The key will have this as a prefix, pointing to the value. */
     public final static String TALEND6_ADDITIONAL_PROPERTIES = "talend6.prop."; //$NON-NLS-1$
