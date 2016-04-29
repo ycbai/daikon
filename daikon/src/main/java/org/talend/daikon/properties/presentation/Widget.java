@@ -168,6 +168,10 @@ public class Widget implements ToStringIndent {
 
     public Widget setVisible(boolean visible) {
         this.visible = visible;
+        // recurse to change visibility to nested Forms
+        if (content != null && content instanceof Form) {
+            ((Form) content).setVisible(visible);
+        } // else not need to recurse
         return this;
     }
 
