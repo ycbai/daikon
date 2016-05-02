@@ -51,6 +51,7 @@ public class PropertiesDynamicMethodHelper {
 
     static void doInvoke(Properties props, Method m) throws Throwable {
         try {
+            m.setAccessible(true);
             Object result = m.invoke(props);
             PropertiesDynamicMethodHelper.storeResult(props, result);
         } catch (InvocationTargetException e) {
@@ -69,6 +70,7 @@ public class PropertiesDynamicMethodHelper {
 
     static void doInvoke(Properties props, Method m, Object... arguments) throws Throwable {
         try {
+            m.setAccessible(true);
             Object result = m.invoke(props, arguments);
             storeResult(props, result);
         } catch (IllegalArgumentException | InvocationTargetException e) {
@@ -80,6 +82,7 @@ public class PropertiesDynamicMethodHelper {
     static public void validateProperty(Properties props, String propName) throws Throwable {
         Method m = findMethod(props, Properties.METHOD_VALIDATE, propName, REQUIRED);
         try {
+            m.setAccessible(true);
             props.validationResult = (ValidationResult) m.invoke(props);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();

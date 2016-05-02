@@ -16,16 +16,17 @@ import static org.junit.Assert.*;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.talend.daikon.properties.Properties;
+import org.talend.daikon.properties.Property;
 import org.talend.daikon.properties.ValidationResult;
 import org.talend.daikon.properties.ValidationResult.Result;
 import org.talend.daikon.properties.presentation.Form;
 import org.talend.daikon.properties.test.PropertiesTestUtils;
 import org.talend.daikon.properties.testproperties.TestProperties;
-import org.talend.daikon.properties.Property;
 
 public class PropertiesServiceTest {
 
@@ -142,6 +143,52 @@ public class PropertiesServiceTest {
         propService.afterFormFinish(Form.MAIN, props);
         assertNotNull(props.getValidationResult());
         assertEquals(Result.ERROR, props.getValidationResult().getStatus());
+    }
+
+    @Test
+    public void testAfterFormFinishOverridden() throws Throwable {
+        final AtomicBoolean afterFormFinishCalled = new AtomicBoolean();
+        Properties props = new TestProperties(null) {
+
+            @Override
+            public ValidationResult afterFormFinishMain(org.talend.daikon.properties.service.Repository<Properties> repo) {
+                afterFormFinishCalled.set(true);
+                return null;
+            };
+        }.init();
+        assertFalse(afterFormFinishCalled.get());
+        propService.afterFormFinish(Form.MAIN, props);
+        assertTrue(afterFormFinishCalled.get());
+    }
+
+    @Test
+    public void testAfterMethodOverridden() throws Throwable {
+        final AtomicBoolean afterUserIdCalled = new AtomicBoolean();
+        TestProperties testProps = (TestProperties) new TestProperties("testProps") {
+
+            public void afterUserId() {
+                afterUserIdCalled.set(true);
+            }
+
+        }.init();
+        assertFalse(afterUserIdCalled.get());
+        PropertiesTestUtils.checkAndAfter(propService, testProps.getForm(Form.MAIN), testProps.userId.getName(), testProps);
+        assertTrue(afterUserIdCalled.get());
+    }
+
+    @Test
+    public void validatePropertyOverriden() throws Throwable {
+        final AtomicBoolean validateUserIdCalled = new AtomicBoolean();
+        TestProperties testProps = (TestProperties) new TestProperties("testProps") {
+
+            public void validateUserId() {
+                validateUserIdCalled.set(true);
+            }
+
+        }.init();
+        assertFalse(validateUserIdCalled.get());
+        PropertiesTestUtils.checkAndValidate(propService, testProps.getForm(Form.MAIN), testProps.userId.getName(), testProps);
+        assertTrue(validateUserIdCalled.get());
     }
 
 }
