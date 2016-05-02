@@ -12,18 +12,22 @@
 // ============================================================================
 package org.talend.daikon.properties;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import com.cedarsoftware.util.io.JsonReader;
+import com.cedarsoftware.util.io.JsonWriter;
+import org.json.JSONWriter;
+import org.junit.Test;
+import org.talend.daikon.properties.presentation.Widget;
 
-/**
- * created by pbailly on 5 Nov 2015 Detailled comment
- *
- */
 public class PropertyTest {
 
     /**
@@ -127,6 +131,45 @@ public class PropertyTest {
         assertEquals("myElement", childrenMap.get("myElement").getName());
         assertEquals("myElement2", childrenMap.get("myElement2").getName());
         childrenMap.put("myElement3", new Property("myElement3"));
+    }
+
+    @Test
+    public void testHiddenForProperties() {
+        Property element = new Property("element");
+        assertFalse(element.isFlag(Property.Flags.HIDDEN));
+        Widget widget = new Widget(element);
+        assertFalse(element.isFlag(Property.Flags.HIDDEN));
+        widget.setHidden(true);
+        assertTrue(element.isFlag(Property.Flags.HIDDEN));
+        widget.setHidden(false);
+        assertFalse(element.isFlag(Property.Flags.HIDDEN));
+    }
+
+    @Test
+    public void testFlags() {
+        Property element = new Property("element");
+        assertFalse(element.isFlag(Property.Flags.ENCRYPT));
+        assertFalse(element.isFlag(Property.Flags.HIDDEN));
+        element.addFlag(Property.Flags.ENCRYPT);
+        assertTrue(element.isFlag(Property.Flags.ENCRYPT));
+        assertFalse(element.isFlag(Property.Flags.HIDDEN));
+        element.addFlag(Property.Flags.HIDDEN);
+        assertTrue(element.isFlag(Property.Flags.ENCRYPT));
+        assertTrue(element.isFlag(Property.Flags.HIDDEN));
+        element.removeFlag(Property.Flags.HIDDEN);
+        assertTrue(element.isFlag(Property.Flags.ENCRYPT));
+        assertFalse(element.isFlag(Property.Flags.HIDDEN));
+        element.removeFlag(Property.Flags.ENCRYPT);
+        assertFalse(element.isFlag(Property.Flags.ENCRYPT));
+        assertFalse(element.isFlag(Property.Flags.HIDDEN));
+
+        String elementStr = JsonWriter.objectToJson(element);
+        element = (Property) JsonReader.jsonToJava(elementStr);
+        element.addFlag(Property.Flags.HIDDEN);
+
+        element.addFlag(Property.Flags.ENCRYPT);
+        assertTrue(element.isFlag(Property.Flags.ENCRYPT));
+
     }
 
 }

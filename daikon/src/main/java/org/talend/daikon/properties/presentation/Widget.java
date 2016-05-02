@@ -102,7 +102,7 @@ public class Widget implements ToStringIndent {
      */
     private int order;
 
-    private boolean visible = true;
+    private boolean hidden;
 
     /**
      * The type of widget to be used to express this property. This is used only if there is a choice given the type of
@@ -166,17 +166,24 @@ public class Widget implements ToStringIndent {
         return this;
     }
 
-    public Widget setVisible(boolean visible) {
-        this.visible = visible;
-        // recurse to change visibility to nested Forms
+    public Widget setHidden(boolean hidden) {
+        this.hidden = hidden;
         if (content != null && content instanceof Form) {
-            ((Form) content).setVisible(visible);
-        } // else not need to recurse
+            // Recurse to change visibility to nested Forms
+            ((Form) content).setHidden(hidden);
+        } else if (content != null && content instanceof Property) {
+            // Persist this with the underlying property
+            Property prop = (Property) content;
+            if (hidden)
+                prop.addFlag(Property.Flags.HIDDEN);
+            else
+                prop.removeFlag(Property.Flags.HIDDEN);
+        }
         return this;
     }
 
-    public boolean isVisible() {
-        return visible;
+    public boolean isHidden() {
+        return hidden;
     }
 
     public WidgetType getWidgetType() {

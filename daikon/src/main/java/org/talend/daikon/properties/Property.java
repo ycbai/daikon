@@ -72,7 +72,14 @@ public class Property extends SimpleNamedThing implements AnyProperty {
         /**
          * Used only at design time, not necessary for runtime.
          */
-        DESIGN_TIME_ONLY;
+        DESIGN_TIME_ONLY,
+        /**
+         * Hidden at runtime. Normally automatically set by
+         * {@link org.talend.daikon.properties.presentation.Widget#setHidden(boolean)} However, this can also be set or
+         * cleared independently. This is used to cause properties to not be visible and processed at runtime if
+         * necessary.
+         */
+        HIDDEN;
 
     };
 
@@ -96,7 +103,7 @@ public class Property extends SimpleNamedThing implements AnyProperty {
 
     private List<?> possibleValues;
 
-    protected List<Property> children = new ArrayList<>();;
+    protected List<Property> children = new ArrayList<>();
 
     public Property(String name, String title) {
         this(null, name, title);
@@ -299,6 +306,28 @@ public class Property extends SimpleNamedThing implements AnyProperty {
         return flags.contains(flag);
     }
 
+    public void addFlag(Flags flag) {
+        if (flags == null) {
+            flags = EnumSet.of(flag);
+        } else {
+            if (true) {
+                // Work around https://github.com/jdereg/json-io/issues/72
+                EnumSet<Flags> newFlags = EnumSet.of(flag);
+                newFlags.addAll(flags);
+                flags = newFlags;
+            } else {
+                // Preferred code:
+                flags.add(flag);
+            }
+        }
+    }
+
+    public void removeFlag(Flags flag) {
+        if (flags != null) {
+            flags.remove(flag);
+        }
+    }
+
     public void setValue(Object value) {
         storedValue = value;
     }
@@ -374,7 +403,8 @@ public class Property extends SimpleNamedThing implements AnyProperty {
      */
     @Override
     public String getDisplayName() {
-        return displayName != null ? displayName : getI18nMessage(I18N_PROPERTY_PREFIX + name + NamedThing.I18N_DISPLAY_NAME_SUFFIX);
+        return displayName != null ? displayName
+                : getI18nMessage(I18N_PROPERTY_PREFIX + name + NamedThing.I18N_DISPLAY_NAME_SUFFIX);
     }
 
     /**
