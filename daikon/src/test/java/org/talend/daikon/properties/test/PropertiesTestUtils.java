@@ -29,6 +29,7 @@ import org.talend.daikon.properties.Properties.Deserialized;
 import org.talend.daikon.properties.Property;
 import org.talend.daikon.properties.presentation.Form;
 import org.talend.daikon.properties.presentation.Widget;
+import org.talend.daikon.properties.service.PropertiesService;
 
 public class PropertiesTestUtils {
 
@@ -142,6 +143,30 @@ public class PropertiesTestUtils {
             }
         }, null);
         return StringUtils.join(classSet, ", ");
+    }
+
+    public static Properties checkAndBeforeActivate(PropertiesService propServ, Form form, String propName, Properties props)
+            throws Throwable {
+        assertTrue(form.getWidget(propName).isCallBeforeActivate());
+        return propServ.beforePropertyActivate(propName, props);
+    }
+
+    public static Properties checkAndBeforePresent(PropertiesService propServ, Form form, String propName, Properties props)
+            throws Throwable {
+        assertTrue(form.getWidget(propName).isCallBeforePresent());
+        return propServ.beforePropertyPresent(propName, props);
+    }
+
+    public static Properties checkAndAfter(PropertiesService propServ, Form form, String propName, Properties props)
+            throws Throwable {
+        assertTrue(form.getWidget(propName).isCallAfter());
+        return propServ.afterProperty(propName, props);
+    }
+
+    public static Properties checkAndValidate(PropertiesService propServ, Form form, String propName, Properties props)
+            throws Throwable {
+        assertTrue(form.getWidget(propName).isCallValidate());
+        return propServ.validateProperty(propName, props);
     }
 
 }

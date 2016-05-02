@@ -23,6 +23,7 @@ import org.talend.daikon.properties.Properties;
 import org.talend.daikon.properties.ValidationResult;
 import org.talend.daikon.properties.ValidationResult.Result;
 import org.talend.daikon.properties.presentation.Form;
+import org.talend.daikon.properties.test.PropertiesTestUtils;
 import org.talend.daikon.properties.testproperties.TestProperties;
 import org.talend.daikon.properties.Property;
 
@@ -39,11 +40,11 @@ public class PropertiesServiceTest {
     public void testBefore() throws Throwable {
         Properties props = new TestProperties(null).init();
 
-        checkAndBeforePresent(propService, props.getForm(Form.MAIN), "nameList", props);
+        PropertiesTestUtils.checkAndBeforePresent(propService, props.getForm(Form.MAIN), "nameList", props);
         assertEquals(3, ((Property) props.getProperty("nameList")).getPossibleValues().size());
         assertEquals("name1", ((Property) props.getProperty("nameList")).getPossibleValues().get(0));
 
-        checkAndBeforeActivate(propService, props.getForm(Form.MAIN), "nameListRef", props);
+        PropertiesTestUtils.checkAndBeforeActivate(propService, props.getForm(Form.MAIN), "nameListRef", props);
         assertEquals(3, ((Property) props.getProperty("nameListRef")).getPossibleValues().size());
         assertEquals("namer1", ((Property) props.getProperty("nameListRef")).getPossibleValues().get(0));
 
@@ -55,7 +56,7 @@ public class PropertiesServiceTest {
     public void testBeforePresentWithValidationResults() throws Throwable {
         Properties props = new TestProperties(null).init();
         assertNull(props.getValidationResult());
-        checkAndBeforePresent(propService, props.getForm(Form.MAIN), "nameList", props);
+        PropertiesTestUtils.checkAndBeforePresent(propService, props.getForm(Form.MAIN), "nameList", props);
         assertNotNull(props.getValidationResult());
     }
 
@@ -63,7 +64,7 @@ public class PropertiesServiceTest {
     public void testAfterPresentWithValidationResultsWarning() throws Throwable {
         Properties props = new TestProperties(null).init();
         assertNull(props.getValidationResult());
-        checkAndAfter(propService, props.getForm("restoreTest"), "integer", props);
+        PropertiesTestUtils.checkAndAfter(propService, props.getForm("restoreTest"), "integer", props);
         assertEquals(ValidationResult.Result.WARNING, props.getValidationResult().getStatus());
     }
 
@@ -71,7 +72,7 @@ public class PropertiesServiceTest {
     public void testBeforeActivateWithDefaultValidationResults() throws Throwable {
         Properties props = new TestProperties(null).init();
         assertNull(props.getValidationResult());
-        checkAndBeforeActivate(propService, props.getForm(Form.MAIN), "nameListRef", props);
+        PropertiesTestUtils.checkAndBeforeActivate(propService, props.getForm(Form.MAIN), "nameListRef", props);
         assertNotNull(props.getValidationResult());
     }
 
@@ -141,30 +142,6 @@ public class PropertiesServiceTest {
         propService.afterFormFinish(Form.MAIN, props);
         assertNotNull(props.getValidationResult());
         assertEquals(Result.ERROR, props.getValidationResult().getStatus());
-    }
-
-    public static Properties checkAndBeforeActivate(PropertiesService propServ, Form form, String propName, Properties props)
-            throws Throwable {
-        assertTrue(form.getWidget(propName).isCallBeforeActivate());
-        return propServ.beforePropertyActivate(propName, props);
-    }
-
-    public static Properties checkAndBeforePresent(PropertiesService propServ, Form form, String propName, Properties props)
-            throws Throwable {
-        assertTrue(form.getWidget(propName).isCallBeforePresent());
-        return propServ.beforePropertyPresent(propName, props);
-    }
-
-    public static Properties checkAndAfter(PropertiesService propServ, Form form, String propName, Properties props)
-            throws Throwable {
-        assertTrue(form.getWidget(propName).isCallAfter());
-        return propServ.afterProperty(propName, props);
-    }
-
-    public static Properties checkAndValidate(PropertiesService propServ, Form form, String propName, Properties props)
-            throws Throwable {
-        assertTrue(form.getWidget(propName).isCallValidate());
-        return propServ.validateProperty(propName, props);
     }
 
 }
