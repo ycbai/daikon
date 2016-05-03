@@ -28,29 +28,29 @@ public class SchemaConstants {
      */
     public final static String TALEND_IS_LOCKED = "talend.isLocked"; //$NON-NLS-1$
 
-    public final static String TALEND_COLUMN_DB_TYPE = "talend.column.sourceType"; //$NON-NLS-1$
+    public final static String TALEND_COLUMN_DB_COLUMN_NAME = "talend.field.dbColumnName"; //$NON-NLS-1$
 
-    public final static String TALEND_COLUMN_PATTERN = "talend.column.pattern"; //$NON-NLS-1$
+    public final static String TALEND_COLUMN_DB_TYPE = "talend.field.dbType"; //$NON-NLS-1$
 
-    public final static String TALEND_COLUMN_DB_COLUMN_NAME = "talend.column.dbColumnName"; //$NON-NLS-1$
-
-    /**
-     * String representation of an int.
-     */
-    public final static String TALEND_COLUMN_DB_LENGTH = "talend.column.length"; //$NON-NLS-1$
+    public final static String TALEND_COLUMN_PATTERN = "talend.field.pattern"; //$NON-NLS-1$
 
     /**
      * String representation of an int.
      */
-    public final static String TALEND_COLUMN_PRECISION = "talend.column.precision"; //$NON-NLS-1$
+    public final static String TALEND_COLUMN_DB_LENGTH = "talend.field.length"; //$NON-NLS-1$
 
-    public final static String TALEND_COLUMN_SCALE = "talend.column.scale"; //$NON-NLS-1$
+    /**
+     * String representation of an int.
+     */
+    public final static String TALEND_COLUMN_PRECISION = "talend.field.precision"; //$NON-NLS-1$
 
-    public final static String TALEND_COLUMN_DEFAULT = "talend.column.default"; //$NON-NLS-1$
+    public final static String TALEND_COLUMN_SCALE = "talend.field.scale"; //$NON-NLS-1$
+
+    public final static String TALEND_COLUMN_DEFAULT = "talend.field.default"; //$NON-NLS-1$
 
     /**
      * Use this property to indicate the column is a key, normally when the output component has ability to create
      * table, should need this property
      */
-    public final static String TALEND_COLUMN_IS_KEY = "talend.column.isKey"; //$NON-NLS-1$
+    public final static String TALEND_COLUMN_IS_KEY = "talend.field.isKey"; //$NON-NLS-1$
 }
