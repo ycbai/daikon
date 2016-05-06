@@ -100,7 +100,7 @@
 				<artifactId>maven-scm-plugin</artifactId>
 				<version>1.9.4</version>
 				<configuration>
-					<tag>${project.artifactId}-${project.version}</tag>
+					<tag>daikon-${project.version}</tag>
 				</configuration>
 			</plugin>
 			<plugin>
