@@ -6,6 +6,8 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 
+import java.util.Date;
+
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
 import org.apache.avro.generic.GenericData;
@@ -194,4 +196,39 @@ public class Talend6IncomingSchemaEnforcerTest {
         // Put values into the enforcer and get them as an IndexedRecord.
         checkEnforcerWithComponentRecordData(enforcer);
     }
+
+    @Test
+    public void testTypeConversion_toDate() {
+        // The expected schema after enforcement.
+        Schema talend6Schema = SchemaBuilder.builder().record("Record").fields() //
+                .name("field") //
+                // properties
+                .prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, "id_Date")
+                .prop(Talend6SchemaConstants.TALEND6_COLUMN_PATTERN, "yyyy-MM-dd'T'HH:mm:ss'000Z'")
+                // type
+                .type().longType().noDefault() //
+                // Add java-class to longType? Add union to output?
+                .endRecord();
+
+        talend6Schema = AvroUtils.setProperty(talend6Schema, Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION, "3");
+
+        Talend6IncomingSchemaEnforcer enforcer = new Talend6IncomingSchemaEnforcer(talend6Schema);
+
+        // No dynamic columns, the schema is available.
+        assertThat(enforcer.getDesignSchema(), is(talend6Schema));
+        assertThat(enforcer.needsInitDynamicColumns(), is(false));
+        assertThat(enforcer.getRuntimeSchema(), is(talend6Schema));
+
+        // Put values into the enforcer and get them as an IndexedRecord.
+        enforcer.put(0, new Date(1234567891011L));
+        assertThat(enforcer.createIndexedRecord().get(0), is((Object) new Date(1234567891011L)));
+
+        //               2016-05-02T17:30:38.000Z
+        enforcer.put(0, "2009-02-13T23:31:31.000Z");
+        // "yyyy-MM-dd'T'HH:mm:ss'000Z'"
+        IndexedRecord adapted = enforcer.createIndexedRecord();
+        assertThat(adapted.getSchema(), sameInstance(enforcer.getRuntimeSchema()));
+        assertThat(adapted.get(0), is((Object) new Date(1234567891000L)));
+    }
+
 }

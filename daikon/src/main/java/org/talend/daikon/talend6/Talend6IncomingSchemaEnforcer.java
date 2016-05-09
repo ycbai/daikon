@@ -12,15 +12,20 @@
 // ============================================================================
 package org.talend.daikon.talend6;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.IndexedRecord;
+import org.talend.daikon.avro.SchemaConstants;
 import org.talend.daikon.avro.util.AvroUtils;
 
 /**
@@ -68,6 +73,9 @@ public class Talend6IncomingSchemaEnforcer implements Talend6SchemaConstants {
      * complicates the logic of dynamic columns quite a bit.
      */
     private final Map<String, Integer> columnToFieldIndex = new HashMap<>();
+
+    // TODO(rskraba): fix with a general type conversion strategy.
+    private final Map<String, SimpleDateFormat> dateFormatCache = new HashMap<>();
 
     public Talend6IncomingSchemaEnforcer(Schema incoming) {
         this.incomingDesignSchema = incoming;
@@ -197,61 +205,98 @@ public class Talend6IncomingSchemaEnforcer implements Talend6SchemaConstants {
 
         Object datum = null;
 
-        switch (fieldSchema.getType()) {
-        case ARRAY:
-            break;
-        case BOOLEAN:
-            if (v instanceof Boolean)
-                datum = (Boolean) v;
-            else
-                datum = Boolean.valueOf(String.valueOf(v));
-            break;
-        case FIXED:
-        case BYTES:
-            if (v instanceof byte[])
-                datum = (byte[]) v;
-            else
-                datum = String.valueOf(v).getBytes();
-            break;
-        case DOUBLE:
-            if (v instanceof Number)
-                datum = ((Number) v).doubleValue();
-            else
-                datum = Double.valueOf(String.valueOf(v));
-            break;
-        case ENUM:
-            break;
-        case FLOAT:
-            if (v instanceof Number)
-                datum = ((Number) v).floatValue();
-            else
-                datum = Float.valueOf(String.valueOf(v));
-            break;
-        case INT:
-            if (v instanceof Number)
-                datum = ((Number) v).intValue();
-            else
-                datum = Integer.valueOf(String.valueOf(v));
-            break;
-        case LONG:
-            if (v instanceof Number)
-                datum = ((Number) v).longValue();
-            else
-                datum = Long.valueOf(String.valueOf(v));
-            break;
-        case MAP:
-            break;
-        case NULL:
-            datum = null;
-        case RECORD:
-            break;
-        case STRING:
-            datum = String.valueOf(v);
-            break;
-        case UNION:
-            break;
-        default:
-            break;
+        // TODO(rskraba): This is pretty rough -- fix with a general type conversion strategy.
+        String talendType = f.getProp(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE);
+        String javaClass = f.schema().getProp(SchemaConstants.JAVA_CLASS_FLAG);
+        if ("id_Date".equals(talendType) || "java.util.Date".equals(javaClass)) {
+            if (v instanceof Date) {
+                datum = v;
+            } else if (v instanceof Long) {
+                datum = new Date((long) v);
+            } else if (v instanceof String) {
+                String pattern = f.getProp(Talend6SchemaConstants.TALEND6_COLUMN_PATTERN);
+                String vs = (String) v;
+
+                if (pattern.equals("yyyy-MM-dd'T'HH:mm:ss'000Z'")) {
+                    if (!vs.endsWith("000Z")) {
+                        throw new RuntimeException("Unparseable date: \"" + vs + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                    pattern = "yyyy-MM-dd'T'HH:mm:ss";
+                    vs = vs.substring(0, vs.lastIndexOf("000Z"));
+                }
+
+                SimpleDateFormat df = dateFormatCache.get(pattern);
+                if (df == null) {
+                    df = new SimpleDateFormat(pattern);
+                    df.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    dateFormatCache.put(pattern, df);
+                }
+
+                try {
+                    datum = df.parse((String) v);
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        if (datum == null) {
+            switch (fieldSchema.getType()) {
+            case ARRAY:
+                break;
+            case BOOLEAN:
+                if (v instanceof Boolean)
+                    datum = (Boolean) v;
+                else
+                    datum = Boolean.valueOf(String.valueOf(v));
+                break;
+            case FIXED:
+            case BYTES:
+                if (v instanceof byte[])
+                    datum = (byte[]) v;
+                else
+                    datum = String.valueOf(v).getBytes();
+                break;
+            case DOUBLE:
+                if (v instanceof Number)
+                    datum = ((Number) v).doubleValue();
+                else
+                    datum = Double.valueOf(String.valueOf(v));
+                break;
+            case ENUM:
+                break;
+            case FLOAT:
+                if (v instanceof Number)
+                    datum = ((Number) v).floatValue();
+                else
+                    datum = Float.valueOf(String.valueOf(v));
+                break;
+            case INT:
+                if (v instanceof Number)
+                    datum = ((Number) v).intValue();
+                else
+                    datum = Integer.valueOf(String.valueOf(v));
+                break;
+            case LONG:
+                if (v instanceof Number)
+                    datum = ((Number) v).longValue();
+                else
+                    datum = Long.valueOf(String.valueOf(v));
+                break;
+            case MAP:
+                break;
+            case NULL:
+                datum = null;
+            case RECORD:
+                break;
+            case STRING:
+                datum = String.valueOf(v);
+                break;
+            case UNION:
+                break;
+            default:
+                break;
+            }
         }
 
         wrapped.put(i, datum);
