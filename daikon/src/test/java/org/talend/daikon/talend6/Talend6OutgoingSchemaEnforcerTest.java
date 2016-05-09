@@ -1,5 +1,15 @@
 package org.talend.daikon.talend6;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.util.Date;
+import java.util.Map;
+
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
 import org.apache.avro.generic.GenericData;
@@ -8,14 +18,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.talend.daikon.avro.SchemaConstants;
 import org.talend.daikon.avro.util.AvroUtils;
 import org.talend.daikon.avro.util.SingleColumnIndexedRecordAdapterFactory;
-
-import java.util.Date;
-import java.util.Map;
-
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 
 /**
  * Unit tests for {Talend6SchemaOutputEnforcer}.
@@ -332,9 +337,34 @@ public class Talend6OutgoingSchemaEnforcerTest {
     public void testValueConversion_toDate() {
         // The expected schema after enforcement.
         Schema talend6Schema = SchemaBuilder.builder().record("Record").fields() //
-                .name("d").prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, //
-                        "id_Date").type().longType().noDefault() //
+                .name("d")
+                .prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, //
+                        "id_Date")
+                .type().longType().noDefault() //
                 .endRecord();
+
+        // The enforcer to test.
+        Talend6OutgoingSchemaEnforcer enforcer = new Talend6OutgoingSchemaEnforcer(talend6Schema, false);
+
+        // Use this factory to create a one-column indexed record.
+        SingleColumnIndexedRecordAdapterFactory<Long> factory = new SingleColumnIndexedRecordAdapterFactory<>(Long.class,
+                Schema.create(Schema.Type.LONG));
+        IndexedRecord testData = factory.convertToAvro(1L);
+
+        enforcer.setWrapped(testData);
+
+        assertThat(enforcer.get(0), instanceOf(Date.class));
+        assertThat(enforcer.get(0), is((Object) new Date(1L)));
+    }
+
+    @Test
+    public void testValueConversion_toDate_javaClass() {
+        // The expected schema after enforcement.
+        Schema talend6Schema = SchemaBuilder.builder().record("Record").fields() //
+                .name("d").type().longType().noDefault() //
+                .endRecord();
+
+        talend6Schema.getFields().get(0).schema().addProp(SchemaConstants.JAVA_CLASS_FLAG, "java.util.Date");
 
         // The enforcer to test.
         Talend6OutgoingSchemaEnforcer enforcer = new Talend6OutgoingSchemaEnforcer(talend6Schema, false);

@@ -12,14 +12,19 @@
 // ============================================================================
 package org.talend.daikon.talend6;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
 import org.apache.avro.generic.IndexedRecord;
 import org.talend.daikon.avro.IndexedRecordAdapterFactory.UnmodifiableAdapterException;
+import org.talend.daikon.avro.SchemaConstants;
 import org.talend.daikon.avro.util.AvroUtils;
 import org.talend.daikon.avro.util.SingleColumnIndexedRecordAdapterFactory;
-
-import java.util.*;
 
 /**
  * This class acts as a wrapper around an arbitrary Avro {@link IndexedRecord} to coerce the output type to the exact
@@ -29,7 +34,8 @@ import java.util.*;
  * Schema constraints imposed by the Studio, including:
  * <ul>
  * <li>Coercing the types of the returned objects to *exactly* the type required by the Talend POJO.</li>
- * <li>Placing all of the unresolved columns between the wrapped schema and the output schema in the Dynamic column.</li>
+ * <li>Placing all of the unresolved columns between the wrapped schema and the output schema in the Dynamic column.
+ * </li>
  * </ul>
  * <p>
  * One instance of this object can be created per outgoing schema and reused via the {@link #setWrapped(IndexedRecord)}
@@ -76,8 +82,8 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
         this.byIndex = byIndex;
 
         // Find the dynamic column, if any.
-        outgoingDynamicColumn = AvroUtils.isIncludeAllFields(outgoing) ? Integer.valueOf(outgoing
-                .getProp(Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION)) : -1;
+        outgoingDynamicColumn = AvroUtils.isIncludeAllFields(outgoing)
+                ? Integer.valueOf(outgoing.getProp(Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION)) : -1;
     }
 
     /**
@@ -180,13 +186,16 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
      */
     private Object transformValue(Object value, Field wrappedField, Field outField) {
         String talendType = outField.getProp(TALEND6_COLUMN_TALEND_TYPE);
-        if (null == talendType || null == value) {
+        String javaClass = outField.schema().getProp(SchemaConstants.JAVA_CLASS_FLAG);
+
+        if (null == value) {
             return value;
         }
+
         // TODO(rskraba): A full list of type conversion to coerce to Talend-compatible types.
         if ("id_Short".equals(talendType)) { //$NON-NLS-1$
             return value instanceof Number ? ((Number) value).shortValue() : Short.parseShort(String.valueOf(value));
-        } else if ("id_Date".equals(talendType)) { //$NON-NLS-1$
+        } else if ("id_Date".equals(talendType) || "java.util.Date".equals(javaClass)) { //$NON-NLS-1$
             return new Date((Long) value);
         } else if ("id_Byte".equals(talendType)) { //$NON-NLS-1$
             return value instanceof Number ? ((Number) value).byteValue() : Byte.parseByte(String.valueOf(value));
