@@ -17,8 +17,9 @@ import org.talend.daikon.i18n.Translatable;
 /**
  * Something that has a name.
  *
+
  */
-public interface NamedThing extends Translatable {
+public    interface NamedThing extends Translatable {
 
     /* suffix used for i18N to compute displayName key */
     String I18N_DISPLAY_NAME_SUFFIX = ".displayName"; //$NON-NLS-1$
