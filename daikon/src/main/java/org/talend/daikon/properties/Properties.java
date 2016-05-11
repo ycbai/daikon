@@ -123,8 +123,6 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
 
     transient private boolean propsAlreadyInitialized;
 
-
-
     /**
      * Holder class for the results of a deserialization.
      */
@@ -329,7 +327,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
     public void setupLayout() {
         // left empty for subclass to override
     }
-    
+
     /**
      * Used for serialization, this will backup all the forms of every properties / sub-properties, and clear them
      */
@@ -345,7 +343,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
         forms = new ArrayList<>();
         return formsMap;
     }
-    
+
     /**
      * Used for serialization, to use after a backup, to restore all the forms
      */
@@ -362,9 +360,9 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
      */
     public String toSerialized() {
         handlePropEncryption(ENCRYPT);
-        
+
         // will clear and backup all forms / sub forms.
-        Map<Properties, List<Form>> formsMap = createFormsBackupAndClear(); 
+        Map<Properties, List<Form>> formsMap = createFormsBackupAndClear();
         String ser = null;
         try {
             ser = JsonWriter.objectToJson(this);
@@ -403,15 +401,16 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
     }
 
     /**
-     * This is called by within the execution of actions associated with {@code Properties}
-     * when the presentation of the properties needs to be updated due to some value change.
-     * The main reason for calling this is to allow the visibility of properties to be changed
-     * when values change.
+     * This is called by within the execution of actions associated with {@code Properties} when the presentation of the
+     * properties needs to be updated due to some value change. The main reason for calling this is to allow the
+     * visibility of properties to be changed when values change.
      *
      * Note: This is automatically called at startup after all of the setupLayout() calls are done.
      */
     public void refreshLayout(Form form) {
-        form.setRefreshUI(true);
+        if (form != null) {
+            form.setRefreshUI(true);
+        } // else nothing to refresh
     }
 
     public List<Form> getForms() {

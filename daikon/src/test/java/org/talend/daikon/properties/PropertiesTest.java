@@ -60,22 +60,21 @@ public class PropertiesTest {
         assertEquals("greatness", props.nestedProps.aGreatProperty.getValue());
 
     }
-    
+
     @Test
     public void testNestedSerialize() {
         TestProperties props = (TestProperties) new TestProperties("test").init();
-        
+
         String serialized = props.toSerialized();
         // check the forms of nested properties, since it should be cleared / restored during the serialize operation
         assertEquals(1, props.nestedProps.getForms().size());
         assertEquals(2, props.getForms().size());
 
-        TestProperties desProp = (TestProperties)Properties.fromSerialized(serialized, Properties.class).properties;
+        TestProperties desProp = (TestProperties) Properties.fromSerialized(serialized, Properties.class).properties;
         assertEquals(1, desProp.nestedProps.getForms().size());
         assertEquals(2, desProp.getForms().size());
 
     }
-
 
     @Test
     public void testGetProperty() {
@@ -373,6 +372,16 @@ public class PropertiesTest {
         MultipleRefProperties props = (MultipleRefProperties) new MultipleRefProperties("test").init();
         List<Form> forms = props.connection.getForms();
         assertEquals(1, forms.size());
+    }
+
+    @Test
+    public void testRefreshFormNPE() {
+        MultipleRefProperties props = (MultipleRefProperties) new MultipleRefProperties("test").init();
+        try {
+            props.refreshLayout(null);// should not throw an NPE
+        } catch (NullPointerException npe) {
+            fail("Should never throw an NPE");
+        }
     }
 
     @Test
