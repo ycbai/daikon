@@ -67,8 +67,8 @@ public class ValidationResultTest {
      */
     @Test
     public void testToString() {
-        assertEquals("ERROR UNEXPECTED_EXCEPTION",
-                new ValidationResult(new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION)).toString());
+        assertEquals("ERROR UNEXPECTED_EXCEPTION", new ValidationResult(new TalendRuntimeException(
+                CommonErrorCodes.UNEXPECTED_EXCEPTION)).toString());
     }
 
 }

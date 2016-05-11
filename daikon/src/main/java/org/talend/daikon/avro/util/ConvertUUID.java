@@ -11,7 +11,8 @@ public class ConvertUUID implements AvroConverter<UUID, String> {
 
     @Override
     public Schema getSchema() {
-        return SchemaBuilder.builder().stringBuilder().prop(SchemaConstants.JAVA_CLASS_FLAG, getDatumClass().getCanonicalName()).endString();
+        return SchemaBuilder.builder().stringBuilder().prop(SchemaConstants.JAVA_CLASS_FLAG, getDatumClass().getCanonicalName())
+                .endString();
     }
 
     @Override

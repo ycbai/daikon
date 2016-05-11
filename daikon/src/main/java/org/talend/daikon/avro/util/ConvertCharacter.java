@@ -6,9 +6,11 @@ import org.talend.daikon.avro.AvroConverter;
 import org.talend.daikon.avro.SchemaConstants;
 
 public class ConvertCharacter implements AvroConverter<Character, String> {
+
     @Override
     public Schema getSchema() {
-        return SchemaBuilder.builder().stringBuilder().prop(SchemaConstants.JAVA_CLASS_FLAG, getDatumClass().getCanonicalName()).endString();
+        return SchemaBuilder.builder().stringBuilder().prop(SchemaConstants.JAVA_CLASS_FLAG, getDatumClass().getCanonicalName())
+                .endString();
     }
 
     @Override

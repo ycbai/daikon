@@ -108,6 +108,22 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>net.revelc.code</groupId>
+				<artifactId>formatter-maven-plugin</artifactId>
+				<version>0.5.2</version>
+				<executions>
+          <execution>
+            <goals>
+              <goal>format</goal>
+            </goals>
+          </execution>
+        </executions>
+                <configuration>
+                    <configFile>/Users/sgandon/Talend/git/components_master/tooling/IDEs/eclipse/talend_formatter.xml</configFile>
+                </configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 </project>

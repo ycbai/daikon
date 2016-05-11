@@ -26,7 +26,8 @@ public class AvroRegistryTest {
     public void testBasic() {
         // Some basic cases for the AvroRegistry.
         AvroRegistry registry = new AvroRegistry();
-        assertThat(registry.inferSchema(UUID.fromString("12341234-1234-1234-1234-123412341234")), is(SchemaBuilder.builder().stringBuilder().prop(SchemaConstants.JAVA_CLASS_FLAG, UUID.class.getCanonicalName()).endString()));
+        assertThat(registry.inferSchema(UUID.fromString("12341234-1234-1234-1234-123412341234")), is(SchemaBuilder.builder()
+                .stringBuilder().prop(SchemaConstants.JAVA_CLASS_FLAG, UUID.class.getCanonicalName()).endString()));
     }
 
     @Test

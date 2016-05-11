@@ -12,11 +12,8 @@ public class ConvertInetAddress implements AvroConverter<InetAddress, byte[]> {
 
     @Override
     public Schema getSchema() {
-        return SchemaBuilder.unionOf().array()
-                .prop(SchemaConstants.JAVA_CLASS_FLAG, getDatumClass().getCanonicalName())
-                .items()
-                .fixed("Inet4").size(4)
-                .and().fixed("Inet6").size(16).endUnion();
+        return SchemaBuilder.unionOf().array().prop(SchemaConstants.JAVA_CLASS_FLAG, getDatumClass().getCanonicalName()).items()
+                .fixed("Inet4").size(4).and().fixed("Inet6").size(16).endUnion();
     }
 
     @Override

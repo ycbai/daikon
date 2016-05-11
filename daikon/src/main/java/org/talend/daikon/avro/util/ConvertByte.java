@@ -6,9 +6,11 @@ import org.talend.daikon.avro.AvroConverter;
 import org.talend.daikon.avro.SchemaConstants;
 
 public class ConvertByte implements AvroConverter<Byte, Integer> {
+
     @Override
     public Schema getSchema() {
-        return SchemaBuilder.builder().intBuilder().prop(SchemaConstants.JAVA_CLASS_FLAG, getDatumClass().getCanonicalName()).endInt();
+        return SchemaBuilder.builder().intBuilder().prop(SchemaConstants.JAVA_CLASS_FLAG, getDatumClass().getCanonicalName())
+                .endInt();
     }
 
     @Override

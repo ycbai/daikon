@@ -24,7 +24,7 @@ public class FormTest {
     @Test
     public void testNameEqualsDisplayNameWithUsualConstructor() {
         Form form = new Form(new Properties("bar") { //$NON-NLS-1$
-        }, "foo"); //$NON-NLS-1$
+                }, "foo"); //$NON-NLS-1$
         assertEquals("foo", form.getName()); //$NON-NLS-1$
         assertEquals("foo", form.getDisplayName()); //$NON-NLS-1$
     }
@@ -32,7 +32,7 @@ public class FormTest {
     @Test
     public void testGetI18NFields() {
         Form form = new Form(new Properties("bar") { //$NON-NLS-1$
-        }, "foo", null); //$NON-NLS-1$
+                }, "foo", null); //$NON-NLS-1$
         assertEquals("Ze Form DisplayName", form.getDisplayName()); //$NON-NLS-1$
         assertEquals("Ze Form Title", form.getTitle()); //$NON-NLS-1$
         assertEquals("Ze Form SubTitle", form.getSubtitle()); //$NON-NLS-1$
@@ -43,7 +43,7 @@ public class FormTest {
         String displayName = "Default Display Name"; //$NON-NLS-1$
         String subTitle = "Default SubTitle"; //$NON-NLS-1$
         Form form = new Form(new Properties("bar") { //$NON-NLS-1$
-        }, "foo", displayName); //$NON-NLS-1$
+                }, "foo", displayName); //$NON-NLS-1$
         form.setSubtitle(subTitle);
         assertEquals(displayName, form.getDisplayName());
         assertEquals("Ze Form Title", form.getTitle());
@@ -53,7 +53,7 @@ public class FormTest {
     @Test
     public void testSetVisible() {
         Form form = new Form(new Properties("bar") { //$NON-NLS-1$
-        }, "foo"); //$NON-NLS-1$
+                }, "foo"); //$NON-NLS-1$
         form.addRow(widget(newString("w1")));
         form.addRow(widget(newString("w2")));
         form.addRow(widget(newString("w3")));
@@ -73,9 +73,9 @@ public class FormTest {
     @Test
     public void testSetVisibleForNestedForms() {
         Form form = new Form(new Properties("bar") { //$NON-NLS-1$
-        }, "foo"); //$NON-NLS-1$
+                }, "foo"); //$NON-NLS-1$
         Form nestedForm = new Form(new Properties("foo") { //$NON-NLS-1$
-        }, "bar"); //$NON-NLS-1$
+                }, "bar"); //$NON-NLS-1$
         form.addRow(widget(newString("w1")));
         form.addRow(widget(nestedForm));
         nestedForm.addRow(widget(newString("w3")));

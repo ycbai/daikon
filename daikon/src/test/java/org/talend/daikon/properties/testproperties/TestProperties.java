@@ -45,8 +45,8 @@ public class TestProperties extends Properties {
 
     public Property userId = newProperty(USER_ID_PROP_NAME).setRequired(true);
 
-    public Property password = newProperty("password").setRequired(true)
-            .setFlags(EnumSet.of(Property.Flags.ENCRYPT, Property.Flags.SUPPRESS_LOGGING));
+    public Property password = newProperty("password").setRequired(true).setFlags(
+            EnumSet.of(Property.Flags.ENCRYPT, Property.Flags.SUPPRESS_LOGGING));
 
     public Property nameList = newProperty("nameList");
 

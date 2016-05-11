@@ -67,13 +67,13 @@ public class AvroTypes {
     public static boolean isSameType(Schema actual, Schema expect) {
         String expectJavaClass = expect.getProp(SchemaConstants.JAVA_CLASS_FLAG);
         String actualJavaClass = actual.getProp(SchemaConstants.JAVA_CLASS_FLAG);
-        if(actual.getType() == expect.getType()) {
+        if (actual.getType() == expect.getType()) {
             if (actualJavaClass == null) {
-                if(expectJavaClass == null) {
+                if (expectJavaClass == null) {
                     return true;
                 }
-            }else{
-                if(actualJavaClass.equals(expectJavaClass)){
+            } else {
+                if (actualJavaClass.equals(expectJavaClass)) {
                     return true;
                 }
             }

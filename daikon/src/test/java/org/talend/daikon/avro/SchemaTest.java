@@ -16,7 +16,7 @@ public class SchemaTest {
         Schema main = SchemaBuilder.record("Main").fields().name("C").type().stringType().noDefault().name("D").type()
                 .stringType().noDefault().endRecord();
 
-        Property schemaMain  = PropertyFactory.newSchema("main");
+        Property schemaMain = PropertyFactory.newSchema("main");
         schemaMain.setValue(main);
 
         String jsonMain = JsonWriter.objectToJson(schemaMain);

@@ -60,11 +60,8 @@ public class AvroUtilsTest {
     @Test
     public void testMakeFieldMap() {
 
-        Schema s = SchemaBuilder.record("test")
-                .fields()
-                .name("field1").type().booleanType().noDefault()
-                .name("field2").type().stringType().noDefault()
-                .endRecord();
+        Schema s = SchemaBuilder.record("test").fields().name("field1").type().booleanType().noDefault().name("field2").type()
+                .stringType().noDefault().endRecord();
         Map map = AvroUtils.makeFieldMap(s);
         assertEquals("field1", ((Schema.Field) map.get("field1")).name());
         assertEquals("field2", ((Schema.Field) map.get("field2")).name());
@@ -72,11 +69,8 @@ public class AvroUtilsTest {
 
     @Test
     public void testSetProperty() {
-        Schema s = SchemaBuilder.record("test")
-                .fields()
-                .name("field1").type().booleanType().noDefault()
-                .name("field2").type().stringType().noDefault()
-                .endRecord();
+        Schema s = SchemaBuilder.record("test").fields().name("field1").type().booleanType().noDefault().name("field2").type()
+                .stringType().noDefault().endRecord();
         s = AvroUtils.setProperty(s, "where", "here");
         assertThat(s.getProp("where"), is("here"));
         s = AvroUtils.setProperty(s, "where", "there");
@@ -85,11 +79,8 @@ public class AvroUtilsTest {
 
     @Test
     public void testIsIncludeAllFields() {
-        Schema s = SchemaBuilder.record("test")
-                .fields()
-                .name("field1").type().booleanType().noDefault()
-                .name("field2").type().stringType().noDefault()
-                .endRecord();
+        Schema s = SchemaBuilder.record("test").fields().name("field1").type().booleanType().noDefault().name("field2").type()
+                .stringType().noDefault().endRecord();
         assertFalse(AvroUtils.isIncludeAllFields(s));
         s = AvroUtils.setIncludeAllFields(s, true);
         assertTrue(AvroUtils.isIncludeAllFields(s));

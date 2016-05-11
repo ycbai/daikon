@@ -11,7 +11,8 @@ public class ConvertDate implements AvroConverter<Date, Long> {
 
     @Override
     public Schema getSchema() {
-        return SchemaBuilder.builder().longBuilder().prop(SchemaConstants.JAVA_CLASS_FLAG, getDatumClass().getCanonicalName()).endLong();
+        return SchemaBuilder.builder().longBuilder().prop(SchemaConstants.JAVA_CLASS_FLAG, getDatumClass().getCanonicalName())
+                .endLong();
     }
 
     @Override

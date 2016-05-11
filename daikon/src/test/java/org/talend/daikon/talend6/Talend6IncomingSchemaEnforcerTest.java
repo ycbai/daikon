@@ -200,8 +200,11 @@ public class Talend6IncomingSchemaEnforcerTest {
     @Test
     public void testTypeConversion_toDate() {
         // The expected schema after enforcement.
-        Schema talend6Schema = SchemaBuilder.builder().record("Record").fields() //
-                .name("field") //
+        Schema talend6Schema = SchemaBuilder.builder().record("Record")
+                .fields()
+                //
+                .name("field")
+                //
                 // properties
                 .prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, "id_Date")
                 .prop(Talend6SchemaConstants.TALEND6_COLUMN_PATTERN, "yyyy-MM-dd'T'HH:mm:ss'000Z'")
@@ -223,7 +226,7 @@ public class Talend6IncomingSchemaEnforcerTest {
         enforcer.put(0, new Date(1234567891011L));
         assertThat(enforcer.createIndexedRecord().get(0), is((Object) new Date(1234567891011L)));
 
-        //               2016-05-02T17:30:38.000Z
+        // 2016-05-02T17:30:38.000Z
         enforcer.put(0, "2009-02-13T23:31:31.000Z");
         // "yyyy-MM-dd'T'HH:mm:ss'000Z'"
         IndexedRecord adapted = enforcer.createIndexedRecord();

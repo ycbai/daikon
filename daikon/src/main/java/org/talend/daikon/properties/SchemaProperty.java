@@ -38,8 +38,8 @@ public class SchemaProperty extends Property implements AnyProperty {
         } else if (value instanceof String) {
             valueToSet = value;
         } else {
-            throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION,
-                    new IllegalArgumentException("value should be a String or a Schema."));
+            throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, new IllegalArgumentException(
+                    "value should be a String or a Schema."));
         }
         storedValue = valueToSet;
     }

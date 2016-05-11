@@ -11,8 +11,10 @@ public class ConvertBigDecimal implements AvroConverter<BigDecimal, String> {
 
     @Override
     public Schema getSchema() {
-        //TODO is it ok to use string type rather than logical decimal type? logical type need two parameters, precision and scale
-        return SchemaBuilder.builder().stringBuilder().prop(SchemaConstants.JAVA_CLASS_FLAG, getDatumClass().getCanonicalName()).endString();
+        // TODO is it ok to use string type rather than logical decimal type? logical type need two parameters,
+        // precision and scale
+        return SchemaBuilder.builder().stringBuilder().prop(SchemaConstants.JAVA_CLASS_FLAG, getDatumClass().getCanonicalName())
+                .endString();
     }
 
     @Override

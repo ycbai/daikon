@@ -50,8 +50,8 @@ public class AvroRegistry {
      * to the {@link #inferSchema(Object)} method.
      *
      * @param datumClass The class of the object that can be introspected to obtain an Avro {@link Schema}.
-     * @param inferrer   A function that can take an instance of the object and return the {@link Schema} that represents
-     *                   its data.
+     * @param inferrer A function that can take an instance of the object and return the {@link Schema} that represents
+     * its data.
      */
     public <DatumT> void registerSchemaInferrer(Class<DatumT> datumClass, SerializableFunction<? super DatumT, Schema> inferrer) {
         mapSchemaInferrer.put(datumClass, inferrer);
@@ -104,8 +104,8 @@ public class AvroRegistry {
 
     /**
      * Given an object, attempts to construct an Avro {@link Schema} that corresponds to it. This uses the functions
-     * provided by {@link #registerSchemaInferrer(Class, SerializableFunction)} to find the best matching schema based on the class
-     * of the incoming data.
+     * provided by {@link #registerSchemaInferrer(Class, SerializableFunction)} to find the best matching schema based
+     * on the class of the incoming data.
      * <p>
      * Classes that use this method should guarantee that the registry knows how to infer {@link Schema}s for its datum
      * classes.
@@ -144,7 +144,7 @@ public class AvroRegistry {
      *
      * @param specificClass The class of the object that should be converted.
      * @param avroConverter An instance that can convert to and from instances of the DatumT class to an Avro-compatible
-     *                      instance.
+     * instance.
      */
     public <DatumT> void registerConverter(Class<DatumT> specificClass, AvroConverter<DatumT, ?> avroConverter) {
         mapConverter.put(specificClass, avroConverter);
@@ -175,7 +175,7 @@ public class AvroRegistry {
      * Registers a reusable mechanism to obtain a {@link IndexedRecordAdapterFactory} for a specific class of object and
      * makes it available to the {@link #createAdapterFactory(Class)} method.
      *
-     * @param datumClass          The class of the object that the {@link IndexedRecordAdapterFactory} knows how to wrap.
+     * @param datumClass The class of the object that the {@link IndexedRecordAdapterFactory} knows how to wrap.
      * @param adapterFactoryClass A class that can take a datum and wrap it into a valid IndexedRecord.
      */
     protected <DatumT, AdapterFactoryT extends IndexedRecordAdapterFactory<? super DatumT, ?>> void registerAdapterFactory(
@@ -187,12 +187,12 @@ public class AvroRegistry {
      * Registers a reusable mechanism to obtain a {@link IndexedRecordAdapterFactory} for a specific class of object and
      * makes it available to the {@link #createAdapterFactory(Class)} method.
      *
-     * @param datumClass            The class of the object that the {@link IndexedRecordAdapterFactory} knows how to wrap.
+     * @param datumClass The class of the object that the {@link IndexedRecordAdapterFactory} knows how to wrap.
      * @param adapterFactoryFactory A supplier that will return a new {@link IndexedRecordAdapterFactory} for that
-     *                              object.
+     * object.
      */
     protected <T> void registerAdapterFactory(Class<T> datumClass,
-                                              SerializableSupplier<? extends IndexedRecordAdapterFactory<? super T, ?>> adapterFactoryFactory) {
+            SerializableSupplier<? extends IndexedRecordAdapterFactory<? super T, ?>> adapterFactoryFactory) {
         mapSharedAdapterFactory.put(datumClass, adapterFactoryFactory);
     }
 
@@ -209,7 +209,7 @@ public class AvroRegistry {
      */
     public <DatumT> IndexedRecordAdapterFactory<? super DatumT, ?> createAdapterFactory(Class<DatumT> datumClass) {
         // This is guaranteed to be correctly typed if it exists, because of the register methods.
-        @SuppressWarnings({"rawtypes", "unchecked"})
+        @SuppressWarnings({ "rawtypes", "unchecked" })
         Supplier<? extends IndexedRecordAdapterFactory<DatumT, ?>> adapterFactory = (Supplier) getFromClassRegistry(
                 mapSharedAdapterFactory, datumClass);
 
@@ -228,7 +228,7 @@ public class AvroRegistry {
      * If there is no exact match on the datum class, all of the super-classes are looked up then all of the interface
      * classes.
      *
-     * @param map        A map keyed on Class.
+     * @param map A map keyed on Class.
      * @param datumClass The class to look up.
      * @return The best matching value from the map, or null if none is found.
      */
@@ -265,7 +265,7 @@ public class AvroRegistry {
      * <p>
      * If a constructor with the parameter exists, it is preferred, otherwise the empty constructor is used.
      *
-     * @param cls           The class to create.
+     * @param cls The class to create.
      * @param optionalParam An optional parameter to use while finding the constructor.
      * @return An instance
      * @throws RuntimeException if any errors occurred while creating the instance.

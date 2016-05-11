@@ -242,7 +242,8 @@ public class Property extends SimpleNamedThing implements AnyProperty {
         return possibleValues;
     }
 
-    @JsonIgnore // to avoid swagger to fail because of the 2 similar following methods.
+    @JsonIgnore
+    // to avoid swagger to fail because of the 2 similar following methods.
     public Property setPossibleValues(List<?> possibleValues) {
         this.possibleValues = possibleValues;
         return this;
@@ -399,8 +400,8 @@ public class Property extends SimpleNamedThing implements AnyProperty {
      */
     @Override
     public String getDisplayName() {
-        return displayName != null ? displayName
-                : getI18nMessage(I18N_PROPERTY_PREFIX + name + NamedThing.I18N_DISPLAY_NAME_SUFFIX);
+        return displayName != null ? displayName : getI18nMessage(I18N_PROPERTY_PREFIX + name
+                + NamedThing.I18N_DISPLAY_NAME_SUFFIX);
     }
 
     /**

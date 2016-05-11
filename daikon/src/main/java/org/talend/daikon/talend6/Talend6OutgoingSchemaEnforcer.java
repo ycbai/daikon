@@ -34,8 +34,7 @@ import org.talend.daikon.avro.util.SingleColumnIndexedRecordAdapterFactory;
  * Schema constraints imposed by the Studio, including:
  * <ul>
  * <li>Coercing the types of the returned objects to *exactly* the type required by the Talend POJO.</li>
- * <li>Placing all of the unresolved columns between the wrapped schema and the output schema in the Dynamic column.
- * </li>
+ * <li>Placing all of the unresolved columns between the wrapped schema and the output schema in the Dynamic column.</li>
  * </ul>
  * <p>
  * One instance of this object can be created per outgoing schema and reused via the {@link #setWrapped(IndexedRecord)}
@@ -82,8 +81,8 @@ public class Talend6OutgoingSchemaEnforcer implements IndexedRecord, Talend6Sche
         this.byIndex = byIndex;
 
         // Find the dynamic column, if any.
-        outgoingDynamicColumn = AvroUtils.isIncludeAllFields(outgoing)
-                ? Integer.valueOf(outgoing.getProp(Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION)) : -1;
+        outgoingDynamicColumn = AvroUtils.isIncludeAllFields(outgoing) ? Integer.valueOf(outgoing
+                .getProp(Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION)) : -1;
     }
 
     /**

@@ -22,9 +22,9 @@ import org.talend.daikon.exception.TalendRuntimeException;
 public class ValidationResult {
 
     public enum Result {
-                        OK,
-                        WARNING,
-                        ERROR
+        OK,
+        WARNING,
+        ERROR
     }
 
     public static ValidationResult OK = new ValidationResult().setStatus(Result.OK);

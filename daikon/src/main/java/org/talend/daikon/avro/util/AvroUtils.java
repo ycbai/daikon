@@ -109,7 +109,7 @@ public class AvroUtils {
                         newSchema.addProp(propKey, props.get(propKey));
                     }
                 }
-            } else {//FIXME for other type
+            } else {// FIXME for other type
                 throw new RuntimeException("Not support this type " + newSchema.getType() + " now, need to implement");
             }
         } else {

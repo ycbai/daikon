@@ -44,10 +44,10 @@ import com.cedarsoftware.util.io.JsonWriter;
  * include those for desktop (Eclipse), web, and scripting. All of these will use the code defined here for their
  * construction and validation.
  * <p/>
- * All aspects of the properties are defined in a subclass of this class using the {@link Property},
- * {@Link PresentationItem}, {@link Widget}, and {@link Form} classes. In addition in cases where user interface
- * decisions are made in code, methods can be added to the subclass to influence the flow of the user interface and help
- * with validation.
+ * All aspects of the properties are defined in a subclass of this class using the {@link Property}, {@Link
+ * PresentationItem}, {@link Widget}, and {@link Form} classes. In addition in cases where user interface decisions are
+ * made in code, methods can be added to the subclass to influence the flow of the user interface and help with
+ * validation.
  * <p/>
  * Each property can be a Java type, both simple types and collections are permitted. In addition, {@code Properties}
  * classes can be composed allowing hierarchies of properties and collections of properties to be reused.
@@ -154,8 +154,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
      * @param serialized created by {@link #toSerialized()}.
      * @return a {@code Properties} object represented by the {@code serialized} value.
      */
-    public static synchronized <T extends Properties> Deserialized<T> fromSerialized(String serialized,
-            Class<T> propertiesclass) {
+    public static synchronized <T extends Properties> Deserialized<T> fromSerialized(String serialized, Class<T> propertiesclass) {
         Deserialized<T> d = new Deserialized<T>();
         d.migration = new MigrationInformationImpl();
         // this set the proper classloader for the JsonReader especially for OSGI
@@ -686,8 +685,8 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
                                     "Failed to find a proper constructor in Properties : " + otherClass.getName());
                         }
                     } else {
-                        TalendRuntimeException.unexpectedException(
-                                "Unexpected property class: " + otherProp.getClass() + " prop: " + otherProp);
+                        TalendRuntimeException.unexpectedException("Unexpected property class: " + otherProp.getClass()
+                                + " prop: " + otherProp);
                     }
                     // assign the newly created instance to the field.
                     try {
