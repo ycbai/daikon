@@ -109,8 +109,8 @@ public class TalendRuntimeException extends RuntimeException {
 
     public static void unexpectedException(String message) {
         // TODO - add some logging here
-        throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, ExceptionContext.build().put(
-                ExceptionContext.KEY_MESSAGE, message));
+        throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION,
+                ExceptionContext.build().put(ExceptionContext.KEY_MESSAGE, message));
     }
 
     /**

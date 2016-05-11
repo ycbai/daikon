@@ -37,6 +37,7 @@ public class PresentationItem extends SimpleNamedThing {
         this.formtoShow = formtoShow;
     }
 
+    @Override
     public String toString() {
         return "Presentation Item: " + getName() + " - " + getTitle();
     }

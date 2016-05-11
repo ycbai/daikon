@@ -337,8 +337,10 @@ public class Talend6OutgoingSchemaEnforcerTest {
     public void testValueConversion_toDate() {
         // The expected schema after enforcement.
         Schema talend6Schema = SchemaBuilder.builder().record("Record").fields() //
-                .name("d").prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, //
-                        "id_Date").type().longType().noDefault() //
+                .name("d")
+                .prop(Talend6SchemaConstants.TALEND6_COLUMN_TALEND_TYPE, //
+                        "id_Date")
+                .type().longType().noDefault() //
                 .endRecord();
 
         // The enforcer to test.

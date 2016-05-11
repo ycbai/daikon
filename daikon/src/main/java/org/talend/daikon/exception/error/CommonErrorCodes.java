@@ -27,8 +27,8 @@ public enum CommonErrorCodes implements ErrorCode {
     UNABLE_TO_SERIALIZE_TO_JSON(HttpServletResponse.SC_INTERNAL_SERVER_ERROR),
     UNABLE_TO_READ_CONTENT(HttpServletResponse.SC_INTERNAL_SERVER_ERROR),
     UNABLE_TO_PARSE_REQUEST(HttpServletResponse.SC_BAD_REQUEST); // 400,
-                                                                 // e.g
-                                                                 // IllegalArgumentException
+                                                                                                                                                                                                                                                                                                                                                          // e.g
+                                                                                                                                                                                                                                                                                                                                                          // IllegalArgumentException
 
     private DefaultErrorCode errorCodeDelegate;
 

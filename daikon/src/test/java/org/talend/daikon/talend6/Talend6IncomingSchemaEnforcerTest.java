@@ -200,8 +200,7 @@ public class Talend6IncomingSchemaEnforcerTest {
     @Test
     public void testTypeConversion_toDate() {
         // The expected schema after enforcement.
-        Schema talend6Schema = SchemaBuilder.builder().record("Record")
-                .fields()
+        Schema talend6Schema = SchemaBuilder.builder().record("Record").fields()
                 //
                 .name("field")
                 //

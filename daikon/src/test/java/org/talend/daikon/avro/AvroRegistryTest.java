@@ -55,8 +55,8 @@ public class AvroRegistryTest {
     @Test
     public void testAdaptorFactoryUnconvertedIndexRecords() {
         // Just create a fake object that is known to be an index record.
-        Object in = new GenericData().newRecord(null, SchemaBuilder.builder().record("testRecord").fields().name("column1")
-                .type().stringType().noDefault().endRecord());
+        Object in = new GenericData().newRecord(null, SchemaBuilder.builder().record("testRecord").fields().name("column1").type()
+                .stringType().noDefault().endRecord());
 
         // Get an adapter factory for it.
         IndexedRecordAdapterFactory<?, ?> irff = new AvroRegistry().createAdapterFactory(in.getClass());

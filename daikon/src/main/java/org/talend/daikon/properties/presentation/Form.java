@@ -289,8 +289,8 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
      */
     public void setValue(String property, Object value) {
         if (property.contains(".")) {
-            throw new IllegalArgumentException("Cannot setValue on a qualified property: '" + property
-                    + "', use the Form associated with the property.");
+            throw new IllegalArgumentException(
+                    "Cannot setValue on a qualified property: '" + property + "', use the Form associated with the property.");
         }
         NamedThing se = getProperties().getProperty(property);
         if (!(se instanceof Property)) {

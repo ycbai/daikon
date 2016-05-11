@@ -88,8 +88,8 @@ public class AvroRegistry {
      */
     private static <DatumT> void registerSharedPrimitiveClass(Class<DatumT> primitiveClass, Schema schema) {
         mapSharedConverter.put(primitiveClass, new Unconverted<>(primitiveClass, schema));
-        mapSharedAdapterFactory.put(primitiveClass, new LambdaSingleColumnIndexedRecordAdapterFactorySupplier<>(primitiveClass,
-                schema));
+        mapSharedAdapterFactory.put(primitiveClass,
+                new LambdaSingleColumnIndexedRecordAdapterFactorySupplier<>(primitiveClass, schema));
     }
 
     /**
@@ -98,8 +98,8 @@ public class AvroRegistry {
      */
     private static <DatumT> void registerSharedPrimitiveClass(Class<DatumT> primitiveClass, AvroConverter<DatumT, ?> converter) {
         mapSharedConverter.put(primitiveClass, converter);
-        mapSharedAdapterFactory.put(primitiveClass, new LambdaSingleColumnIndexedRecordAdapterFactorySupplier<>(primitiveClass,
-                converter.getSchema()));
+        mapSharedAdapterFactory.put(primitiveClass,
+                new LambdaSingleColumnIndexedRecordAdapterFactorySupplier<>(primitiveClass, converter.getSchema()));
     }
 
     /**
@@ -327,8 +327,8 @@ public class AvroRegistry {
     /**
      * Passes through an indexed record without modification.
      */
-    public static class UnconvertedIndexedRecordAdapterFactory<T extends IndexedRecord> implements
-            IndexedRecordAdapterFactory<T, IndexedRecord> {
+    public static class UnconvertedIndexedRecordAdapterFactory<T extends IndexedRecord>
+            implements IndexedRecordAdapterFactory<T, IndexedRecord> {
 
         private Schema mSchema;
 
@@ -387,8 +387,8 @@ public class AvroRegistry {
     /**
      * Java 7 implementation for a lambda SerializableSupplier.
      */
-    private static class LambdaSingleColumnIndexedRecordAdapterFactorySupplier<DatumT> implements
-            SerializableSupplier<SingleColumnIndexedRecordAdapterFactory<DatumT>> {
+    private static class LambdaSingleColumnIndexedRecordAdapterFactorySupplier<DatumT>
+            implements SerializableSupplier<SingleColumnIndexedRecordAdapterFactory<DatumT>> {
 
         /**
          * Default serial version UID.

@@ -6,15 +6,17 @@ import org.apache.avro.generic.IndexedRecord;
 /**
  * 
  */
-public interface IndexedRecordAdapterFactory<SpecificT, IndexedRecordT extends IndexedRecord> extends
-        AvroConverter<SpecificT, IndexedRecordT> {
+public interface IndexedRecordAdapterFactory<SpecificT, IndexedRecordT extends IndexedRecord>
+        extends AvroConverter<SpecificT, IndexedRecordT> {
 
     /**
      * @return the Avro Schema for the {@link IndexedRecord} that this knows how to create. This must be a Type.RECORD,
      * and might be inferred from the specific record, known in advance or unknown. If the schema is null, it should be
      * inferred from the incoming data.
      */
+
     @Override
+
     Schema getSchema();
 
     /**

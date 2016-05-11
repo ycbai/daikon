@@ -24,7 +24,9 @@ import org.talend.daikon.exception.error.ErrorCode;
  */
 public enum PropertiesErrorCode implements ErrorCode {
 
-    MISSING_I18N_TRANSLATOR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "key", //$NON-NLS-1$
+    MISSING_I18N_TRANSLATOR(
+            HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            "key", //$NON-NLS-1$
             "baseName"), //$NON-NLS-1$
     PROPERTIES_HAS_UNITIALIZED_PROPS(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "name", "field"),
     FAILED_INVOKE_METHOD(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "class", "method");

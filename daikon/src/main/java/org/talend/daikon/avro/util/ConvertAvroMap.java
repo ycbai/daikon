@@ -39,14 +39,16 @@ public class ConvertAvroMap<DatumT, AvroT> implements HasNestedAvroConverter<Map
 
     @Override
     public Map<String, DatumT> convertToDatum(Map<String, AvroT> value) {
-        return Collections.unmodifiableMap(new MappedValueMap<>(value, new ConvertAvroList.LambdaConvertToDatumFunction<>(
-                elementConverter), new ConvertAvroList.LambdaConvertToAvroFunction<>(elementConverter)));
+        return Collections
+                .unmodifiableMap(new MappedValueMap<>(value, new ConvertAvroList.LambdaConvertToDatumFunction<>(elementConverter),
+                        new ConvertAvroList.LambdaConvertToAvroFunction<>(elementConverter)));
     }
 
     @Override
     public Map<String, AvroT> convertToAvro(Map<String, DatumT> value) {
-        return Collections.unmodifiableMap(new MappedValueMap<>(value, new ConvertAvroList.LambdaConvertToAvroFunction<>(
-                elementConverter), new ConvertAvroList.LambdaConvertToDatumFunction<>(elementConverter)));
+        return Collections
+                .unmodifiableMap(new MappedValueMap<>(value, new ConvertAvroList.LambdaConvertToAvroFunction<>(elementConverter),
+                        new ConvertAvroList.LambdaConvertToDatumFunction<>(elementConverter)));
     }
 
     @Override

@@ -400,8 +400,8 @@ public class Property extends SimpleNamedThing implements AnyProperty {
      */
     @Override
     public String getDisplayName() {
-        return displayName != null ? displayName : getI18nMessage(I18N_PROPERTY_PREFIX + name
-                + NamedThing.I18N_DISPLAY_NAME_SUFFIX);
+        return displayName != null ? displayName
+                : getI18nMessage(I18N_PROPERTY_PREFIX + name + NamedThing.I18N_DISPLAY_NAME_SUFFIX);
     }
 
     /**

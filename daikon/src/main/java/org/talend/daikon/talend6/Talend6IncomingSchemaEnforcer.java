@@ -82,8 +82,8 @@ public class Talend6IncomingSchemaEnforcer implements Talend6SchemaConstants {
         this.incomingRuntimeSchema = incoming;
 
         // Find the dynamic column, if any.
-        incomingDynamicColumn = AvroUtils.isIncludeAllFields(incoming) ? Integer.valueOf(incoming
-                .getProp(Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION)) : -1;
+        incomingDynamicColumn = AvroUtils.isIncludeAllFields(incoming)
+                ? Integer.valueOf(incoming.getProp(Talend6SchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION)) : -1;
         if (incomingDynamicColumn != -1) {
             incomingRuntimeSchema = null;
             fieldsFromDynamicColumns = new ArrayList<>();
@@ -100,9 +100,8 @@ public class Talend6IncomingSchemaEnforcer implements Talend6SchemaConstants {
     /**
      * Take all of the parameters from the dynamic metadata and adapt it to a field for the runtime Schema.
      */
-    public void initDynamicColumn(String name, String dbName, String type, String dbType, int dbTypeId, int length,
-            int precision, String format, String description, boolean isKey, boolean isNullable, String refFieldName,
-            String refModuleName) {
+    public void initDynamicColumn(String name, String dbName, String type, String dbType, int dbTypeId, int length, int precision,
+            String format, String description, boolean isKey, boolean isNullable, String refFieldName, String refModuleName) {
         if (!needsInitDynamicColumns())
             return;
 
