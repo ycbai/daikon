@@ -16,7 +16,6 @@ public interface IndexedRecordAdapterFactory<SpecificT, IndexedRecordT extends I
      */
 
     @Override
-
     Schema getSchema();
 
     /**
