@@ -1,0 +1,6 @@
+rootProject.name = 'daikon-parent'
+include ':daikon'
+include ':daikon-spring'
+
+project(':daikon').projectDir = "$rootDir/daikon" as File
+project(':daikon-spring').projectDir = "$rootDir/daikon-spring" as File

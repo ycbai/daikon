@@ -1,0 +1,10 @@
+
+description = 'Daikon shared libraries for spring related classes.'
+dependencies {
+    compile group: 'org.springframework', name: 'spring-beans', version:'4.2.0.RELEASE'
+    compile group: 'org.springframework', name: 'spring-context', version:'4.2.0.RELEASE'
+    testCompile group: 'junit', name: 'junit', version:'4.11'
+    testCompile group: 'biz.aQute.bnd', name: 'biz.aQute.bnd.annotation', version:'3.0.0'
+    testCompile group: 'org.springframework', name: 'spring-test', version:'4.2.0.RELEASE'
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'1.2.5.RELEASE'
+}

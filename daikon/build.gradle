@@ -1,0 +1,15 @@
+
+description = 'Daikon main shared library'
+dependencies {
+    compile group: 'org.apache.avro', name: 'avro', version:'1.8.0'
+    compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.12'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version:'2.5.3'
+    compile group: 'commons-lang', name: 'commons-lang', version:'2.4'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version:'2.5.3'
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version:'3.1.0'
+    compile group: 'commons-codec', name: 'commons-codec', version:'1.6'
+    compile group: 'com.cedarsoftware', name: 'json-io', version:'4.4.0'
+    testCompile group: 'junit', name: 'junit', version:'4.11'
+    testCompile group: 'org.hamcrest', name: 'hamcrest-library', version:'1.3'
+    testCompile group: 'org.skyscreamer', name: 'jsonassert', version:'1.2.3'
+}

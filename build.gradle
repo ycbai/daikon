@@ -1,0 +1,27 @@
+allprojects {
+    apply plugin: 'maven'
+
+    group = 'org.talend.daikon'
+    version = '0.9.0-SNAPSHOT'
+}
+
+subprojects {
+    apply plugin: 'java'
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+
+    task packageSources(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    artifacts.archives packageSources
+    repositories {
+        mavenLocal()
+
+        maven { url "http://repo.jenkins-ci.org/public/" }
+        maven { url "http://repo.maven.apache.org/maven2" }
+    }
+
+
+}
