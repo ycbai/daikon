@@ -50,7 +50,7 @@ public class Property extends SimpleNamedThing implements AnyProperty {
         SCHEMA
     }
 
-    public static int INFINITE = -1;
+    public static final int INFINITE = -1;
 
     protected EnumSet<Flags> flags;
 
@@ -81,7 +81,7 @@ public class Property extends SimpleNamedThing implements AnyProperty {
          */
         HIDDEN;
 
-    };
+    }
 
     private Type type;
 
@@ -310,16 +310,12 @@ public class Property extends SimpleNamedThing implements AnyProperty {
         if (flags == null) {
             flags = EnumSet.of(flag);
         } else {
-            if (true) {
-                // Work around https://github.com/jdereg/json-io/issues/72
-                EnumSet<Flags> newFlags = EnumSet.of(flag);
-                newFlags.addAll(flags);
-                flags = newFlags;
-            } else {
-                // Preferred code:
-                flags.add(flag);
-            }
+            // Work around https://github.com/jdereg/json-io/issues/72
+            EnumSet<Flags> newFlags = EnumSet.of(flag);
+            newFlags.addAll(flags);
+            flags = newFlags;
         }
+
     }
 
     public void removeFlag(Flags flag) {

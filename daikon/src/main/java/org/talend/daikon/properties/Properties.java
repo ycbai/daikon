@@ -14,6 +14,7 @@ package org.talend.daikon.properties;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -220,23 +221,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
 
     private void initProperties() {
         if (!propsAlreadyInitialized) {
-            List<Field> uninitializedProperties = new ArrayList<>();
-            Field[] fields = getClass().getFields();
-            for (Field f : fields) {
-                try {
-                    if (isAPropertyType(f.getType())) {
-                        f.setAccessible(true);
-                        NamedThing se = (NamedThing) f.get(this);
-                        if (se != null) {
-                            initializeField(f, se);
-                        } else {// not yet initialized to record it
-                            uninitializedProperties.add(f);
-                        }
-                    } // else not a field that ought to be initialized
-                } catch (IllegalAccessException e) {
-                    throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
-                }
-            }
+            List<Field> uninitializedProperties = initializeFields();
             setupProperties();
             // initialize all the properties that where found and not initialized
             // they must be initalized after the setup.
@@ -260,6 +245,27 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
             }
             propsAlreadyInitialized = true;
         } // else already intialized
+    }
+
+    protected List<Field> initializeFields() {
+        List<Field> uninitializedProperties = new ArrayList<>();
+        Field[] fields = getClass().getFields();
+        for (Field f : fields) {
+            try {
+                if (isAPropertyType(f.getType())) {
+                    f.setAccessible(true);
+                    NamedThing se = (NamedThing) f.get(this);
+                    if (se != null) {
+                        initializeField(f, se);
+                    } else {// not yet initialized to record it
+                        uninitializedProperties.add(f);
+                    }
+                } // else not a field that ought to be initialized
+            } catch (IllegalAccessException e) {
+                throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
+            }
+        }
+        return uninitializedProperties;
     }
 
     /**
@@ -417,6 +423,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
     public void refreshLayout(Form form) {
         if (form != null) {
             form.setRefreshUI(true);
+
         } // else nothing to refresh
     }
 
@@ -690,7 +697,8 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
                         // A field exists in the other that's not in ours, just ignore it
                         continue;
                     }
-                } catch (Exception e) {
+                } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+                        | IllegalArgumentException | InvocationTargetException e) {
                     TalendRuntimeException.unexpectedException(e);
                 }
             }
