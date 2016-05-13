@@ -12,21 +12,17 @@
 // ============================================================================
 package org.talend.daikon.properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.cedarsoftware.util.io.JsonReader;
-import com.cedarsoftware.util.io.JsonWriter;
-import org.json.JSONWriter;
 import org.junit.Test;
 import org.talend.daikon.properties.presentation.Widget;
+
+import com.cedarsoftware.util.io.JsonReader;
+import com.cedarsoftware.util.io.JsonWriter;
 
 public class PropertyTest {
 
@@ -170,6 +166,20 @@ public class PropertyTest {
         element.addFlag(Property.Flags.ENCRYPT);
         assertTrue(element.isFlag(Property.Flags.ENCRYPT));
 
+    }
+
+    @Test
+    public void testCopyTaggedValues() {
+        Property element = new Property("element");
+        element.setTaggedValue("foo", "foo1");
+        Property element2 = new Property("element2");
+        element2.setTaggedValue("bar", "bar1");
+
+        assertEquals("foo1", element.getTaggedValue("foo"));
+        assertNotEquals("bar1", element.getTaggedValue("bar"));
+        element.copyTaggedValues(element2);
+        assertEquals("foo1", element.getTaggedValue("foo"));
+        assertEquals("bar1", element.getTaggedValue("bar"));
     }
 
 }

@@ -24,7 +24,7 @@ public class NestedProperties extends Properties {
 
     public Property aGreatProperty = newProperty(A_GREAT_PROP_NAME);
 
-    public Property anotherProp = newProperty("anotherProp");
+    public Property anotherProp = newBoolean("anotherProp");
 
     public NestedNestedProperties nestedProp = new NestedNestedProperties("nestedProp");
 
@@ -40,4 +40,9 @@ public class NestedProperties extends Properties {
         form.addRow(anotherProp);
     }
 
+    @Override
+    public void refreshLayout(Form form) {
+        // change visibility according to anotherProp value
+        form.getWidget(anotherProp.getName()).setHidden(anotherProp.getBooleanValue());
+    }
 }

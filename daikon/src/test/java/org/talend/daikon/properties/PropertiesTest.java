@@ -129,6 +129,9 @@ public class PropertiesTest {
         ((Property) props.getProperty("nestedProps.aGreatProperty")).setValue("great1");
 
         TestProperties props2 = (TestProperties) new TestProperties("test2").init();
+        assertNotEquals(1, ((Property) props2.getProperty("integer")).getIntValue());
+        assertNotEquals("User1", ((Property) props2.getProperty("userId")).getStringValue());
+        assertNotEquals("great1", ((Property) props2.getProperty("nestedProps.aGreatProperty")).getStringValue());
         props2.copyValuesFrom(props);
         assertEquals(1, ((Property) props2.getProperty("integer")).getIntValue());
         assertEquals("User1", ((Property) props2.getProperty("userId")).getStringValue());
@@ -150,6 +153,32 @@ public class PropertiesTest {
         assertEquals(1, ((Property) props2.getProperty("integer")).getIntValue());
         assertEquals("User1", ((Property) props2.getProperty("userId")).getStringValue());
         assertEquals("great1", ((Property) props2.getProperty("nestedProps.aGreatProperty")).getStringValue());
+    }
+
+    @Test
+    // TDKN-12 copyValues does not work if target has null property
+    public void testCopyValuesRefreshLayout() {
+        TestProperties props = (TestProperties) new TestProperties("props").init();
+        assertFalse(props.nestedProps.getForm(Form.MAIN).getWidget(props.nestedProps.anotherProp.getName()).isHidden());
+        TestProperties props2 = (TestProperties) new TestProperties("props2").init();
+        props2.nestedProps.anotherProp.setValue(true);
+        props.copyValuesFrom(props2);
+        assertTrue(props.nestedProps.getForm(Form.MAIN).getWidget(props.nestedProps.anotherProp.getName()).isHidden());
+    }
+
+    @Test
+    // TDKN-12 copyValues does not work if target has null property
+    public void testCopyValuesCopyTaggedValues() {
+        TestProperties props = (TestProperties) new TestProperties("props").init();
+        TestProperties props2 = (TestProperties) new TestProperties("props2").init();
+        props2.date.setTaggedValue("foo", "foo1");
+        props2.nestedProps.aGreatProperty.setTaggedValue("bar", "bar1");
+
+        assertNotEquals("foo1", props.date.getTaggedValue("foo"));
+        assertNotEquals("bar1", props.nestedProps.aGreatProperty.getTaggedValue("bar"));
+        props.copyValuesFrom(props2);
+        assertEquals("foo1", props.date.getTaggedValue("foo"));
+        assertEquals("bar1", props.nestedProps.aGreatProperty.getTaggedValue("bar"));
     }
 
     @Test

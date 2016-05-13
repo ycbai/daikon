@@ -305,11 +305,18 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
                 }
             }
             setupLayout();
-            for (Form form : getForms()) {
-                refreshLayout(form);
-            }
+            refreshAllFormsLayout();
             layoutAlreadyInitalized = true;
         } // else already initialized
+    }
+
+    /**
+     * loop on all forms to call the refreshLayout
+     */
+    protected void refreshAllFormsLayout() {
+        for (Form form : getForms()) {
+            refreshLayout(form);
+        }
     }
 
     /**
@@ -628,27 +635,35 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
     }
 
     /**
+     * same as {@link #copyValuesFrom(Properties, boolean)} with copyTaggedValues set to true.
+     */
+    public void copyValuesFrom(Properties props) {
+        copyValuesFrom(props, true);
+    }
+
+    /**
      * Copy all of the values from the specified {@link Properties} object. This includes the values from any nested
      * objects. This can be used even if the {@code Properties} objects are not the same class. Fields that are not
      * present in the this {@code Properties} object are ignored.
      * 
-     * @param props
+     * @param props pros to copy into this Properties
+     * @param if true all tagged values are copied
      */
-    public void copyValuesFrom(Properties props) {
+    public void copyValuesFrom(Properties props, boolean copyTaggedValues) {
         for (NamedThing otherProp : props.getProperties()) {
             NamedThing thisProp = getProperty(otherProp.getName());
             if (thisProp == null) {
+                // the current Property or Properties is null so we need to create a new instance
                 try {
-                    Class otherClass = otherProp.getClass();
-
+                    Class<? extends NamedThing> otherClass = otherProp.getClass();
                     if (Property.class.isAssignableFrom(otherClass)) {
-                        Constructor c = otherClass.getConstructor(String.class);
-                        thisProp = (NamedThing) c.newInstance(otherProp.getName());
+                        Constructor<? extends NamedThing> c = otherClass.getConstructor(String.class);
+                        thisProp = c.newInstance(otherProp.getName());
                     } else if (Properties.class.isAssignableFrom(otherClass)) {
                         // Look for single arg String, but an inner class will have a Properties as first arg
-                        Constructor constructors[] = otherClass.getConstructors();
-                        for (Constructor c : constructors) {
-                            Class pts[] = c.getParameterTypes();
+                        Constructor<?> constructors[] = otherClass.getConstructors();
+                        for (Constructor<?> c : constructors) {
+                            Class<?> pts[] = c.getParameterTypes();
                             if (pts.length == 1 && String.class.isAssignableFrom(pts[0])) {
                                 thisProp = (NamedThing) c.newInstance(otherProp.getName());
                                 break;
@@ -659,11 +674,15 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
                                 break;
                             }
                         }
+                        if (thisProp == null) {
+                            TalendRuntimeException.unexpectedException(
+                                    "Failed to find a proper constructor in Properties : " + otherClass.getName());
+                        }
                     } else {
                         TalendRuntimeException.unexpectedException(
                                 "Unexpected property class: " + otherProp.getClass() + " prop: " + otherProp);
                     }
-
+                    // assign the newly created instance to the field.
                     try {
                         Field f = getClass().getField(otherProp.getName());
                         f.set(this, thisProp);
@@ -675,11 +694,21 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
                     TalendRuntimeException.unexpectedException(e);
                 }
             }
+            // thisProp cannot be null here.
+            // recurse if it is a Properties
             if (otherProp instanceof Properties) {
                 ((Properties) thisProp).copyValuesFrom((Properties) otherProp);
-            } else {
+                ((Properties) thisProp).refreshAllFormsLayout();
+            } else if (otherProp instanceof Property) {
+                // copy the value
                 Object value = ((Property) otherProp).getStoredValue();
                 ((Property) thisProp).setValue(value);
+                if (copyTaggedValues) {
+                    ((Property) thisProp).copyTaggedValues((Property) otherProp);
+                }
+            } else {
+                TalendRuntimeException
+                        .unexpectedException("The property " + otherProp.getClass().getName() + " is not of the expected type.");
             }
         }
 

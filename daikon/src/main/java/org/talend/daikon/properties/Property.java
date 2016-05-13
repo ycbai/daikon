@@ -442,4 +442,11 @@ public class Property extends SimpleNamedThing implements AnyProperty {
         return ToStringIndentUtil.indentString(indent) + getName();
     }
 
+    /**
+     * copy all tagged values from the otherProp into this.
+     */
+    public void copyTaggedValues(Property otherProp) {
+        taggedValues.putAll(otherProp.taggedValues);
+    }
+
 }
