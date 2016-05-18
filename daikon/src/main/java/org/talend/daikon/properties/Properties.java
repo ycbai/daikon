@@ -654,7 +654,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
      * present in the this {@code Properties} object are ignored.
      * 
      * @param props pros to copy into this Properties
-     * @param if true all tagged values are copied
+     * @param copyTaggedValues if true all tagged values are copied
      */
     public void copyValuesFrom(Properties props, boolean copyTaggedValues) {
         for (NamedThing otherProp : props.getProperties()) {
