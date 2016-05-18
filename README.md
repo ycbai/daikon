@@ -29,6 +29,7 @@ Using the bug tracker [Talend bugtracker](http://jira.talendforge.org/) is the b
 
 Feel free to share your Talend components on [Talend Exchange](http://www.talendforge.org/exchange).
 
+For code formatting, please use the configuration file and setup for eclipse or intelliJ that you find here : https://github.com/Talend/tools/tree/tools-java-formatter/0.1.0/tools-java-formatter
 
 ## License
 
