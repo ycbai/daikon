@@ -30,6 +30,11 @@
             <name>talend-opensource-snapshot</name>
             <url>http://newbuild.talend.com:8081/nexus/content/repositories/TalendOpenSourceSnapshot/</url>
         </pluginRepository>
+        <pluginRepository>
+            <id>talend-opensource-release</id>
+            <name>talend-opensource-release</name>
+            <url>http://newbuild.talend.com:8081/nexus/content/repositories/TalendOpenSourceRelease/</url>
+        </pluginRepository>
     </pluginRepositories>
 	<distributionManagement>
 		<snapshotRepository>
