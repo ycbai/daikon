@@ -81,6 +81,7 @@
 					<version>1.6.0-SNAPSHOT</version>
 					<configuration>
 						<configFile>talend_java_eclipse_formatter.xml</configFile>
+                        <lineEnding>LF</lineEnding>
 					</configuration>
 					<dependencies>
 						<dependency>
