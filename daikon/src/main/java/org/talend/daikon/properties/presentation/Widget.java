@@ -46,9 +46,9 @@ public class Widget implements ToStringIndent {
          * Provides a means of selecting a name or name/description from a set of names, possibly arranged in a
          * hierarchy. This is to be used for a large number of names, as this has search capability.
          *
-         * The NAME_SELECTION_AREA will operate on a property whose occur max times is -1, and whose value is a
-         * {@code List<NameAndLabel>}. It will show everything on the list and then once complete will set the values of
-         * the list only to those that are selected.
+         * The NAME_SELECTION_AREA will operate on a property whose occur max times is -1, and whose possible values can be picked
+         * in {@code List<NamedThing>} and that will set the values as another {@code List<NamedThing>}. It will show everything
+         * on the list and then once complete will set the values of the list only to those that are selected.
          */
         NAME_SELECTION_AREA,
 
@@ -174,10 +174,11 @@ public class Widget implements ToStringIndent {
         } else if (content != null && content instanceof Property) {
             // Persist this with the underlying property
             Property prop = (Property) content;
-            if (hidden)
+            if (hidden) {
                 prop.addFlag(Property.Flags.HIDDEN);
-            else
+            } else {
                 prop.removeFlag(Property.Flags.HIDDEN);
+            }
         }
         return this;
     }

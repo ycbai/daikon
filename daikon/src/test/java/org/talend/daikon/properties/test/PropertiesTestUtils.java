@@ -22,6 +22,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.rules.ErrorCollector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.talend.daikon.NamedThing;
 import org.talend.daikon.properties.AnyPropertyVisitor;
 import org.talend.daikon.properties.Properties;
@@ -33,6 +35,8 @@ import org.talend.daikon.properties.service.PropertiesService;
 
 public class PropertiesTestUtils {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesTestUtils.class);
+
     public static Properties checkSerialize(Properties props, ErrorCollector errorCollector) {
         String s = props.toSerialized();
         Deserialized<Properties> d = Properties.fromSerialized(s, Properties.class);
@@ -43,13 +47,13 @@ public class PropertiesTestUtils {
         List<Form> newForms = deserProps.getForms();
         int i = 0;
         for (NamedThing prop : props.getProperties()) {
-            System.out.println(prop.getName());
+            LOGGER.debug(prop.getName());
             assertEquals(prop.getName(), newProps.get(i).getName());
             i++;
         }
         i = 0;
         for (Form form : props.getForms()) {
-            System.out.println("Form: " + form.getName());
+            LOGGER.debug("Form: " + form.getName());
             Form newForm = newForms.get(i++);
             assertEquals(form.getName(), form.getName());
             for (Widget widget : form.getWidgets()) {
@@ -58,7 +62,7 @@ public class PropertiesTestUtils {
                 if (formChild instanceof Form) {
                     name = ((Form) formChild).getProperties().getName();
                 }
-                System.out.println("  prop: " + formChild.getName() + " name to be used: " + name);
+                LOGGER.debug("  prop: " + formChild.getName() + " name to be used: " + name);
                 NamedThing newChild = newForm.getWidget(name).getContent();
                 String newName = newChild.getName();
                 if (newChild instanceof Form) {
