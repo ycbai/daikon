@@ -24,7 +24,7 @@ public class EnumProperty<T extends Enum<T>> extends Property<T> implements AnyP
     public EnumProperty(Class<T> zeEnumType, String name) {
         super(zeEnumType, name, null);
         // set the possible values accoording with all the enum types.
-        Enum<?>[] enumConstants = zeEnumType.getEnumConstants();
+        T[] enumConstants = zeEnumType.getEnumConstants();
         this.setPossibleValues(enumConstants);
 
     }

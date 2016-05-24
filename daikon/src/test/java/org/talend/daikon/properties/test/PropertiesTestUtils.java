@@ -111,6 +111,7 @@ public class PropertiesTestUtils {
 
                 @Override
                 public void visit(Property prop, Properties parent) {
+                    // check that property.getDisplay name has been translated.
                     errorCollector.checkThat(
                             "property [" + parent.getClass().getCanonicalName() + "#" + prop.getName()
                                     + "] should have a translated message key [property." + prop.getName()

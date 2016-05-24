@@ -773,7 +773,7 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
 
     @Override
     public String getDisplayName() {
-        return getI18nMessage("properties" + (getName() == null ? getName() : "") + ".displayName");
+        return getI18nMessage("properties." + (getName() == null ? getName() : "") + ".displayName");
     }
 
     @Override

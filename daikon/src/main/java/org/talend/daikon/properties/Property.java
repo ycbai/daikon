@@ -15,6 +15,7 @@ package org.talend.daikon.properties;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Property<T> extends SimpleNamedThing implements AnyProperty {
 
     private static final String I18N_PROPERTY_PREFIX = "property."; //$NON-NLS-1$
+
+    public static final String I18N_PROPERTY_POSSBILE_VALUE_PREFIX = "property.possiblevalue."; //$NON-NLS-1$
 
     public static final int INFINITE = -1;
 
@@ -82,7 +85,7 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
 
     private boolean nullable;
 
-    private List<?> possibleValues;
+    private List<T> possibleValues;
 
     protected List<Property<?>> children = new ArrayList<>();
 
@@ -238,18 +241,18 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
         return this;
     }
 
-    public List<?> getPossibleValues() {
-        return possibleValues;
+    public List<T> getPossibleValues() {
+        return possibleValues == null ? (List<T>) Collections.emptyList() : possibleValues;
     }
 
     @JsonIgnore
     // to avoid swagger to fail because of the 2 similar following methods.
-    public Property<T> setPossibleValues(List<?> possibleValues) {
+    public Property<T> setPossibleValues(List<T> possibleValues) {
         this.possibleValues = possibleValues;
         return this;
     }
 
-    public Property<T> setPossibleValues(Object... values) {
+    public Property<T> setPossibleValues(T... values) {
         this.possibleValues = Arrays.asList(values);
         return this;
     }
@@ -375,6 +378,26 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
     public String getDisplayName() {
         return displayName != null ? displayName
                 : getI18nMessage(I18N_PROPERTY_PREFIX + name + NamedThing.I18N_DISPLAY_NAME_SUFFIX);
+    }
+
+    /**
+     * return a i18n String for a given possible value. It will automatically look for the key
+     * {@value Property#I18N_PROPERTY_PREFIX}.possibleValue.toString().
+     * {@value NamedThing#I18N_DISPLAY_NAME_SUFFIX}. if the key is not found it returns the possibleValue.toString().
+     * If the possibleValue is null it returns the string "null";
+     */
+    public String getPossibleValuesDisplayName(T possibleValue) {
+        if (possibleValue != null) {
+            String i18nMessage = getI18nMessage(
+                    I18N_PROPERTY_POSSBILE_VALUE_PREFIX + possibleValue.toString() + NamedThing.I18N_DISPLAY_NAME_SUFFIX);
+            if (i18nMessage.endsWith(NamedThing.I18N_DISPLAY_NAME_SUFFIX)) {
+                return possibleValue.toString();
+            } else {
+                return i18nMessage;
+            }
+        } else {
+            return "null";
+        }
     }
 
     /**
