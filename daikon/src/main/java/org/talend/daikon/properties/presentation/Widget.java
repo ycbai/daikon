@@ -88,7 +88,12 @@ public class Widget implements ToStringIndent {
         /*
          * a File widget.
          */
-        FILE
+        FILE,
+        /**
+         * Tell the client that the property possible values ({@link Property#getPossibleValues()} must be used as
+         * unique choice for the value of the property.
+         **/
+        ENUMERATION
 
     }
 

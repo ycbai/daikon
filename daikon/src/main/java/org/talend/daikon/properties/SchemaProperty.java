@@ -13,35 +13,28 @@
 package org.talend.daikon.properties;
 
 import org.apache.avro.Schema;
-import org.talend.daikon.exception.TalendRuntimeException;
-import org.talend.daikon.exception.error.CommonErrorCodes;
+import org.apache.commons.lang3.reflect.TypeLiteral;
 
 /**
  * Schema Property that get and set an Avro Schema but store a String internally for serialization optimization. The set
  * Value accepts both Schema and json string for schema. The evaluator is also called with the Schema instance.
  */
-public class SchemaProperty extends Property implements AnyProperty {
+public class SchemaProperty extends Property<Schema> implements AnyProperty {
 
     public SchemaProperty(String name) {
-        super(Type.SCHEMA, name);
+        this(name, null);
     }
 
     public SchemaProperty(String name, String title) {
-        super(Type.SCHEMA, name, title);
+        super(new TypeLiteral<Schema>() {// empty on purpose
+        }, name, title);
     }
 
     @Override
-    public void setValue(Object value) {
-        Object valueToSet = value;
-        if (value != null && value instanceof Schema) {
-            valueToSet = value.toString();
-        } else if (value instanceof String) {
-            valueToSet = value;
-        } else {
-            throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION,
-                    new IllegalArgumentException("value should be a String or a Schema."));
-        }
-        storedValue = valueToSet;
+    public Property<Schema> setValue(Schema value) {
+        // convert to string to optimize serialization
+        storedValue = (value == null ? null : value.toString());
+        return this;
     }
 
     /**
@@ -51,8 +44,8 @@ public class SchemaProperty extends Property implements AnyProperty {
      * 
      */
     @Override
-    public Object getValue() {
-        Object returnValue = null;
+    public Schema getValue() {
+        Schema returnValue = null;
         if (storedValue != null) {
             returnValue = new Schema.Parser().parse(storedValue.toString());
             if (propertyValueEvaluator != null) {
