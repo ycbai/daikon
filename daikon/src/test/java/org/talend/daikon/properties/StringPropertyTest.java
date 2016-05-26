@@ -16,6 +16,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 import org.talend.daikon.NamedThing;
@@ -34,7 +35,7 @@ public class StringPropertyTest {
         namedThings.add(new SimpleNamedThing("bar", "ba r"));
         namedThings.add(new SimpleNamedThing("a null", null));
         stringProperty.setPossibleNamedThingValues(namedThings);
-        assertThat(stringProperty.getPossibleValues(), contains("foo", "bar", "a null"));
+        assertThat((List<String>) stringProperty.getPossibleValues(), contains("foo", "bar", "a null"));
         assertEquals("fo o", stringProperty.getPossibleValuesDisplayName("foo"));
         assertEquals("ba r", stringProperty.getPossibleValuesDisplayName("bar"));
         assertEquals("null", stringProperty.getPossibleValuesDisplayName("a null"));

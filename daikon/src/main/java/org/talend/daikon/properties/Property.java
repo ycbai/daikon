@@ -85,7 +85,7 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
 
     private boolean nullable;
 
-    private List<T> possibleValues;
+    private List<?> possibleValues;
 
     protected List<Property<?>> children = new ArrayList<>();
 
@@ -241,13 +241,19 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
         return this;
     }
 
-    public List<T> getPossibleValues() {
+    /**
+     * return a list of possible values for this property. If the property is a simple type or an enum this will
+     * return a list of element with the same type as the Property. But for convinience if this Property is a collection type such
+     * as Map<T> this shall be used to simply return a list of T and not a List<Map<T>>. This will not be enforced at
+     * all, just a convention.
+     */
+    public List<?> getPossibleValues() {
         return possibleValues == null ? (List<T>) Collections.emptyList() : possibleValues;
     }
 
     @JsonIgnore
     // to avoid swagger to fail because of the 2 similar following methods.
-    public Property<T> setPossibleValues(List<T> possibleValues) {
+    public Property<T> setPossibleValues(List<?> possibleValues) {
         this.possibleValues = possibleValues;
         return this;
     }
