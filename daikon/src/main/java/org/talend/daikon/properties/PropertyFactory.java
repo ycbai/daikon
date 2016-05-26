@@ -22,20 +22,19 @@ import org.apache.commons.lang3.reflect.TypeLiteral;
  */
 public class PropertyFactory {
 
-    public static Property<String> newProperty(String name) {
-        return newProperty(name, null);
+    private PropertyFactory() {
     }
 
-    public static Property<String> newProperty(String name, String title) {
-        return new Property<>(String.class, name, title);
+    public static StringProperty newProperty(String name) {
+        return newString(name);
     }
 
-    public static Property<String> newString(String name) {
-        return newProperty(name);
+    public static StringProperty newString(String name) {
+        return new StringProperty(name);
     }
 
-    public static Property<String> newString(String name, String initialValue) {
-        Property<String> property = newString(name);
+    public static StringProperty newString(String name, String initialValue) {
+        StringProperty property = newString(name);
         property.setValue(initialValue);
         return property;
     }

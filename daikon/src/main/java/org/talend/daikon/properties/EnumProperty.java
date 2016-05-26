@@ -19,7 +19,7 @@ import org.talend.daikon.exception.TalendRuntimeException;
 /**
  * Specifc property for enums
  */
-public class EnumProperty<T extends Enum<T>> extends Property<T> implements AnyProperty {
+public class EnumProperty<T extends Enum<T>> extends Property<T> {
 
     public EnumProperty(Class<T> zeEnumType, String name) {
         super(zeEnumType, name, null);
@@ -29,9 +29,12 @@ public class EnumProperty<T extends Enum<T>> extends Property<T> implements AnyP
 
     }
 
-    // this is used for deserialization
-    EnumProperty(String zeEnumTypeStr, String name) {
-        super(zeEnumTypeStr, name);
+    /**
+     * this is package protected because this constructor should only be used when copying a Property at runtime, so it
+     * does not need to be typed.
+     */
+    EnumProperty(String type, String name) {
+        super(type, name);
     }
 
     @SuppressWarnings("unchecked")

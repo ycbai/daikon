@@ -17,7 +17,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.util.Date;
-import java.util.List;
 
 import org.apache.commons.lang3.reflect.TypeLiteral;
 import org.apache.commons.lang3.reflect.TypeUtils;
@@ -32,16 +31,6 @@ public class PropertyFactoryTest {
         assertNull(element.getValue());
         assertNull(element.getTitle());
         assertEquals(TypeUtils.toString(String.class), element.getType());
-    }
-
-    @Test
-    public void testNewProperty_WithTtitle() {
-        Property<String> element = PropertyFactory.newProperty("testProperty", "title");
-        assertEquals("testProperty", element.getName());
-        assertNull(element.getValue());
-        assertEquals("title", element.getTitle());
-        assertEquals(TypeUtils.toString(String.class), element.getType());
-
     }
 
     @Test
@@ -211,7 +200,7 @@ public class PropertyFactoryTest {
     public void testNewEnum() {
         Property<Foo> element = PropertyFactory.newEnum("testProperty", Foo.class);
         assertEquals("testProperty", element.getName());
-        assertThat((List<Foo>) element.getPossibleValues(), contains(Foo.foo, Foo.bar, Foo.foobar));
+        assertThat(element.getPossibleValues(), contains(Foo.foo, Foo.bar, Foo.foobar));
         assertNull(element.getTitle());
         assertEquals(TypeUtils.toString(Foo.class), element.getType());
         element.setValue(Foo.foo);

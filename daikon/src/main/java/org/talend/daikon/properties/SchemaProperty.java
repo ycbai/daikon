@@ -13,21 +13,35 @@
 package org.talend.daikon.properties;
 
 import org.apache.avro.Schema;
-import org.apache.commons.lang3.reflect.TypeLiteral;
 
 /**
  * Schema Property that get and set an Avro Schema but store a String internally for serialization optimization. The set
  * Value accepts both Schema and json string for schema. The evaluator is also called with the Schema instance.
+ * this is not only for optimization, because json-io fails to deserialize the avro schema here is the explanation.
+ * 1. Properties.fromSerialized() tries to deserialize component properties instance from JSON string.
+ * It uses Json-io library.<br>
+ * 2. During deserialization Json-io library tries to create instance of Schema$RecordSchema.<br>
+ * 3. Schema$RecordSchema has 2 constructors<br>
+ * RecordSchema(Name name, String doc, boolean isError)<br>
+ * RecordSchema(Name name, String doc, boolean isError, List<Field> fields)<br>
+ * 4. Json-io passes default values for primitives and null for objects as arguments:<br>
+ * RecordSchema(null, null, false)<br>
+ * RecordSchema(null, null, false, null)<br>
+ * 5. Some exception is thrown in both constructors.<br>
+ * 6. Json-io can't create instance and throws its own exception.<br>
  */
-public class SchemaProperty extends Property<Schema> implements AnyProperty {
+public class SchemaProperty extends Property<Schema> {
 
     public SchemaProperty(String name) {
-        this(name, null);
+        super(Schema.class, name);
     }
 
-    public SchemaProperty(String name, String title) {
-        super(new TypeLiteral<Schema>() {// empty on purpose
-        }, name, title);
+    /**
+     * this is package protected because this constructor should only be used when copying a Property at runtime, so it
+     * does not need to be typed.
+     */
+    SchemaProperty(String type, String name) {
+        super(type, name);
     }
 
     @Override
@@ -39,7 +53,7 @@ public class SchemaProperty extends Property<Schema> implements AnyProperty {
 
     /**
      * @return the value of the property. This value may not be the one Stored with setValue(), it may be evaluated with
-     * {@link PropertyValueEvaluator}.
+     *         {@link PropertyValueEvaluator}.
      * 
      * 
      */
