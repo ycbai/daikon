@@ -395,13 +395,13 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
      * {@value NamedThing#I18N_DISPLAY_NAME_SUFFIX}. if the key is not found it returns the possibleValue.toString().
      * 
      * @return a I18n value or possibleValue.toString if the value is not found.
-     * @exception TalendRuntimeException with {@link CommonErrorCodes#WRONG_ARGUMENT} if the possible value does not belong to
+     * @exception TalendRuntimeException with {@link CommonErrorCodes#UNEXPECTED_ARGUMENT} if the possible value does not belong to
      *                possible values
      */
     public String getPossibleValuesDisplayName(Object possibleValue) {
         // first check that the possibleValue is part of the possible values
         if (!isAPossibleValue(possibleValue)) {
-            throw new TalendRuntimeException(CommonErrorCodes.WRONG_ARGUMENT,
+            throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_ARGUMENT,
                     ExceptionContext.build().put("argument", "possibleValues").put("value", possibleValue));
         }
         if (possibleValue != null) {

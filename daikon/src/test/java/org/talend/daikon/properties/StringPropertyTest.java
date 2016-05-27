@@ -44,8 +44,9 @@ public class StringPropertyTest {
         // test that with unknown value, an execption is thrown
         try {
             stringProperty.getPossibleValuesDisplayName("not existing value");
+            fail("exception should have been thrown.");
         } catch (TalendRuntimeException e) {
-            assertEquals(CommonErrorCodes.WRONG_ARGUMENT, e.getCode());
+            assertEquals(CommonErrorCodes.UNEXPECTED_ARGUMENT, e.getCode());
         }
     }
 

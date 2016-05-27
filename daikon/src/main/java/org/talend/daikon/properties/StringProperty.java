@@ -68,7 +68,7 @@ public class StringProperty extends Property<String> {
         String displayName = possibleValue == null ? "null" : possibleValue.toString();
         // first check that the possibleValue is part of the possible values
         if (!isAPossibleValue(possibleValue)) {
-            throw new TalendRuntimeException(CommonErrorCodes.WRONG_ARGUMENT,
+            throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_ARGUMENT,
                     ExceptionContext.build().put("argument", "possibleValues").put("value", possibleValue));
         }
         // look for the named thing named possibleValue and return it's display name if not null

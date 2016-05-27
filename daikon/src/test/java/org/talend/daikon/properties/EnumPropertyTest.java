@@ -18,8 +18,21 @@ import static org.junit.Assert.*;
 import java.util.List;
 
 import org.junit.Test;
+import org.talend.daikon.exception.TalendRuntimeException;
+import org.talend.daikon.exception.error.CommonErrorCodes;
 
 public class EnumPropertyTest {
+
+    private final class EnumPropForI18NTest extends EnumProperty {
+
+        /**
+         * @param zeEnumType
+         * @param name
+         */
+        private EnumPropForI18NTest(Class zeEnumType, String name) {
+            super(zeEnumType, name);
+        }
+    }
 
     public enum TestEnum {
         FOO,
@@ -54,6 +67,20 @@ public class EnumPropertyTest {
         });
         enumProperty.setStoredValue("FOO");
         assertEquals(TestEnum.FOO, enumProperty.getValue());
+    }
+
+    @Test
+    public void testI18nForEnums() {
+        EnumProperty<TestEnum> enumProperty = new EnumPropForI18NTest(TestEnum.class, "enumProperty");
+        assertEquals("fo o", enumProperty.getPossibleValuesDisplayName(TestEnum.FOO));
+        assertEquals("ba r", enumProperty.getPossibleValuesDisplayName(TestEnum.BAR));
+        assertEquals("fooba r", enumProperty.getPossibleValuesDisplayName(TestEnum.FOOBAR));
+        try {
+            enumProperty.getPossibleValuesDisplayName("I am your father");
+            fail("exception should have been thrown.");
+        } catch (TalendRuntimeException e) {
+            assertEquals(CommonErrorCodes.UNEXPECTED_ARGUMENT, e.getCode());
+        }
     }
 
 }
