@@ -25,6 +25,9 @@ import org.apache.commons.lang3.reflect.TypeLiteral;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.talend.daikon.NamedThing;
 import org.talend.daikon.SimpleNamedThing;
+import org.talend.daikon.exception.ExceptionContext;
+import org.talend.daikon.exception.TalendRuntimeException;
+import org.talend.daikon.exception.error.CommonErrorCodes;
 import org.talend.daikon.strings.ToStringIndentUtil;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -258,7 +261,7 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
         return this;
     }
 
-    public Property<T> setPossibleValues(T... values) {
+    public Property<T> setPossibleValues(Object... values) {
         this.possibleValues = Arrays.asList(values);
         return this;
     }
@@ -390,9 +393,17 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
      * return a i18n String for a given possible value. It will automatically look for the key
      * {@value Property#I18N_PROPERTY_PREFIX}.possibleValue.toString().
      * {@value NamedThing#I18N_DISPLAY_NAME_SUFFIX}. if the key is not found it returns the possibleValue.toString().
-     * If the possibleValue is null it returns the string "null";
+     * 
+     * @return a I18n value or possibleValue.toString if the value is not found.
+     * @exception TalendRuntimeException with {@link CommonErrorCodes#WRONG_ARGUMENT} if the possible value does not belong to
+     *                possible values
      */
-    public String getPossibleValuesDisplayName(T possibleValue) {
+    public String getPossibleValuesDisplayName(Object possibleValue) {
+        // first check that the possibleValue is part of the possible values
+        if (!isAPossibleValue(possibleValue)) {
+            throw new TalendRuntimeException(CommonErrorCodes.WRONG_ARGUMENT,
+                    ExceptionContext.build().put("argument", "possibleValues").put("value", possibleValue));
+        }
         if (possibleValue != null) {
             String i18nMessage = getI18nMessage(
                     I18N_PROPERTY_POSSBILE_VALUE_PREFIX + possibleValue.toString() + NamedThing.I18N_DISPLAY_NAME_SUFFIX);
@@ -404,6 +415,13 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
         } else {
             return "null";
         }
+    }
+
+    protected boolean isAPossibleValue(Object possibleValue) {
+        if (getPossibleValues() != null) {
+            return getPossibleValues().contains(possibleValue);
+        } // no possible values so this should not be called, return false.
+        return false;
     }
 
     /**

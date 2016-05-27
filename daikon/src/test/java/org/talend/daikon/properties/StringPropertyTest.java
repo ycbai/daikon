@@ -21,6 +21,8 @@ import java.util.List;
 import org.junit.Test;
 import org.talend.daikon.NamedThing;
 import org.talend.daikon.SimpleNamedThing;
+import org.talend.daikon.exception.TalendRuntimeException;
+import org.talend.daikon.exception.error.CommonErrorCodes;
 
 public class StringPropertyTest {
 
@@ -38,6 +40,24 @@ public class StringPropertyTest {
         assertThat((List<String>) stringProperty.getPossibleValues(), contains("foo", "bar", "a null"));
         assertEquals("fo o", stringProperty.getPossibleValuesDisplayName("foo"));
         assertEquals("ba r", stringProperty.getPossibleValuesDisplayName("bar"));
-        assertEquals("null", stringProperty.getPossibleValuesDisplayName("a null"));
+        assertEquals(null, stringProperty.getPossibleValuesDisplayName("a null"));
+        // test that with unknown value, an execption is thrown
+        try {
+            stringProperty.getPossibleValuesDisplayName("not existing value");
+        } catch (TalendRuntimeException e) {
+            assertEquals(CommonErrorCodes.WRONG_ARGUMENT, e.getCode());
+        }
     }
+
+    @Test
+    public void testSetPossibleValuesNotNamedNamedThing() {
+        StringProperty stringProperty = new StringProperty("foo") {// in order to have i18n related to this class
+        };
+        stringProperty.setPossibleValues("possible.value");
+        assertEquals("possible.value", stringProperty.getPossibleValuesDisplayName("possible.value"));
+        stringProperty.setPossibleValues("possible.value.2");
+        assertEquals("possible value 2 i18n", stringProperty.getPossibleValuesDisplayName("possible.value.2"));
+
+    }
+
 }

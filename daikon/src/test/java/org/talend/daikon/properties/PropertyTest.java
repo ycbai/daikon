@@ -169,6 +169,17 @@ public class PropertyTest {
     }
 
     @Test
+    public void testSetPossibleValuesNotNamedNamedThing() {
+        StringProperty stringProperty = new StringProperty("foo") {// in order to have i18n related to this class
+        };
+        stringProperty.setPossibleValues("possible.value");
+        assertEquals("possible.value", stringProperty.getPossibleValuesDisplayName("possible.value"));
+        stringProperty.setPossibleValues("possible.value.3");
+        assertEquals("possible value 3 i18n", stringProperty.getPossibleValuesDisplayName("possible.value.3"));
+
+    }
+
+    @Test
     public void testType() {
         Property foo = new Property<Integer>(Integer.class, "foo");
         foo.setValue("bar");
