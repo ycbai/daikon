@@ -23,6 +23,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.talend.daikon.NamedThing;
+import org.talend.daikon.properties.Properties.Deserialized;
 import org.talend.daikon.properties.presentation.Form;
 import org.talend.daikon.properties.test.PropertiesTestUtils;
 import org.talend.daikon.properties.testproperties.PropertiesWithDefinedI18N;
@@ -44,6 +45,40 @@ public class PropertiesTest {
          * @param name
          */
         private StringListProperties(String name) {
+            super(name);
+        }
+    }
+
+    private final class AnotherNestedProperties extends Properties {
+
+        public StringProperty stringProp = PropertyFactory.newProperty("stringProp");
+
+        /**
+         * 
+         * @param name
+         */
+        private AnotherNestedProperties(String name) {
+            super(name);
+        }
+
+        @Override
+        public void setupLayout() {
+            super.setupLayout();
+            new Form(this, Form.MAIN);
+        }
+    }
+
+    private final class With2NestedProperties extends Properties {
+
+        public final AnotherNestedProperties nestProp1 = new AnotherNestedProperties("nestProp1");
+
+        public final AnotherNestedProperties nestProp2 = new AnotherNestedProperties("nestProp2");
+
+        /**
+         * 
+         * @param name
+         */
+        private With2NestedProperties(String name) {
             super(name);
         }
     }
@@ -102,7 +137,7 @@ public class PropertiesTest {
         assertEquals(1, props.nestedProps.getForms().size());
         assertEquals(2, props.getForms().size());
 
-        TestProperties desProp = (TestProperties) Properties.fromSerialized(serialized, Properties.class).properties;
+        TestProperties desProp = Properties.fromSerialized(serialized, TestProperties.class).properties;
         assertEquals(1, desProp.nestedProps.getForms().size());
         assertEquals(2, desProp.getForms().size());
 
@@ -115,32 +150,6 @@ public class PropertiesTest {
         assertEquals("integer", props.getProperty("integer").getName());
         assertEquals("aGreatProperty", props.getProperty("nestedProps.aGreatProperty").getName());
     }
-
-    // @Test
-    // public void testGetValues() {
-    // Property<Integer> prop = new Property<Integer>(Integer.class,"");
-    // // integer
-    // prop.setValue(1000);
-    // assertEquals(1000, prop.getValue());
-    // prop.setValue("1000");
-    // assertEquals(1000, prop.getValue());
-    // prop.setValue(null);
-    // assertEquals(0, prop.getIntValue());
-    // // String
-    // prop.setValue("a String");
-    // assertEquals("a String", prop.getStringValue());
-    // prop.setValue(null);
-    // assertEquals(null, prop.getStringValue());
-    // // Boolean
-    // prop.setValue(true);
-    // assertEquals(true, prop.getBooleanValue());
-    // prop.setValue(false);
-    // assertEquals(false, prop.getBooleanValue());
-    // prop.setValue(null);
-    // assertEquals(false, prop.getBooleanValue());
-    // prop.setValue("Any Obj");
-    // assertEquals(false, prop.getBooleanValue());
-    // }
 
     @Test
     public void testFindForm() {
@@ -505,6 +514,19 @@ public class PropertiesTest {
         TestProperties props = (TestProperties) new TestProperties("test").init();
         String javaCode = PropertiesTestUtils.generatedNestedComponentCompatibilitiesJavaCode(props);
         System.out.println(javaCode);
+    }
+
+    @Test
+    public void testFormNotNullAfterSerialized() {
+        AnotherNestedProperties props = (AnotherNestedProperties) new AnotherNestedProperties("test").init();
+        assertNotNull(props.getForm(Form.MAIN));
+        String serialized = props.toSerialized();
+        assertNotNull(props.getForm(Form.MAIN));
+        // check that form are setup after Serialization
+        Deserialized<AnotherNestedProperties> fromSerialized = Properties.fromSerialized(serialized,
+                AnotherNestedProperties.class);
+        assertNotNull(fromSerialized.properties.getForm(Form.MAIN));
+
     }
 
 }
