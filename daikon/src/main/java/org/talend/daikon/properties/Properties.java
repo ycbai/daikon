@@ -14,13 +14,8 @@ package org.talend.daikon.properties;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.talend.daikon.NamedThing;
 import org.talend.daikon.exception.ExceptionContext;
@@ -37,7 +32,6 @@ import org.talend.daikon.strings.ToStringIndentUtil;
 
 import com.cedarsoftware.util.io.JsonReader;
 import com.cedarsoftware.util.io.JsonWriter;
-import com.cedarsoftware.util.io.MetaUtils;
 
 /**
  * The {@code Properties} class contains the definitions of the properties associated with a component. These
@@ -386,20 +380,6 @@ public abstract class Properties extends TranslatableImpl implements AnyProperty
         } finally {
             handlePropEncryption(!ENCRYPT);
         }
-    }
-
-    private Map<?, List<String>> getPropertiesSerializableFields() {
-        Map<String, Field> deepDeclaredFields = MetaUtils.getDeepDeclaredFields(Properties.class);
-        // copying the set but remove the form named field and the transient fields.
-        Set<Entry<String, Field>> entrySet = deepDeclaredFields.entrySet();
-        List<String> fieldsNameList = new ArrayList<>(entrySet.size());
-        for (Entry<String, Field> entry : entrySet) {
-            if (!"forms".equals(entry.getKey()) && !Modifier.isTransient(entry.getValue().getModifiers())) {
-                fieldsNameList.add(entry.getKey());
-            }
-        }
-        fieldsNameList.remove("forms");
-        return Collections.singletonMap(Properties.class, fieldsNameList);
     }
 
     protected void handlePropEncryption(final boolean encrypt) {
