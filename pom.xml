@@ -24,6 +24,9 @@
 		<module>daikon</module>
 		<module>daikon-spring</module>
 	</modules>
+	<scm>
+		<connection>scm:git:https://github.com/Talend/daikon.git</connection>
+	</scm>
 	<pluginRepositories>
         <pluginRepository>
             <id>talend-opensource-snapshot</id>
