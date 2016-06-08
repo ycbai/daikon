@@ -15,19 +15,19 @@ package org.talend.daikon.properties;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.talend.daikon.NamedThing;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.exception.error.CommonErrorCodes;
-import org.talend.daikon.i18n.I18nMessages;
 import org.talend.daikon.i18n.TranslatableImpl;
 import org.talend.daikon.properties.error.PropertiesErrorCode;
 import org.talend.daikon.properties.presentation.Form;
-import org.talend.daikon.properties.presentation.Widget;
 import org.talend.daikon.properties.property.Property;
-import org.talend.daikon.properties.property.PropertyFactory;
 import org.talend.daikon.properties.property.PropertyValueEvaluator;
 import org.talend.daikon.security.CryptoHelper;
 import org.talend.daikon.strings.ToStringIndent;
@@ -43,7 +43,7 @@ public class PropertiesImpl extends TranslatableImpl implements Properties, AnyP
 
     private String name;
 
-    transient private List<Form> forms = new ArrayList<>();
+    private List<Form> forms = new ArrayList<>();
 
     ValidationResult validationResult;
 
@@ -234,9 +234,14 @@ public class PropertiesImpl extends TranslatableImpl implements Properties, AnyP
     @Override
     public String toSerialized() {
         handlePropEncryption(ENCRYPT);
-
+        // remove form from serialization for storing the properties
+        Map<Class<?>, List<String>> fieldBlackLists = new HashMap<>();
+        List<String> fields = new ArrayList<>();
+        fields.add("forms");
+        fieldBlackLists.put(PropertiesImpl.class, fields);
         try {
-            return JsonWriter.objectToJson(this);
+            return JsonWriter.objectToJson(this,
+                    Collections.singletonMap(JsonWriter.FIELD_NAME_BLACK_LIST, (Object) fieldBlackLists));
         } finally {
             handlePropEncryption(!ENCRYPT);
         }
