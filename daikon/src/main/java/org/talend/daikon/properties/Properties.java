@@ -22,6 +22,8 @@ import org.talend.daikon.properties.presentation.Widget;
 import org.talend.daikon.properties.property.Property;
 import org.talend.daikon.properties.property.PropertyFactory;
 import org.talend.daikon.properties.property.PropertyValueEvaluator;
+import org.talend.daikon.serialize.PostDeserializeSetup;
+import org.talend.daikon.serialize.SerializerDeserializer;
 import org.talend.daikon.strings.ToStringIndent;
 
 /**
@@ -32,85 +34,74 @@ import org.talend.daikon.strings.ToStringIndent;
  * include those for desktop (Eclipse), web, and scripting. All of these will use the code defined here for their
  * construction and validation.
  * <p/>
- * All aspects of the properties are defined in a subclass of this class using the {@link Property},
- * {@Link PresentationItem}, {@link Widget}, and {@link Form} classes. In addition in cases where user interface
- * decisions are made in code, methods can be added to the subclass to influence the flow of the user interface and help
- * with validation.
+ * All aspects of the properties are defined in a subclass of this class using the {@link Property}, {@Link
+ * PresentationItem}, {@link Widget}, and {@link Form} classes. In addition in cases where user interface decisions are made in
+ * code, methods can be added to the subclass to influence the flow of the user interface and help with validation.
  * <p/>
- * Each property can be a Java type, both simple types and collections are permitted. In addition, {@code Properties}
- * classes can be composed allowing hierarchies of properties and collections of properties to be reused.
+ * Each property can be a Java type, both simple types and collections are permitted. In addition, {@code Properties} classes can
+ * be composed allowing hierarchies of properties and collections of properties to be reused.
  * <p/>
- * A property is defined using a field in a subclass of this class. Each property field is initialized with one of the
- * following:
+ * A property is defined using a field in a subclass of this class. Each property field is initialized with one of the following:
  * <ol>
- * <li>For a single property, a {@link Property} object, usually using a static method from the {@link PropertyFactory}.
- * </li>
+ * <li>For a single property, a {@link Property} object, usually using a static method from the {@link PropertyFactory}.</li>
  * <li>For a reference to other properties, a subclass of {@code Properties}.</li>
- * <li>For a presentation item that's not actually a property, but is necessary for the user interface, a
- * {@link PresentationItem}.</li>
+ * <li>For a presentation item that's not actually a property, but is necessary for the user interface, a {@link PresentationItem}
+ * .</li>
  * </ol>
  * <p/>
- * For construction of user interfaces, properties are grouped into {@link Form} objects which can be presented in
- * various ways by the user interface (for example, a wizard page, a tab in a property sheet, or a dialog). The same
- * property can appear in multiple forms.
+ * For construction of user interfaces, properties are grouped into {@link Form} objects which can be presented in various ways by
+ * the user interface (for example, a wizard page, a tab in a property sheet, or a dialog). The same property can appear in
+ * multiple forms.
  * <p/>
  * Methods can be added in subclasses according to the conventions below to help direct the UI. These methods will be
  * automatically called by the UI code.
  * <ul>
- * <li>{@code before<PropertyName>} - Called before the property is presented in the UI. This can be used to compute
- * anything required to display the property.</li>
- * <li>{@code after<PropertyName>} - Called after the property is presented and validated in the UI. This can be used to
- * update the properties state to consider the changed in this property.</li>
- * <li>{@code validate<PropertyName>} - Called to validate the property value that has been entered in the UI. This will
- * return a {@link ValidationResult} object with any error information.</li>
+ * <li>{@code before<PropertyName>} - Called before the property is presented in the UI. This can be used to compute anything
+ * required to display the property.</li>
+ * <li>{@code after<PropertyName>} - Called after the property is presented and validated in the UI. This can be used to update
+ * the properties state to consider the changed in this property.</li>
+ * <li>{@code validate<PropertyName>} - Called to validate the property value that has been entered in the UI. This will return a
+ * {@link ValidationResult} object with any error information.</li>
  * <li>{@code beforeFormPresent<FormName>} - Called before the form is displayed.</li>
  * </ul>
  * {@code<PropertyName>} and {@code<FormName>} are the property or form name with their first in letter uppercase.
  * </p>
  * wizard lifecycle related form methods are :
  * <ul>
- * <li>{@code afterFormBack<FormName>} - Called when the current edited form is &lt;FormName&gt; and when the user has
- * pressed the back button.</li>
- * <li>{@code afterFormNext<FormName>} - Called when the current edited form is &lt;FormName&gt; and when the user has
- * pressed the next button.</li>
- * <li>{@code afterFormFinish<FormName>(Repository<Properties> prop)} - Called when the current edited form is
- * &lt;FormName&gt; and when the finish button is pressed. this method is supposed to serialize the current Properties
- * instance and it's sub properties</li>
+ * <li>{@code afterFormBack<FormName>} - Called when the current edited form is &lt;FormName&gt; and when the user has pressed the
+ * back button.</li>
+ * <li>{@code afterFormNext<FormName>} - Called when the current edited form is &lt;FormName&gt; and when the user has pressed the
+ * next button.</li>
+ * <li>{@code afterFormFinish<FormName>(Repository<Properties> prop)} - Called when the current edited form is &lt;FormName&gt;
+ * and when the finish button is pressed. this method is supposed to serialize the current Properties instance and it's sub
+ * properties</li>
  * </ul>
  * <p/>
- * Once the Properties is create by the service, the {@link Properties#setupProperties()} and
- * {@link Properties#setupLayout()} is called.
+ * Once the Properties is create by the service, the {@link Properties#setupProperties()} and {@link Properties#setupLayout()} is
+ * called.
  * <p/>
- * <b>WARNING</b> - It is not recommanded to instanciate a Property field after {@link Properties#setupProperties()} is
- * called. If you want to create the property later you'll have to call
- * {@link Property#setI18nMessageFormater(I18nMessages)} manually.
+ * <b>WARNING</b> - It is not recommanded to instanciate a Property field after {@link Properties#setupProperties()} is called. If
+ * you want to create the property later you'll have to call {@link Property#setI18nMessageFormater(I18nMessages)} manually.
  */
 public interface Properties extends AnyProperty, ToStringIndent {
 
     public static class Helper {
 
-        public static synchronized <T extends Properties> Deserialized<T> fromSerialized(String serialized,
-                Class<T> propertiesclass, PostSerializationSetup<T> postSerializationSetup) {
-            return PropertiesImpl.fromSerialized(serialized, propertiesclass, postSerializationSetup);
+        public static synchronized <T extends Properties> SerializerDeserializer.Deserialized<T> fromSerializedPersistent(
+                String serialized, Class<T> propertiesclass, PostDeserializeSetup postSetup) {
+            return SerializerDeserializer.fromSerialized(serialized, propertiesclass, postSetup,
+                    SerializerDeserializer.PERSISTENT);
         }
 
-        public static synchronized <T extends Properties> Deserialized<T> fromSerialized(String serialized,
-                Class<T> propertiesclass) {
-            return fromSerialized(serialized, propertiesclass, null);
+        public static synchronized <T extends Properties> SerializerDeserializer.Deserialized<T> fromSerializedPersistent(
+                String serialized, Class<T> propertiesclass) {
+            return SerializerDeserializer.fromSerialized(serialized, propertiesclass, null, SerializerDeserializer.PERSISTENT);
         }
-    }
 
-    /**
-     * Used for setting up a callback after deserialization. Usually used to setup
-     * Property evaluator.
-     */
-    public static interface PostSerializationSetup<T extends Properties> {
-
-        /**
-         * This method will be called right after the deserialization and after the ecrypted field have been decrypted.
-         * This will be called before any layout initialization.
-         */
-        void setup(T properties);
+        public static synchronized <T extends Properties> SerializerDeserializer.Deserialized<T> fromSerializedTransient(
+                String serialized, Class<T> propertiesclass) {
+            return SerializerDeserializer.fromSerialized(serialized, propertiesclass, null, SerializerDeserializer.TRANSIENT);
+        }
     }
 
     static final String METHOD_BEFORE = "before";
@@ -129,30 +120,6 @@ public interface Properties extends AnyProperty, ToStringIndent {
     static final String METHOD_AFTER_FORM_FINISH = "afterFormFinish";
 
     static final boolean ENCRYPT = true;
-
-    /**
-     * Holder class for the results of a deserialization.
-     */
-    public static class Deserialized<T extends Properties> {
-
-        public T properties;
-
-        public MigrationInformation migration;
-    }
-
-    // FIXME - will be moved
-    public static class MigrationInformationImpl implements MigrationInformation {
-
-        @Override
-        public boolean isMigrated() {
-            return false;
-        }
-
-        @Override
-        public String getVersion() {
-            return null;
-        }
-    }
 
     /**
      * Must be called once the class is instantiated to setup the properties and the layout
@@ -193,7 +160,8 @@ public interface Properties extends AnyProperty, ToStringIndent {
     /**
      * Returns a serialized version of this for storage in a repository.
      *
-     * @return the serialized {@code String}, use {@link Helper#fromSerialized(String, Class)} to materialize the object.
+     * @return the serialized {@code String}, use {@link Helper#fromSerialized(String, Class)} to materialize the
+     * object.
      */
     public String toSerialized();
 
@@ -222,11 +190,11 @@ public interface Properties extends AnyProperty, ToStringIndent {
     public List<NamedThing> getProperties();
 
     /**
-     * Returns {@link Property} or a {@link Properties} as specified by a qualifed property name string representing the field
-     * name.
+     * Returns {@link Property} or a {@link Properties} as specified by a qualifed property name string representing the
+     * field name.
      * <p/>
-     * The first component is the property name within this object. The optional subsequent components, separated by a
-     * "." are property names in the nested {@link Properties} objects.
+     * The first component is the property name within this object. The optional subsequent components, separated by a "." are
+     * property names in the nested {@link Properties} objects.
      *
      * @param propName a qualified property name, should never be null
      * @return the object denoted with the name or null if not found
@@ -239,7 +207,7 @@ public interface Properties extends AnyProperty, ToStringIndent {
     public Property<?> getValuedProperty(String propPath);
 
     /**
-     * same as {@link Properties#getProperty(String)} but returns null if the property is not of type {@link Properties}.
+     * same as {@link Properties#getProperty(String)} but returns null if the property is not of type {@link Properties} .
      */
     public Properties getProperties(String propPath);
 
@@ -271,7 +239,8 @@ public interface Properties extends AnyProperty, ToStringIndent {
     public void assignNestedProperties(Properties... newValueProperties);
 
     /**
-     * same as {@link #copyValuesFrom(Properties, boolean, boolean)} with copyTaggedValues set to true and copyEvaluator set to true.
+     * same as {@link #copyValuesFrom(Properties, boolean, boolean)} with copyTaggedValues set to true and copyEvaluator
+     * set to true.
      */
     public void copyValuesFrom(Properties props);
 

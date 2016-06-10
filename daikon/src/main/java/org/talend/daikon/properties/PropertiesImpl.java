@@ -12,14 +12,7 @@
 // ============================================================================
 package org.talend.daikon.properties;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.cedarsoftware.util.io.JsonWriter;
 import org.talend.daikon.NamedThing;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.exception.TalendRuntimeException;
@@ -30,16 +23,23 @@ import org.talend.daikon.properties.presentation.Form;
 import org.talend.daikon.properties.property.Property;
 import org.talend.daikon.properties.property.PropertyValueEvaluator;
 import org.talend.daikon.security.CryptoHelper;
+import org.talend.daikon.serialize.PostDeserializeHandler;
+import org.talend.daikon.serialize.PostDeserializeSetup;
 import org.talend.daikon.strings.ToStringIndent;
 import org.talend.daikon.strings.ToStringIndentUtil;
 
-import com.cedarsoftware.util.io.JsonReader;
-import com.cedarsoftware.util.io.JsonWriter;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Implementation of {@link Properties} which must be subclassed to define your properties.
  */
-public class PropertiesImpl extends TranslatableImpl implements Properties, AnyProperty, ToStringIndent {
+public class PropertiesImpl extends TranslatableImpl implements Properties, AnyProperty, PostDeserializeHandler, ToStringIndent {
 
     private String name;
 
@@ -52,53 +52,29 @@ public class PropertiesImpl extends TranslatableImpl implements Properties, AnyP
     transient private boolean propsAlreadyInitialized;
 
     /**
-     * Returns the Properties object previously serialized.
+     * Handle post deserialization.
      *
-     * @param serialized created by {@link #toSerialized()}.
-     * @param propertiesclass, class type to deserialized
-     * @param postSerializationSetup callback to setup the Properties class after deserialization and before layout and i18N
-     *            setup.
-     * @return a {@code Properties} object represented by the {@code serialized} value.
+     * If you need to do additional things to react to a specific version, you can subclass this (and call the
+     * superclass <strong>last</strong>).
      */
-    @SuppressWarnings("unchecked")
-    public static synchronized <T extends Properties> Deserialized<T> fromSerialized(String serialized, Class<T> propertiesclass,
-            PostSerializationSetup<T> postSerializationSetup) {
-        Deserialized<T> d = new Deserialized<>();
-        d.migration = new MigrationInformationImpl();
-        // this set the proper classloader for the JsonReader especially for OSGI
-        ClassLoader originalContextClassLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(Properties.class.getClassLoader());
-            d.properties = (T) JsonReader.jsonToJava(serialized);
-            if (d.properties instanceof PropertiesImpl) {
-                ((PropertiesImpl) d.properties).handlePropEncryption(!ENCRYPT);
-            } // else we nothing to be done
-            if (postSerializationSetup != null) {
-                postSerializationSetup.setup(d.properties);
-            } // else no setup callback to call so ignore
-            if (d.properties instanceof PropertiesImpl) {
-                ((PropertiesImpl) d.properties).setupPropertiesPostDeserialization();
-            } // else we nothing to be done
-        } finally {
-            Thread.currentThread().setContextClassLoader(originalContextClassLoader);
-        }
-        return d;
-    }
+    @Override
+    public boolean postDeserialize(int version, PostDeserializeSetup setup, boolean persistent) {
+        if (persistent)
+            handlePropEncryption(!ENCRYPT);
 
-    /**
-     * This will setup all Properties after the deserialization process. For now it will just setup i18N
-     */
-    void setupPropertiesPostDeserialization() {
-        initLayout();
+        if (setup != null)
+            setup.setup(this);
+
+        if (persistent)
+            initLayout();
+
         List<NamedThing> properties = getProperties();
         for (NamedThing prop : properties) {
-            if (prop instanceof PropertiesImpl) {
-                ((PropertiesImpl) prop).setupPropertiesPostDeserialization();
-            } else {
+            if (prop instanceof Property) {
                 prop.setI18nMessageFormater(getI18nMessageFormater());
             }
         }
-
+        return false;
     }
 
     /**
@@ -235,6 +211,7 @@ public class PropertiesImpl extends TranslatableImpl implements Properties, AnyP
     public String toSerialized() {
         handlePropEncryption(ENCRYPT);
         // remove form from serialization for storing the properties
+        // FIXME - move this to use the SerializeFieldOmitter
         Map<Class<?>, List<String>> fieldBlackLists = new HashMap<>();
         List<String> fields = new ArrayList<>();
         fields.add("forms");
