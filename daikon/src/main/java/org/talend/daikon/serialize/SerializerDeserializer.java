@@ -1,15 +1,15 @@
 package org.talend.daikon.serialize;
 
-import com.cedarsoftware.util.io.JsonObject;
-import com.cedarsoftware.util.io.JsonReader;
-import com.cedarsoftware.util.io.JsonWriter;
-import com.cedarsoftware.util.io.ObjectResolver;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.cedarsoftware.util.io.JsonObject;
+import com.cedarsoftware.util.io.JsonReader;
+import com.cedarsoftware.util.io.JsonWriter;
+import com.cedarsoftware.util.io.ObjectResolver;
 
 /**
  * Handles serialization and deserialization to/from a String and supports migration of serialized data to newer
