@@ -19,6 +19,7 @@ import org.talend.daikon.NamedThing;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.exception.error.CommonErrorCodes;
+import org.talend.daikon.security.CryptoHelper;
 
 /**
  * This property has an extra method to handle possible values of type NamedThing
@@ -65,7 +66,7 @@ public class StringProperty extends Property<String> {
      */
     @Override
     public String getPossibleValuesDisplayName(Object possibleValue) {
-        String displayName = possibleValue == null ? "null" : possibleValue.toString();
+        String possibleValueDisplayName = possibleValue == null ? "null" : possibleValue.toString();
         // first check that the possibleValue is part of the possible values
         if (!isAPossibleValue(possibleValue)) {
             throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_ARGUMENT,
@@ -75,14 +76,27 @@ public class StringProperty extends Property<String> {
         if (possibleValues2 != null && !possibleValues2.isEmpty()) {
             for (NamedThing nt : possibleValues2) {
                 if (possibleValue != null && possibleValue.equals(nt.getName())) {
-                    displayName = nt.getDisplayName();
+                    possibleValueDisplayName = nt.getDisplayName();
                     break;
                 } // else keep looking
             }
         } else {// delegate to super.
-            displayName = super.getPossibleValuesDisplayName(possibleValue);
+            possibleValueDisplayName = super.getPossibleValuesDisplayName(possibleValue);
         }
-        return displayName;
+        return possibleValueDisplayName;
+    }
+
+    @Override
+    public void encryptStoredValue(boolean encrypt) {
+        if (isFlag(Property.Flags.ENCRYPT)) {
+            String value = (String) getStoredValue();
+            CryptoHelper ch = new CryptoHelper(CryptoHelper.PASSPHRASE);
+            if (encrypt) {
+                setStoredValue(ch.encrypt(value));
+            } else {
+                setStoredValue(ch.decrypt(value));
+            }
+        }
     }
 
 }

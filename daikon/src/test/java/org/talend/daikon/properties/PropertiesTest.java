@@ -12,13 +12,21 @@
 // ============================================================================
 package org.talend.daikon.properties;
 
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+
 import org.apache.commons.lang3.reflect.TypeLiteral;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.talend.daikon.NamedThing;
 import org.talend.daikon.properties.presentation.Form;
 import org.talend.daikon.properties.property.Property;
+import org.talend.daikon.properties.property.Property.Flags;
 import org.talend.daikon.properties.property.PropertyFactory;
 import org.talend.daikon.properties.property.PropertyValueEvaluator;
 import org.talend.daikon.properties.property.StringProperty;
@@ -31,18 +39,6 @@ import org.talend.daikon.properties.testproperties.nestedprop.inherited.Inherite
 import org.talend.daikon.properties.testproperties.references.MultipleRefProperties;
 import org.talend.daikon.serialize.PostDeserializeSetup;
 import org.talend.daikon.serialize.SerializerDeserializer;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class PropertiesTest {
 
@@ -385,7 +381,7 @@ public class PropertiesTest {
 
     @Test
     public void testfromSerialized() {
-        TestProperties props = (TestProperties) new TestProperties("test") {
+        TestProperties props = new TestProperties("test") {
 
             @Override
             public boolean postDeserialize(int version, PostDeserializeSetup setup, boolean persistent) {
@@ -413,8 +409,9 @@ public class PropertiesTest {
 
                     @Override
                     public <T> T evaluate(Property<T> property, Object storedValue) {
-                        if (property.getName().equals("userId"))
+                        if (property.getName().equals("userId")) {
                             return (T) (storedValue != null ? storedValue + "XXX" : null);
+                        }
                         return (T) storedValue;
                     }
                 });
@@ -540,6 +537,44 @@ public class PropertiesTest {
         SerializerDeserializer.Deserialized<AnotherNestedProperties> fromSerialized = Properties.Helper
                 .fromSerializedPersistent(serialized, AnotherNestedProperties.class);
         assertNotNull(fromSerialized.object.getForm(Form.MAIN));
+    }
+
+    static public class NestedCryptedProperty extends PropertiesImpl {
+
+        /**
+         * @param name
+         */
+        public NestedCryptedProperty(String name) {
+            super(name);
+        }
+
+        public final Property<String> password = PropertyFactory.newString("password").setFlags(EnumSet.of(Flags.ENCRYPT))
+                .setDisplayName("");
+    }
+
+    static public class TestCryptedProperty extends PropertiesImpl {
+
+        /**
+         * @param name
+         */
+        public TestCryptedProperty(String name) {
+            super(name);
+        }
+
+        public final NestedCryptedProperty nestedPassword = new NestedCryptedProperty("nestedPassword");
+
+    }
+
+    @Test
+    public void testSerializeEncryptedFailure() {
+        Properties props;
+
+        props = new TestCryptedProperty("foo");
+        props.setValue("nestedPassword.password", "myPassword");
+        Properties newProps = PropertiesTestUtils.checkSerialize(props, errorCollector);
+
+        Assert.assertEquals("myPassword", props.getValuedProperty("nestedPassword.password").getValue());
+        Assert.assertEquals("myPassword", newProps.getValuedProperty("nestedPassword.password").getValue());
     }
 
 }

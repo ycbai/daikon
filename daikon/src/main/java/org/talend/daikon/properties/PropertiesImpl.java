@@ -12,7 +12,14 @@
 // ============================================================================
 package org.talend.daikon.properties;
 
-import com.cedarsoftware.util.io.JsonWriter;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.talend.daikon.NamedThing;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.exception.TalendRuntimeException;
@@ -21,20 +28,15 @@ import org.talend.daikon.i18n.TranslatableImpl;
 import org.talend.daikon.properties.error.PropertiesErrorCode;
 import org.talend.daikon.properties.presentation.Form;
 import org.talend.daikon.properties.property.Property;
+import org.talend.daikon.properties.property.Property.Flags;
 import org.talend.daikon.properties.property.PropertyValueEvaluator;
-import org.talend.daikon.security.CryptoHelper;
+import org.talend.daikon.properties.property.PropertyVisitor;
 import org.talend.daikon.serialize.PostDeserializeHandler;
 import org.talend.daikon.serialize.PostDeserializeSetup;
 import org.talend.daikon.strings.ToStringIndent;
 import org.talend.daikon.strings.ToStringIndentUtil;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.cedarsoftware.util.io.JsonWriter;
 
 /**
  * Implementation of {@link Properties} which must be subclassed to define your properties.
@@ -59,14 +61,26 @@ public class PropertiesImpl extends TranslatableImpl implements Properties, AnyP
      */
     @Override
     public boolean postDeserialize(int version, PostDeserializeSetup setup, boolean persistent) {
-        if (persistent)
-            handlePropEncryption(!ENCRYPT);
+        if (persistent) {
+            // only handle local properties
+            List<NamedThing> properties = getProperties();
+            for (NamedThing nt : properties) {
+                if (nt instanceof Property) {
+                    Property<?> property = (Property<?>) nt;
+                    if (property.isFlag(Flags.ENCRYPT)) {
+                        property.encryptStoredValue(!ENCRYPT);
+                    } // else not an encrypted property
+                } // else not a Property so ignors it.
+            }
+        }
 
-        if (setup != null)
+        if (setup != null) {
             setup.setup(this);
+        }
 
-        if (persistent)
+        if (persistent) {
             initLayout();
+        }
 
         List<NamedThing> properties = getProperties();
         for (NamedThing prop : properties) {
@@ -209,7 +223,7 @@ public class PropertiesImpl extends TranslatableImpl implements Properties, AnyP
 
     @Override
     public String toSerialized() {
-        handlePropEncryption(ENCRYPT);
+        handleAllPropertyEncryption(ENCRYPT);
         // remove form from serialization for storing the properties
         // FIXME - move this to use the SerializeFieldOmitter
         Map<Class<?>, List<String>> fieldBlackLists = new HashMap<>();
@@ -220,34 +234,26 @@ public class PropertiesImpl extends TranslatableImpl implements Properties, AnyP
             return JsonWriter.objectToJson(this,
                     Collections.singletonMap(JsonWriter.FIELD_NAME_BLACK_LIST, (Object) fieldBlackLists));
         } finally {
-            handlePropEncryption(!ENCRYPT);
+            handleAllPropertyEncryption(!ENCRYPT);
         }
 
     }
 
     protected static final boolean ENCRYPT = true;
 
-    protected void handlePropEncryption(final boolean encrypt) {
-        accept(new AnyPropertyVisitor() {
-
-            @Override
-            public void visit(Properties properties, Properties parent) {
-                // nothing to be encrypted here
-            }
+    /**
+     * this will look for all property with the encrypt flag including nested Properties and encrypt or decrypt them
+     */
+    protected void handleAllPropertyEncryption(final boolean encrypt) {
+        accept(new PropertyVisitor() {
 
             @Override
             public void visit(Property property, Properties parent) {
                 if (property.isFlag(Property.Flags.ENCRYPT)) {
-                    String value = (String) property.getStoredValue();
-                    CryptoHelper ch = new CryptoHelper(CryptoHelper.PASSPHRASE);
-                    if (encrypt) {
-                        property.setValue(ch.encrypt(value));
-                    } else {
-                        property.setValue(ch.decrypt(value));
-                    }
+                    property.encryptStoredValue(encrypt);
                 }
             }
-        }, null);// null cause we are visiting ourself
+        }, null);// null
     }
 
     @Override

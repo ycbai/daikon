@@ -12,14 +12,10 @@
 // ============================================================================
 package org.talend.daikon.properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.talend.daikon.properties.property.PropertyFactory.newProperty;
+import static org.junit.Assert.*;
+import static org.talend.daikon.properties.property.PropertyFactory.*;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +23,7 @@ import org.apache.commons.lang3.reflect.TypeUtils;
 import org.junit.Test;
 import org.talend.daikon.properties.presentation.Widget;
 import org.talend.daikon.properties.property.Property;
+import org.talend.daikon.properties.property.Property.Flags;
 import org.talend.daikon.properties.property.StringProperty;
 
 import com.cedarsoftware.util.io.JsonReader;
@@ -191,6 +188,20 @@ public class PropertyTest {
         Property foo = new Property<Integer>(Integer.class, "foo");
         foo.setValue("bar");
         assertEquals("bar", foo.getValue());
+    }
+
+    @Test
+    public void testEncryptDoNothing() {
+        class NotAnExistingType {// left empty on purpose
+        }
+        Property<NotAnExistingType> foo = new Property<>(NotAnExistingType.class, "foo").setFlags(EnumSet.of(Flags.ENCRYPT));
+        NotAnExistingType notAnExistingTypeInstance = new NotAnExistingType();
+        foo.setValue(notAnExistingTypeInstance);
+        assertEquals(notAnExistingTypeInstance, foo.getValue());
+        foo.encryptStoredValue(true);
+        assertEquals(notAnExistingTypeInstance, foo.getValue());
+        foo.encryptStoredValue(false);
+        assertEquals(notAnExistingTypeInstance, foo.getValue());
     }
 
 }

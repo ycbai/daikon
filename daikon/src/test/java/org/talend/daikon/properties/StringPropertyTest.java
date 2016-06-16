@@ -12,12 +12,11 @@
 // ============================================================================
 package org.talend.daikon.properties;
 
-import static org.hamcrest.Matchers.contains;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import org.junit.Test;
@@ -25,6 +24,7 @@ import org.talend.daikon.NamedThing;
 import org.talend.daikon.SimpleNamedThing;
 import org.talend.daikon.exception.TalendRuntimeException;
 import org.talend.daikon.exception.error.CommonErrorCodes;
+import org.talend.daikon.properties.property.Property.Flags;
 import org.talend.daikon.properties.property.StringProperty;
 
 public class StringPropertyTest {
@@ -65,4 +65,25 @@ public class StringPropertyTest {
 
     }
 
+    @Test
+    public void testEncryptStringProp() {
+        StringProperty stringProperty = new StringProperty("foo") {// in order to have i18n related to this class
+        };
+        stringProperty.setValue("foo");
+        assertEquals("foo", stringProperty.getValue());
+        stringProperty.encryptStoredValue(true);
+        // value should be the same cause we did not set the Encrypt flag
+        assertEquals("foo", stringProperty.getValue());
+        stringProperty.encryptStoredValue(false);
+        // value should be the same cause we did not set the Encrypt flag
+        assertEquals("foo", stringProperty.getValue());
+
+        // make the property to be encrypted
+        stringProperty.setFlags(EnumSet.of(Flags.ENCRYPT));
+        assertEquals("foo", stringProperty.getValue());
+        stringProperty.encryptStoredValue(true);
+        assertNotEquals("foo", stringProperty.getValue());
+        stringProperty.encryptStoredValue(false);
+        assertEquals("foo", stringProperty.getValue());
+    }
 }

@@ -486,4 +486,11 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
         taggedValues.putAll(otherProp.taggedValues);
     }
 
+    /**
+     * This will encrypt the stored value or do nothing if there is not implementation for the given type.
+     */
+    public void encryptStoredValue(boolean encrypt) {
+        // do nothing by default see StringProperty for an example
+    }
+
 }
