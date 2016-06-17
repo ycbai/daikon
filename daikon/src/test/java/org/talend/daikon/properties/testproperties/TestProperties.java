@@ -44,9 +44,9 @@ public class TestProperties extends PropertiesImpl {
 
     public PresentationItem testPI = new PresentationItem("testPI", "testPI display name");
 
-    public Property<String> userId = newProperty(USER_ID_PROP_NAME).setRequired(true);
+    public Property<String> userId = newProperty(USER_ID_PROP_NAME).setRequired();
 
-    public Property<String> password = newProperty("password").setRequired(true)
+    public Property<String> password = newProperty("password").setRequired()
             .setFlags(EnumSet.of(Property.Flags.ENCRYPT, Property.Flags.SUPPRESS_LOGGING));
 
     public Property<String> nameList = newProperty("nameList");

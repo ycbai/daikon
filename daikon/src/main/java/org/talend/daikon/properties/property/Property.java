@@ -211,10 +211,6 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
     }
 
     public Property<T> setRequired() {
-        return setRequired(true);
-    }
-
-    public Property<T> setRequired(boolean required) {
         setOccurMinTimes(1);
         setOccurMaxTimes(1);
         return this;
