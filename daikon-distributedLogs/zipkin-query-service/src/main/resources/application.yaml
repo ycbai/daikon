@@ -20,4 +20,5 @@ spring:
         enabled: false
 
 spring.datasource.initialize: true
+
 zipkin.storage.type: elasticsearch

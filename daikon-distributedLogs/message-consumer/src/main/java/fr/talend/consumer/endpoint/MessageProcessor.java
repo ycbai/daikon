@@ -13,7 +13,7 @@ import org.springframework.integration.annotation.ServiceActivator;
 @EnableBinding(Source.class)
 public class MessageProcessor {
 
-	private static Logger logger = LoggerFactory.getLogger(MessageProcessor.class);
+	private final Logger logger = LoggerFactory.getLogger(MessageProcessor.class);
 	 
 	@Autowired
 	private ReplySender replySender;
@@ -21,8 +21,6 @@ public class MessageProcessor {
 	@ServiceActivator(inputChannel = Sink.INPUT)
 	public void onMessage(String msg) {
 		this.logger.info("received message: '" + msg + "'.");
-		
-
 		this.replySender.sendMessage("third level");
 	}
 }
