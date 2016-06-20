@@ -67,23 +67,23 @@ public class I18nMessagesTest {
     @Test
     public void testGetMessageAllDefaultStringFormat() {
         I18nMessages i18nMessages = new DynamicLocalFormatedI18nImpl(null, "org.talend.daikon.i18n.testMessage");
-        assertEquals("", i18nMessages.getMessage("ze.empty.key", null));
-        assertEquals("normal", i18nMessages.getMessage("ze.normal.key", null));
+        assertEquals("", i18nMessages.getMessage("ze.empty.key"));
+        assertEquals("normal", i18nMessages.getMessage("ze.normal.key"));
         assertEquals("normal", i18nMessages.getMessage("ze.normal.key", "foo"));
-        assertEquals("test {0} and {1}", i18nMessages.getMessage("ze.message.key", null));
+        assertEquals("test {0} and {1}", i18nMessages.getMessage("ze.message.key"));
         assertEquals("test foo and bar", i18nMessages.getMessage("ze.message.key", "foo", "bar"));
     }
 
     @Test(expected = MissingResourceException.class)
     public void testResourceNotfoundExceptionNoKey() {
         I18nMessages i18nMessages = new DynamicLocalFormatedI18nImpl(null, "org.talend.daikon.i18n.testMessage");
-        i18nMessages.getMessage("unknown.key", null);
+        i18nMessages.getMessage("unknown.key");
     }
 
     @Test(expected = MissingResourceException.class)
     public void testResourceNotfoundExceptionNoFileFound() {
         I18nMessages i18nMessages = new DynamicLocalFormatedI18nImpl(null, "org.talend.daikon.i18n.testMessageNoExisting");
-        i18nMessages.getMessage("any.key", null);
+        i18nMessages.getMessage("any.key");
     }
 
     /**
@@ -94,16 +94,16 @@ public class I18nMessagesTest {
         MutableLocalProvider mutableLocaleProvider = new MutableLocalProvider();
         I18nMessages i18nMessages = new DynamicLocalFormatedI18nImpl(mutableLocaleProvider, "org.talend.daikon.i18n.testMessage"); //$NON-NLS-1$
         // first test with a null local which shall result in the default locale
-        assertEquals("", i18nMessages.getMessage("ze.empty.key", null));
-        assertEquals("normal", i18nMessages.getMessage("ze.normal.key", null));
+        assertEquals("", i18nMessages.getMessage("ze.empty.key"));
+        assertEquals("normal", i18nMessages.getMessage("ze.normal.key"));
         assertEquals("normal", i18nMessages.getMessage("ze.normal.key", "foo"));
-        assertEquals("test {0} and {1}", i18nMessages.getMessage("ze.message.key", null));
+        assertEquals("test {0} and {1}", i18nMessages.getMessage("ze.message.key"));
         assertEquals("test foo and bar", i18nMessages.getMessage("ze.message.key", "foo", "bar"));
 
         // set another locale
         mutableLocaleProvider.setLocale("ru"); //$NON-NLS-1$
-        assertEquals("", i18nMessages.getMessage("ze.empty.key", null));
-        assertEquals("norrrrmal", i18nMessages.getMessage("ze.normal.key", null));
+        assertEquals("", i18nMessages.getMessage("ze.empty.key"));
+        assertEquals("norrrrmal", i18nMessages.getMessage("ze.normal.key"));
         assertEquals("test foo and bar in russian", i18nMessages.getMessage("ze.message.key", "foo", "bar"));
 
     }

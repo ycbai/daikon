@@ -25,7 +25,7 @@ public interface AnyPropertyVisitor {
      * @param property, the visited property
      * @param parent, the property parent or null if none.
      */
-    public void visit(Property property, Properties parent);
+    void visit(Property property, Properties parent);
 
     /**
      * visit the Properties
@@ -33,5 +33,5 @@ public interface AnyPropertyVisitor {
      * @param properties, the visited properties
      * @param parent, the properties parent or null if none.
      */
-    public void visit(Properties properties, Properties parent);
+    void visit(Properties properties, Properties parent);
 }

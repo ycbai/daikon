@@ -31,7 +31,7 @@ public interface IndexedRecordConverter<SpecificT, IndexedRecordT extends Indexe
      * This is a {@link RuntimeException}. Developers should ensure that the classes they support are capable of doing
      * the conversions they require.
      */
-    public static class UnmodifiableAdapterException extends UnsupportedOperationException {
+    class UnmodifiableAdapterException extends UnsupportedOperationException {
 
         /** Default serial version UID. */
         private static final long serialVersionUID = 1L;

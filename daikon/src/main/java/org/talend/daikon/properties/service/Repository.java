@@ -31,6 +31,6 @@ public interface Repository<T extends Properties> {
      * @param schemaPropertyName the qualified name of the schema property relative to the properties parameter.
      * @return repositoryLocation, a String containing the location where this object was stored.
      */
-    public String storeProperties(T properties, String name, String repositoryLocation, String schemaPropertyName);
+    String storeProperties(T properties, String name, String repositoryLocation, String schemaPropertyName);
 
 }

@@ -73,7 +73,7 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
          * cleared independently. This is used to cause properties to not be visible and processed at runtime if
          * necessary.
          */
-        HIDDEN;
+        HIDDEN
 
     }
 
@@ -182,10 +182,7 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
     }
 
     public boolean isSizeUnbounded() {
-        if (size == -1) {
-            return true;
-        }
-        return false;
+        return size == -1;
     }
 
     public int getOccurMinTimes() {

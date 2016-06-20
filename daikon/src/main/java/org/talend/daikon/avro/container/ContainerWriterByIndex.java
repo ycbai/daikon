@@ -5,5 +5,5 @@ package org.talend.daikon.avro.container;
  */
 public interface ContainerWriterByIndex<WriteContainerT, T> {
 
-    public void writeValue(WriteContainerT app, int index, T value);
+    void writeValue(WriteContainerT app, int index, T value);
 }

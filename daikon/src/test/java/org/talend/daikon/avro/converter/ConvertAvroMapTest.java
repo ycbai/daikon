@@ -55,7 +55,7 @@ public class ConvertAvroMapTest {
                 containsInAnyOrder("11111111-1111-1111-1111-111111111111", "12341234-1234-1234-1234-123412341234"));
 
         // Check that the entrySet is comparable to other Map.Entry implementations.
-        Set<Map.Entry<String, String>> expectedEntries = new HashSet();
+        Set<Map.Entry<String, String>> expectedEntries = new HashSet<>();
         expectedEntries.add(new AbstractMap.SimpleEntry<>("1", "11111111-1111-1111-1111-111111111111"));
         expectedEntries.add(new AbstractMap.SimpleEntry<>("2", "12341234-1234-1234-1234-123412341234"));
         assertThat(avroValue.entrySet(), is(expectedEntries));

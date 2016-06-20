@@ -21,11 +21,8 @@ public interface PropertyValueEvaluator {
     /**
      * compute the actual value of the given property according to the storedValue
      * 
-     * @param <T>
-     * 
-     * @param property
      * @param storedValue value stored for this property that may be transformed.
      * @return
      */
-    public <T> T evaluate(Property<T> property, Object storedValue);
+    <T> T evaluate(Property<T> property, Object storedValue);
 }

@@ -5,5 +5,5 @@ package org.talend.daikon.avro.container;
  */
 public interface ContainerReaderByIndex<ReadContainerT, T> {
 
-    public T readValue(ReadContainerT obj, int index);
+    T readValue(ReadContainerT obj, int index);
 }

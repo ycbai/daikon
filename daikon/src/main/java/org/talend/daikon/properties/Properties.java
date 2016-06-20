@@ -85,7 +85,7 @@ import org.talend.daikon.strings.ToStringIndent;
  */
 public interface Properties extends AnyProperty, ToStringIndent {
 
-    public static class Helper {
+    class Helper {
 
         public static synchronized <T extends Properties> SerializerDeserializer.Deserialized<T> fromSerializedPersistent(
                 String serialized, Class<T> propertiesclass, PostDeserializeSetup postSetup) {
@@ -104,36 +104,36 @@ public interface Properties extends AnyProperty, ToStringIndent {
         }
     }
 
-    static final String METHOD_BEFORE = "before";
+    String METHOD_BEFORE = "before";
 
-    static final String METHOD_AFTER = "after";
+    String METHOD_AFTER = "after";
 
-    static final String METHOD_VALIDATE = "validate";
+    String METHOD_VALIDATE = "validate";
 
     // consider removing this in favor of beforeRender at the property level
-    static final String METHOD_BEFORE_FORM = "beforeFormPresent";
+    String METHOD_BEFORE_FORM = "beforeFormPresent";
 
-    static final String METHOD_AFTER_FORM_BACK = "afterFormBack";
+    String METHOD_AFTER_FORM_BACK = "afterFormBack";
 
-    static final String METHOD_AFTER_FORM_NEXT = "afterFormNext";
+    String METHOD_AFTER_FORM_NEXT = "afterFormNext";
 
-    static final String METHOD_AFTER_FORM_FINISH = "afterFormFinish";
+    String METHOD_AFTER_FORM_FINISH = "afterFormFinish";
 
-    static final boolean ENCRYPT = true;
+    boolean ENCRYPT = true;
 
     /**
      * Must be called once the class is instantiated to setup the properties and the layout
      * 
      * @return this instance
      */
-    public Properties init();
+    Properties init();
 
     /**
      * Initialize the properties without any layout initialization.
      * 
      * @return this instance
      */
-    public Properties initForRuntime();
+    Properties initForRuntime();
 
     /**
      * This shall set the value holder for all the properties, set the i18n formatter of this current class to the
@@ -143,27 +143,27 @@ public interface Properties extends AnyProperty, ToStringIndent {
      * @param f field to be initialized
      * @param value associated with this field, never null
      */
-    public void initializeField(Field f, NamedThing value);
+    void initializeField(Field f, NamedThing value);
 
     /**
      * Initialize this object, all subclass initialization should override this, and call the super. <br>
      * WARNING : make sure to call super() first otherwise you may endup with NPE because of not initialised properties
      */
-    public void setupProperties();
+    void setupProperties();
 
     /**
      * Declare the widget layout information for each of the properties.<br>
      * WARNING : make sure to call super() first otherwise you may endup with NPE because of not initialised layout
      */
-    public void setupLayout();
+    void setupLayout();
 
     /**
      * Returns a serialized version of this for storage in a repository.
      *
-     * @return the serialized {@code String}, use {@link Helper#fromSerialized(String, Class)} to materialize the
+     * @return the serialized {@code String}, use {@link Helper#fromSerializedPersistent(String, Class)} to materialize the
      * object.
      */
-    public String toSerialized();
+    String toSerialized();
 
     /**
      * This is called by within the execution of actions associated with {@code Properties} when the presentation of the
@@ -172,22 +172,22 @@ public interface Properties extends AnyProperty, ToStringIndent {
      *
      * Note: This is automatically called at startup after all of the setupLayout() calls are done.
      */
-    public void refreshLayout(Form form);
+    void refreshLayout(Form form);
 
-    public List<Form> getForms();
+    List<Form> getForms();
 
-    public Form getForm(String formName);
+    Form getForm(String formName);
 
-    public String getSimpleClassName();
+    String getSimpleClassName();
 
-    public void addForm(Form form);
+    void addForm(Form form);
 
     /**
      * Returns the list of properties associated with this object.
      * 
      * @return all properties associated with this object (including those defined in superclasses).
      */
-    public List<NamedThing> getProperties();
+    List<NamedThing> getProperties();
 
     /**
      * Returns {@link Property} or a {@link Properties} as specified by a qualifed property name string representing the
@@ -199,19 +199,19 @@ public interface Properties extends AnyProperty, ToStringIndent {
      * @param propName a qualified property name, should never be null
      * @return the object denoted with the name or null if not found
      */
-    public NamedThing getProperty(String propName);
+    NamedThing getProperty(String propName);
 
     /**
      * same as {@link Properties#getProperty(String)} but returns null if the property is not of type {@link Property}.
      */
-    public Property<?> getValuedProperty(String propPath);
+    Property<?> getValuedProperty(String propPath);
 
     /**
      * same as {@link Properties#getProperty(String)} but returns null if the property is not of type {@link Properties} .
      */
-    public Properties getProperties(String propPath);
+    Properties getProperties(String propPath);
 
-    public void setValue(String property, Object value);
+    void setValue(String property, Object value);
 
     /**
      * Helper method to set the evaluator to all properties handled by this instance and all the nested Properties
@@ -219,14 +219,14 @@ public interface Properties extends AnyProperty, ToStringIndent {
      * 
      * @param ve value evaluator to be used for evaluation.
      */
-    public void setValueEvaluator(PropertyValueEvaluator ve);
+    void setValueEvaluator(PropertyValueEvaluator ve);
 
     /**
      * Returns the {@link ValidationResult} for the property being validated if requested.
      *
      * @return a ValidationResult
      */
-    public ValidationResult getValidationResult();
+    ValidationResult getValidationResult();
 
     /**
      * This goes through all nested properties recusively and replace them with the newValueProperties given as
@@ -236,13 +236,13 @@ public interface Properties extends AnyProperty, ToStringIndent {
      * 
      * @param newValueProperties list of Properties to be assigned to this instance nested Properties
      */
-    public void assignNestedProperties(Properties... newValueProperties);
+    void assignNestedProperties(Properties... newValueProperties);
 
     /**
      * same as {@link #copyValuesFrom(Properties, boolean, boolean)} with copyTaggedValues set to true and copyEvaluator
      * set to true.
      */
-    public void copyValuesFrom(Properties props);
+    void copyValuesFrom(Properties props);
 
     /**
      * Copy all of the values from the specified {@link Properties} object. This includes the values from any nested
@@ -253,10 +253,10 @@ public interface Properties extends AnyProperty, ToStringIndent {
      * @param copyTaggedValues if true all tagged values are copied
      * @param copyEvaluators if true all evaluators are copied
      */
-    public void copyValuesFrom(Properties props, boolean copyTaggedValues, boolean copyEvaluators);
+    void copyValuesFrom(Properties props, boolean copyTaggedValues, boolean copyEvaluators);
 
-    public NamedThing createPropertyInstance(NamedThing otherProp) throws ReflectiveOperationException;
+    NamedThing createPropertyInstance(NamedThing otherProp) throws ReflectiveOperationException;
 
-    public Properties setName(String name);
+    Properties setName(String name);
 
 }

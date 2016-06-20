@@ -470,7 +470,7 @@ public class PropertiesTest {
             public <T> T evaluate(Property<T> property, Object storedValue) {
                 // if the prop is a system property then evaluate it.
                 Object taggedValue = property.getTaggedValue("value.language");
-                if (taggedValue != null && ((String) taggedValue).equals("sys.prop")) {
+                if (taggedValue != null && taggedValue.equals("sys.prop")) {
                     return (T) System.getProperty((String) storedValue);
                 } else {// otherwise just return the value.
                     return (T) storedValue;

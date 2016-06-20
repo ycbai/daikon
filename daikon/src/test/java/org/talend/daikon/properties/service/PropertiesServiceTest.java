@@ -134,7 +134,7 @@ public class PropertiesServiceTest {
             public ValidationResult afterFormFinishMain(org.talend.daikon.properties.service.Repository<Properties> repo) {
                 afterFormFinishCalled.set(true);
                 return null;
-            };
+            }
         }.init();
         assertFalse(afterFormFinishCalled.get());
         propService.afterFormFinish(Form.MAIN, props);

@@ -129,7 +129,7 @@ public class DiIncomingSchemaEnforcer implements DiSchemaConstants {
     }
 
     /**
-     * Called when dynamic columns have finished being initialized. After this call, the {@link #getSchema()} can be
+     * Called when dynamic columns have finished being initialized. After this call, the {@link #getDesignSchema()} can be
      * used to get the runtime schema.
      */
     public void initDynamicColumnsFinished() {
@@ -172,7 +172,7 @@ public class DiIncomingSchemaEnforcer implements DiSchemaConstants {
 
     /**
      * @return true only if there is a dynamic column and they haven't been finished initializing yet. When this returns
-     * true, the enforcer can't be used yet and {@link #getSchema()} is guaranteed to return null.
+     * true, the enforcer can't be used yet and {@link #getDesignSchema()} is guaranteed to return null.
      */
     public boolean needsInitDynamicColumns() {
         return fieldsFromDynamicColumns != null;
@@ -246,14 +246,14 @@ public class DiIncomingSchemaEnforcer implements DiSchemaConstants {
                 break;
             case BOOLEAN:
                 if (v instanceof Boolean)
-                    datum = (Boolean) v;
+                    datum = v;
                 else
                     datum = Boolean.valueOf(String.valueOf(v));
                 break;
             case FIXED:
             case BYTES:
                 if (v instanceof byte[])
-                    datum = (byte[]) v;
+                    datum = v;
                 else
                     datum = String.valueOf(v).getBytes();
                 break;

@@ -80,7 +80,7 @@ public class TestProperties extends PropertiesImpl {
     enum Foo {
         FOO,
         BAR,
-        FOOBAR;
+        FOOBAR
     }
 
     public Property<Foo> enumFoo = newEnum("enumFoo", Foo.class);
@@ -93,14 +93,14 @@ public class TestProperties extends PropertiesImpl {
 
     public ValidationResult beforeNameList() {
         List<String> values = new ArrayList<>();
-        Collections.addAll(values, new String[] { "name1", "name2", "name3" });
+        Collections.addAll(values, "name1", "name2", "name3");
         nameList.setPossibleValues(values);
         return ValidationResult.OK;
     }
 
     public void beforeNameListRef() {
         List<String> values = new ArrayList<>();
-        Collections.addAll(values, new String[] { "namer1", "namer2", "namer3" });
+        Collections.addAll(values, "namer1", "namer2", "namer3");
         nameListRef.setPossibleValues(values);
     }
 

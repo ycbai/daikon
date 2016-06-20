@@ -198,7 +198,7 @@ public class PropertyFactoryTest {
     enum Foo {
         foo,
         bar,
-        foobar;
+        foobar
     }
 
     @Test

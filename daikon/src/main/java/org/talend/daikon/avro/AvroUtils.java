@@ -203,10 +203,7 @@ public class AvroUtils {
      */
     public static boolean isIncludeAllFields(Schema schema) {
         String prop = schema.getProp(SchemaConstants.INCLUDE_ALL_FIELDS);
-        if (prop == null || !Boolean.valueOf(prop)) {
-            return false;
-        }
-        return true;
+        return !(prop == null || !Boolean.valueOf(prop));
     }
 
     /**

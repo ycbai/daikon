@@ -26,5 +26,5 @@ public interface AnyProperty extends NamedThing {
      * @param parent Properties that issued the visit or null if no parent is set.
      * 
      */
-    public void accept(AnyPropertyVisitor visitor, Properties parent);
+    void accept(AnyPropertyVisitor visitor, Properties parent);
 }
