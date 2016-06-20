@@ -24,7 +24,7 @@ import fr.talend.logs.injector.CustomHttpServletResponseSpanInjector;
 @SpringBootApplication
 @EnableAutoConfiguration
 @EnableBinding(Source.class)
-public class MessageServiceApplication {
+public class MessageProducerApplication {
 	
 	@Bean
 	Sampler sampler() {
@@ -49,6 +49,6 @@ public class MessageServiceApplication {
 	}*/
 	
 	public static void main(String[] args) {
-		SpringApplication.run(MessageServiceApplication.class, args);
+		SpringApplication.run(MessageProducerApplication.class, args);
 	}
 }

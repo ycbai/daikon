@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import fr.talend.logs.model.Person;
 
 @RestController
-public class MessageServiceRestController {
+public class MessageProducerRestController {
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	
@@ -68,6 +68,7 @@ public class MessageServiceRestController {
 		//Span currentSpan = tracer.getCurrentSpan();
 		tracer.addTag("IP", request.getRemoteAddr());
 		tracer.addTag("http.method", request.getMethod());
+		tracer.addTag("remote.user", request.getRemoteUser());
 		tracer.addTag("id", String.valueOf(p.getId()));
 		tracer.addTag("firstname", p.getFirstname());
 		tracer.addTag("lastname", p.getLastname());
