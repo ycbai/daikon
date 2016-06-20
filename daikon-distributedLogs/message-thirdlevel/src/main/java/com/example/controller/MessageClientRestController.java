@@ -22,7 +22,7 @@ import com.example.MessageThirdLevelApplication;
 @RequestMapping("/message")
 public class MessageClientRestController {
 
-	private final Logger log = LoggerFactory.getLogger(this.getClass());
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	private RestTemplate restTemplate;
