@@ -12,6 +12,13 @@
 // ============================================================================
 package org.talend.daikon.properties.test;
 
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.rules.ErrorCollector;
 import org.slf4j.Logger;
@@ -24,15 +31,6 @@ import org.talend.daikon.properties.presentation.Widget;
 import org.talend.daikon.properties.property.Property;
 import org.talend.daikon.properties.service.PropertiesService;
 import org.talend.daikon.serialize.SerializerDeserializer;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 // import static org.hamcrest.Matchers.*;
 
@@ -110,16 +108,29 @@ public class PropertiesTestUtils {
 
                 @Override
                 public void visit(Property prop, Properties parent) {
-                    // check that property.getDisplay name has been translated.
-                    errorCollector.checkThat(
-                            "property [" + parent.getClass().getCanonicalName() + "#" + prop.getName()
-                                    + "] should have a translated message key [property." + prop.getName()
-                                    + ".displayName] in [the proper messages.properties]",
-                            prop.getDisplayName().endsWith(".displayName"), is(false));
+                    chekProperty(errorCollector, prop, parent);
                 }
+
             }, null);
 
         }
+    }
+
+    /**
+     * check that the property has a display name that is translated. We basically checks that is does not end with
+     * ".displayName".
+     * 
+     * @param errorCollector, to collect the error
+     * @param prop the property to check for an i18N {@link Property#getDisplayName()}
+     * @param parent, used only for the error message to identify the origin of the property
+     */
+    static public void chekProperty(final ErrorCollector errorCollector, Property<?> prop, Object parent) {
+        // check that property.getDisplay name has been translated.
+        errorCollector.checkThat(
+                "property [" + parent.getClass().getCanonicalName() + "#" + prop.getName()
+                        + "] should have a translated message key [property." + prop.getName()
+                        + ".displayName] in [the proper messages.properties]",
+                prop.getDisplayName().endsWith(".displayName"), is(false));
     }
 
     /**
