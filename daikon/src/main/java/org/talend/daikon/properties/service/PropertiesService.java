@@ -41,8 +41,6 @@ public interface PropertiesService<T extends Properties> extends Repository<T> {
 
     /**
      * Allows for a local implementation to setup a repository store used to store {@link T}.
-     * 
-     * @param repository
      */
     void setRepository(Repository repository);
 

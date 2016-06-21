@@ -97,7 +97,7 @@ public class DiOutgoingSchemaEnforcer implements IndexedRecord, DiSchemaConstant
         }
         this.wrapped = wrapped;
         if (outgoingDynamicRuntimeSchema == null && outgoingDynamicColumn != -1) {
-            List<Schema.Field> copyFieldList = null;
+            List<Schema.Field> copyFieldList;
             if (byIndex) {
                 copyFieldList = getDynamicSchemaByIndex();
             } else {
@@ -146,7 +146,7 @@ public class DiOutgoingSchemaEnforcer implements IndexedRecord, DiSchemaConstant
         }
 
         Field outField = getSchema().getFields().get(i);
-        Field wrappedField = null;
+        Field wrappedField;
 
         // If we are not asking for the dynamic column, then get the input field that corresponds to the position.
         int wrappedIndex;
@@ -182,14 +182,13 @@ public class DiOutgoingSchemaEnforcer implements IndexedRecord, DiSchemaConstant
      * @param wrappedField The incoming field description (a valid Avro Schema). This can be null if there is no
      * corresponding wrapped field.
      * @param outField The outgoing field description that must be enforced. This must not be null.
-     * @return
      */
     private Object transformValue(Object value, Field wrappedField, Field outField) {
         String talendType = outField.getProp(TALEND6_COLUMN_TALEND_TYPE);
         String javaClass = AvroUtils.unwrapIfNullable(outField.schema()).getProp(SchemaConstants.JAVA_CLASS_FLAG);
 
         if (null == value) {
-            return value;
+            return null;
         }
 
         // TODO(rskraba): A full list of type conversion to coerce to Talend-compatible types.

@@ -188,9 +188,6 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
 
     /**
      * Add the widget in the next row and first column, it's relative, only forward and step always is 1.
-     * 
-     * @param widget
-     * @return
      */
     public Form addRow(Widget widget) {
         lastColumn = 1;
@@ -202,9 +199,6 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
 
     /**
      * Add the widget in the next column of current row, it's relative, only forward and step always is 1.
-     * 
-     * @param widget
-     * @return
      */
     public Form addColumn(Widget widget) {
         String widgetName = getWidgetContentName(widget);
@@ -223,10 +217,7 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
     }
 
     /**
-     * return widget name from it's contents
-     * 
-     * @param widget
-     * @return name of the widget content.
+     * Return widget name from it's contents
      */
     private String getWidgetContentName(Widget widget) {
         NamedThing child = widget.getContent();
@@ -283,9 +274,6 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
      * {@link org.talend.daikon.properties.service.PropertiesService#cancelFormValues(Properties, String)} is called.
      * <p/>
      * FIXME - note we need to work out how this happens with the REST API.
-     *
-     * @param property
-     * @param value
      */
     public void setValue(String property, Object value) {
         if (property.contains(".")) {

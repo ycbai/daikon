@@ -31,10 +31,6 @@ public class EnumPropertyTest {
 
     private final class EnumPropForI18NTest extends EnumProperty {
 
-        /**
-         * @param zeEnumType
-         * @param name
-         */
         private EnumPropForI18NTest(Class zeEnumType, String name) {
             super(zeEnumType, name);
         }
@@ -46,9 +42,6 @@ public class EnumPropertyTest {
         FOOBAR
     }
 
-    /**
-     * Test method for {@link org.talend.daikon.properties.property.EnumProperty#getValue()}.
-     */
     @Test
     public void testGetValue() {
         EnumProperty<TestEnum> enumProperty = PropertyFactory.newEnum("prop", TestEnum.class);
@@ -58,9 +51,6 @@ public class EnumPropertyTest {
         assertEquals(TestEnum.FOO, enumProperty.getValue());
     }
 
-    /**
-     * Test method for {@link org.talend.daikon.properties.property.EnumProperty#getValue()}.
-     */
     @Test
     public void testGetValueWithEvaluator() {
         EnumProperty<TestEnum> enumProperty = PropertyFactory.newEnum("prop", TestEnum.class);

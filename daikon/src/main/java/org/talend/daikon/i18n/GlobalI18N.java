@@ -44,10 +44,8 @@ public class GlobalI18N {
     }
 
     /**
-     * create a static MessageProvider using the given LocalProvider. Should only be used outside a container such as
+     * Create a static MessageProvider using the given LocalProvider. Should only be used outside a container such as
      * OSGI or Spring
-     * 
-     * @param localeProvider
      */
     public static void createI18nMessageProvider(final LocaleProvider localeProvider) {
         i18nMessageProvider = new I18nMessageProvider() {

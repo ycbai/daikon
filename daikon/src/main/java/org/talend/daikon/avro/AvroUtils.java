@@ -164,10 +164,6 @@ public class AvroUtils {
 
     /**
      * Schema don't support overwrite property's value, so have to clone it then put the new value
-     *
-     * @param schema
-     * @param key
-     * @param value
      * @return schema with the new value for the property: key
      */
     public static Schema setProperty(Schema schema, String key, String value) {
@@ -198,7 +194,6 @@ public class AvroUtils {
     }
 
     /**
-     * @param schema
      * @return the value of the property include-all-fields, false if there is no this property
      */
     public static boolean isIncludeAllFields(Schema schema) {
@@ -207,8 +202,6 @@ public class AvroUtils {
     }
 
     /**
-     * @param schema
-     * @param value
      * @return set boolean value for the property include-all-fields
      */
     public static Schema setIncludeAllFields(Schema schema, boolean value) {

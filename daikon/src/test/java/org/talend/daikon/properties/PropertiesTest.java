@@ -47,10 +47,6 @@ public class PropertiesTest {
         public Property<List<String>> listString = new Property(new TypeLiteral<List<String>>() {
         }, "listString");
 
-        /**
-         * 
-         * @param name
-         */
         private StringListProperties(String name) {
             super(name);
         }
@@ -60,10 +56,6 @@ public class PropertiesTest {
 
         public StringProperty stringProp = PropertyFactory.newProperty("stringProp");
 
-        /**
-         * 
-         * @param name
-         */
         private AnotherNestedProperties(String name) {
             super(name);
         }
@@ -87,7 +79,7 @@ public class PropertiesTest {
     @Test
     public void testSerializeListStringProp() {
         StringListProperties props = (StringListProperties) new StringListProperties("test").init();
-        ArrayList<String> value = new ArrayList<String>();
+        ArrayList<String> value = new ArrayList<>();
         props.listString.setValue(value);
         assertEquals(value, props.listString.getValue());
         props = (StringListProperties) PropertiesTestUtils.checkSerialize(props, errorCollector);
@@ -117,7 +109,6 @@ public class PropertiesTest {
         assertEquals("testPassword", props.password.getValue());
         assertEquals("greatness", props.nestedProps.aGreatProperty.getValue());
         assertTrue(props.suppressDate.getValue());
-
     }
 
     @Test
@@ -541,9 +532,6 @@ public class PropertiesTest {
 
     static public class NestedCryptedProperty extends PropertiesImpl {
 
-        /**
-         * @param name
-         */
         public NestedCryptedProperty(String name) {
             super(name);
         }
@@ -554,9 +542,6 @@ public class PropertiesTest {
 
     static public class TestCryptedProperty extends PropertiesImpl {
 
-        /**
-         * @param name
-         */
         public TestCryptedProperty(String name) {
             super(name);
         }

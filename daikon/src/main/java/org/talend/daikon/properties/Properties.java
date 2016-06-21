@@ -34,7 +34,7 @@ import org.talend.daikon.strings.ToStringIndent;
  * include those for desktop (Eclipse), web, and scripting. All of these will use the code defined here for their
  * construction and validation.
  * <p/>
- * All aspects of the properties are defined in a subclass of this class using the {@link Property}, {@Link
+ * All aspects of the properties are defined in a subclass of this class using the {@link Property}, {@link
  * PresentationItem}, {@link Widget}, and {@link Form} classes. In addition in cases where user interface decisions are made in
  * code, methods can be added to the subclass to influence the flow of the user interface and help with validation.
  * <p/>
@@ -64,7 +64,7 @@ import org.talend.daikon.strings.ToStringIndent;
  * {@link ValidationResult} object with any error information.</li>
  * <li>{@code beforeFormPresent<FormName>} - Called before the form is displayed.</li>
  * </ul>
- * {@code<PropertyName>} and {@code<FormName>} are the property or form name with their first in letter uppercase.
+ * {@code PropertyName} and {@code FormName} are the property or form name with their first in letter uppercase.
  * </p>
  * wizard lifecycle related form methods are :
  * <ul>

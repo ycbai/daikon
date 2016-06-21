@@ -195,7 +195,7 @@ public class AvroRegistry {
 
     /**
      * Registers a reusable mechanism to obtain a {@link IndexedRecordConverter} for a specific class of object and
-     * makes it available to the {@link #createConverter(Class)} method.
+     * makes it available to the {@link #createIndexedRecordConverter(Class)} method.
      *
      * @param datumClass The class of the object that the {@link IndexedRecordConverter} knows how to wrap.
      * @param converterFactory A supplier that will return a new {@link IndexedRecordConverter} for that object.

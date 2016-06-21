@@ -349,7 +349,7 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
     }
 
     /**
-     * return the internal value used for serialization.
+     * Return the internal value used for serialization.
      */
     public Object getStoredValue() {
         return storedValue;
@@ -359,7 +359,7 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
      * 
      * @return the value of the property. This value may not be the one Stored with setValue(), it may be evaluated with
      *         {@link PropertyValueEvaluator}.
-     * @exception throw a ClassCastException is the stored value is not of the property type and no
+     * @exception ClassCastException is the stored value is not of the property type and no
      *                PropertyValueEvaluator has been set.
      */
     @SuppressWarnings("unchecked")

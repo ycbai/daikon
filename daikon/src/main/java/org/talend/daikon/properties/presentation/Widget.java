@@ -53,7 +53,7 @@ public class Widget implements ToStringIndent {
 
     /**
      * A reference to a named selection. This just shows the selected name and a button to get a dialog that has the
-     * {@link #NAME_SELECTION_AREA}.
+     * {@link #NAME_SELECTION_AREA_WIDGET_TYPE}.
      */
     public static final String NAME_SELECTION_REFERENCE_WIDGET_TYPE = "widget.type.name.selection.widget";
 
@@ -228,7 +228,7 @@ public class Widget implements ToStringIndent {
     }
 
     public void setCallBefore(boolean callBefore) {
-        if (widgetType == SCHEMA_REFERENCE_WIDGET_TYPE || widgetType == NAME_SELECTION_REFERENCE_WIDGET_TYPE) {
+        if (widgetType.equals(SCHEMA_REFERENCE_WIDGET_TYPE) || widgetType.equals(NAME_SELECTION_REFERENCE_WIDGET_TYPE)) {
             this.callBeforeActivate = callBefore;
             this.callBeforePresent = !callBefore;
         } else {

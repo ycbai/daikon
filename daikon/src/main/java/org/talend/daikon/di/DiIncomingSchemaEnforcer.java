@@ -222,7 +222,7 @@ public class DiIncomingSchemaEnforcer implements DiSchemaConstants {
                         throw new RuntimeException("Unparseable date: \"" + vs + "\""); //$NON-NLS-1$ //$NON-NLS-2$
                     }
                     pattern = "yyyy-MM-dd'T'HH:mm:ss";
-                    vs = vs.substring(0, vs.lastIndexOf("000Z"));
+                    vs.substring(0, vs.lastIndexOf("000Z"));
                 }
 
                 SimpleDateFormat df = dateFormatCache.get(pattern);

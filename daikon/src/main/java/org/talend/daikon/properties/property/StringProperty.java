@@ -56,7 +56,7 @@ public class StringProperty extends Property<String> {
     }
 
     /**
-     * This will look if {@link NameThing} where used as possible values and use associated {@link NamedThing#getDisplayName()}.
+     * This will look if {@link NamedThing} where used as possible values and use associated {@link NamedThing#getDisplayName()}.
      * If there are possible Values as NamedThing and the value is not found the an exception is thrown. If no NamedThing was set
      * as possible values it will delegate to {@link Property#getPossibleValuesDisplayName(Object)}
      * 

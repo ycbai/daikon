@@ -19,23 +19,12 @@ import java.util.MissingResourceException;
 
 import org.junit.Test;
 
-/**
- * created by sgandon on 11 sept. 2015
- */
 public class I18nMessagesTest {
 
-    /**
-     * created by sgandon on 16 nov. 2015
-     */
     private final class DynamicLocalFormatedI18nImpl extends I18nMessages {
 
         private String baseName;
 
-        /**
-         * DOC sgandon DynamicLocalFormatediI18n constructor comment.
-         * 
-         * @param localeProvider
-         */
         private DynamicLocalFormatedI18nImpl(LocaleProvider localeProvider, String baseName) {
             super(localeProvider);
             this.baseName = baseName;
@@ -61,9 +50,6 @@ public class I18nMessagesTest {
         }
     }
 
-    /**
-     * Test method for {@link org.talend.daikon.i18n.I18nMessages#getMessage(java.lang.String, java.lang.Object[])}.
-     */
     @Test
     public void testGetMessageAllDefaultStringFormat() {
         I18nMessages i18nMessages = new DynamicLocalFormatedI18nImpl(null, "org.talend.daikon.i18n.testMessage");
@@ -86,9 +72,6 @@ public class I18nMessagesTest {
         i18nMessages.getMessage("any.key");
     }
 
-    /**
-     * Test method for {@link org.talend.daikon.i18n.I18nMessages#getMessage(java.lang.String, java.lang.Object[])}.
-     */
     @Test
     public void testGetMessageMutableLocalProvider() {
         MutableLocalProvider mutableLocaleProvider = new MutableLocalProvider();

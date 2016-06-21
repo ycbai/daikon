@@ -19,10 +19,10 @@ package org.talend.daikon.properties.property;
 public interface PropertyValueEvaluator {
 
     /**
-     * compute the actual value of the given property according to the storedValue
+     * Compute the actual value of the given property according to the storedValue
      * 
      * @param storedValue value stored for this property that may be transformed.
-     * @return
+     * @return the evaluated value for the property based on the given stored value.
      */
     <T> T evaluate(Property<T> property, Object storedValue);
 }

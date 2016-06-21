@@ -61,7 +61,7 @@ public class PropertiesDynamicMethodHelper {
     }
 
     public static void storeResult(Properties props, Object result) {
-        if (result instanceof ValidationResult && result != null) {
+        if (result instanceof ValidationResult) {
             ((PropertiesImpl) props).setValidationResult((ValidationResult) result);
         } else {
             ((PropertiesImpl) props).setValidationResult(ValidationResult.OK);
