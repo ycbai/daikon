@@ -277,39 +277,6 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
         return this;
     }
 
-    public List<Property<?>> getChildren() {
-        return children;
-    }
-
-    public Property<T> setChildren(List<Property<?>> children) {
-        this.children = children;
-        return this;
-    }
-
-    public Property<T> addChild(Property<?> child) {
-        children.add(child);
-        return this;
-    }
-
-    public Property<?> getChild(String aName) {
-        if (children != null) {
-            for (Property<?> child : children) {
-                if (child.getName().equals(aName)) {
-                    return child;
-                }
-            }
-        }
-        return null;
-    }
-
-    public Map<String, Property<?>> getChildMap() {
-        Map<String, Property<?>> map = new HashMap<>();
-        for (Property<?> se : getChildren()) {
-            map.put(se.getName(), se);
-        }
-        return map;
-    }
-
     public EnumSet<Flags> getFlags() {
         return flags;
     }

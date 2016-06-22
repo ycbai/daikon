@@ -107,29 +107,6 @@ public class PropertyTest {
     }
 
     @Test
-    public void testChildren() {
-        Property<String> element = newProperty("element");
-        Property<String> child = newProperty("myElement");
-        assertNotNull(element.addChild(child).getChild("myElement"));
-        assertEquals("myElement", element.getChild("myElement").getName());
-
-        List<Property<?>> children = element.getChildren();
-        assertEquals(1, children.size());
-        assertEquals("myElement", children.get(0).getName());
-
-        children.add(newProperty("myElement2"));
-        element.setChildren(children);
-        assertEquals("myElement", element.getChild("myElement").getName());
-        assertEquals("myElement2", element.getChild("myElement2").getName());
-
-        Map<String, Property<?>> childrenMap = element.getChildMap();
-        assertEquals(2, childrenMap.size());
-        assertEquals("myElement", childrenMap.get("myElement").getName());
-        assertEquals("myElement2", childrenMap.get("myElement2").getName());
-        childrenMap.put("myElement3", newProperty("myElement3"));
-    }
-
-    @Test
     public void testHiddenForProperties() {
         Property<String> element = newProperty("element");
         assertFalse(element.isFlag(Property.Flags.HIDDEN));
