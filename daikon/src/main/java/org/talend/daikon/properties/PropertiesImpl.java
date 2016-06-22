@@ -87,7 +87,7 @@ public class PropertiesImpl extends TranslatableImpl implements Properties, AnyP
         List<NamedThing> properties = getProperties();
         for (NamedThing prop : properties) {
             if (prop instanceof Property) {
-                prop.setI18nMessageFormater(getI18nMessageFormater());
+                prop.setI18nMessageFormatter(getI18nMessageFormatter());
             }
         }
         return false;
@@ -187,7 +187,7 @@ public class PropertiesImpl extends TranslatableImpl implements Properties, AnyP
         }
         if (value instanceof Property) {
             // Do not set the i18N for nested Properties, they already handle their i18n
-            value.setI18nMessageFormater(getI18nMessageFormater());
+            value.setI18nMessageFormatter(getI18nMessageFormatter());
         } else if (value instanceof PropertiesImpl) {// a property so setit up
             ((PropertiesImpl) value).initProperties();
         } // else nothing to initialize.

@@ -16,7 +16,7 @@ import org.talend.daikon.exception.error.CommonErrorCodes;
 
 public interface Translatable {
 
-    void setI18nMessageFormater(I18nMessages i18nMessages);
+    void setI18nMessageFormatter(I18nMessages i18nMessages);
 
     /**
      * return the Internationnalised messages found from the resource found with the provided baseName from
@@ -28,7 +28,7 @@ public interface Translatable {
      * @return the formated string or the key if no message was found
      * @exception org.talend.daikon.exception.TalendRuntimeException thrown with the code
      * {@link CommonErrorCodes#MISSING_I18N_TRANSLATOR} if the
-     * I18nMessages that should have been set by {@link #setI18nMessageFormater(I18nMessages)} is null
+     * I18nMessages that should have been set by {@link #setI18nMessageFormatter(I18nMessages)} is null
      */
     String getI18nMessage(String key, Object... arguments);
 

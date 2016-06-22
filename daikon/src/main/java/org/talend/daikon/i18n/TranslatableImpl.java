@@ -21,11 +21,11 @@ public class TranslatableImpl implements Translatable {
     private transient I18nMessages i18nMessages;
 
     @Override
-    public void setI18nMessageFormater(I18nMessages i18nMessages) {
+    public void setI18nMessageFormatter(I18nMessages i18nMessages) {
         this.i18nMessages = i18nMessages;
     }
 
-    public I18nMessages getI18nMessageFormater() {
+    public I18nMessages getI18nMessageFormatter() {
         if (i18nMessages == null) {
             i18nMessages = createI18nMessageFormater();
         }
@@ -44,12 +44,10 @@ public class TranslatableImpl implements Translatable {
 
     @Override
     public String getI18nMessage(String key, Object... arguments) {
-        I18nMessages i18nMessageFormater = getI18nMessageFormater();
+        I18nMessages i18nMessageFormater = getI18nMessageFormatter();
         if (i18nMessageFormater != null) {
             return i18nMessageFormater.getMessage(key, arguments);
         } else {
-            // return "Missing translator: " + key;
-            // FIXME - removing this for now until I18N can support this on deserialization
             throw new TalendRuntimeException(CommonErrorCodes.MISSING_I18N_TRANSLATOR, ExceptionContext.build().put("key", key)); //$NON-NLS-1$
         }
     }

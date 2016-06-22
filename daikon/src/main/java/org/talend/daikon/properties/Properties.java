@@ -81,7 +81,7 @@ import org.talend.daikon.strings.ToStringIndent;
  * called.
  * <p/>
  * <b>WARNING</b> - It is not recommanded to instanciate a Property field after {@link Properties#setupProperties()} is called. If
- * you want to create the property later you'll have to call {@link Property#setI18nMessageFormater(I18nMessages)} manually.
+ * you want to create the property later you'll have to call {@link Property#setI18nMessageFormatter(I18nMessages)} manually.
  */
 public interface Properties extends AnyProperty, ToStringIndent {
 
