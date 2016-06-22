@@ -17,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.talend.daikon.exception.TalendRuntimeException;
 
 /**
- * Specifc property for enums
+ * Property that contains an enum
  */
 public class EnumProperty<T extends Enum<T>> extends Property<T> {
 
@@ -29,8 +29,8 @@ public class EnumProperty<T extends Enum<T>> extends Property<T> {
 
     }
 
-    /**
-     * this is package protected because this constructor should only be used when copying a Property at runtime, so it
+    /*
+     * This is package protected because this constructor should only be used when copying a Property at runtime, so it
      * does not need to be typed.
      */
     EnumProperty(String type, String name) {
@@ -56,8 +56,8 @@ public class EnumProperty<T extends Enum<T>> extends Property<T> {
         return (T) value;
     }
 
-    /**
-     * this will replace the . with a $ for all String starting with a Capital letter except for the first one.
+    /*
+     * this will replace the "." with a "$" for all String starting with a Capital letter except for the first one.
      */
     String convertToInnerClassString(String type) {
         return StringUtils.replacePattern(type, "([a-z0-9]*\\\\.[A-Z][^.]*)?((\\\\.)([A-Z][a-z0-9]*))", "$1\\$$4");

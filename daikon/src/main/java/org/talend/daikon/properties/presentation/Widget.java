@@ -22,6 +22,8 @@ import org.talend.daikon.strings.ToStringIndentUtil;
 
 /**
  * The {@code Widget} class defines the presentation characteristics of the property within its {@link Form}.
+ *
+ * A {@code Widget} may also refer to a {@link Form}.
  */
 public class Widget implements ToStringIndent {
 
@@ -219,14 +221,16 @@ public class Widget implements ToStringIndent {
         return this;
     }
 
-    //
-    // These are automatically set by this framework; they are not to be specified by the user.
-    //
-
+    /**
+     * For internal use only.
+     */
     public boolean isCallBeforeActivate() {
         return callBeforeActivate;
     }
 
+    /**
+     * For internal use only, this is automatically set by the framework.
+     */
     public void setCallBefore(boolean callBefore) {
         if (widgetType.equals(SCHEMA_REFERENCE_WIDGET_TYPE) || widgetType.equals(NAME_SELECTION_REFERENCE_WIDGET_TYPE)) {
             this.callBeforeActivate = callBefore;
@@ -237,22 +241,37 @@ public class Widget implements ToStringIndent {
         }
     }
 
+    /**
+     * For internal use only.
+     */
     public boolean isCallBeforePresent() {
         return callBeforePresent;
     }
 
+    /**
+     * For internal use only.
+     */
     public boolean isCallValidate() {
         return callValidate;
     }
 
+    /**
+     * For internal use only, this is automatically set by the framework.
+     */
     public void setCallValidate(boolean callValidate) {
         this.callValidate = callValidate;
     }
 
+    /**
+     * For internal use only.
+     */
     public boolean isCallAfter() {
         return callAfter;
     }
 
+    /**
+     * For internal use only, this is automatically set by the framework.
+     */
     public void setCallAfter(boolean callAfter) {
         this.callAfter = callAfter;
     }

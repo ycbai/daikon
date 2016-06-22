@@ -12,8 +12,13 @@
 // ============================================================================
 package org.talend.daikon.properties;
 
-import static org.junit.Assert.*;
-import static org.talend.daikon.properties.property.PropertyFactory.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.talend.daikon.properties.property.PropertyFactory.newProperty;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -24,6 +29,7 @@ import org.junit.Test;
 import org.talend.daikon.properties.presentation.Widget;
 import org.talend.daikon.properties.property.Property;
 import org.talend.daikon.properties.property.Property.Flags;
+import org.talend.daikon.properties.property.PropertyFactory;
 import org.talend.daikon.properties.property.StringProperty;
 
 import com.cedarsoftware.util.io.JsonReader;
@@ -164,9 +170,9 @@ public class PropertyTest {
 
     @Test
     public void testCopyTaggedValues() {
-        Property<String> element = new Property<>(String.class, "element");
+        Property<String> element = PropertyFactory.newString("element");
         element.setTaggedValue("foo", "foo1");
-        Property<String> element2 = new Property<>(String.class, "element2");
+        Property<String> element2 = PropertyFactory.newString("element2");
         element2.setTaggedValue("bar", "bar1");
 
         assertEquals("foo1", element.getTaggedValue("foo"));
@@ -189,7 +195,7 @@ public class PropertyTest {
 
     @Test
     public void testType() {
-        Property foo = new Property<Integer>(Integer.class, "foo");
+        Property foo = PropertyFactory.newInteger("foo");
         foo.setValue("bar");
         assertEquals("bar", foo.getValue());
     }
@@ -198,7 +204,8 @@ public class PropertyTest {
     public void testEncryptDoNothing() {
         class NotAnExistingType {// left empty on purpose
         }
-        Property<NotAnExistingType> foo = new Property<>(NotAnExistingType.class, "foo").setFlags(EnumSet.of(Flags.ENCRYPT));
+        Property<NotAnExistingType> foo = PropertyFactory.newProperty(NotAnExistingType.class, "foo")
+                .setFlags(EnumSet.of(Flags.ENCRYPT));
         NotAnExistingType notAnExistingTypeInstance = new NotAnExistingType();
         foo.setValue(notAnExistingTypeInstance);
         assertEquals(notAnExistingTypeInstance, foo.getValue());

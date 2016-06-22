@@ -20,7 +20,7 @@ import org.talend.daikon.exception.error.DefaultErrorCode;
 import org.talend.daikon.exception.error.ErrorCode;
 
 /**
- * Error codes for the Component service
+ * Error codes for Properties
  */
 public enum PropertiesErrorCode implements ErrorCode {
 
@@ -33,51 +33,29 @@ public enum PropertiesErrorCode implements ErrorCode {
 
     private DefaultErrorCode errorCodeDelegate;
 
-    /**
-     * default constructor.
-     * 
-     * @param httpStatus the http status to use.
-     */
     PropertiesErrorCode(int httpStatus) {
         this.errorCodeDelegate = new DefaultErrorCode(httpStatus);
     }
 
-    /**
-     * default constructor.
-     *
-     * @param httpStatus the http status to use.
-     */
     PropertiesErrorCode(int httpStatus, String... contextEntries) {
         this.errorCodeDelegate = new DefaultErrorCode(httpStatus, contextEntries);
     }
 
-    /**
-     * @return the product. Default value is Talend.
-     */
     @Override
     public String getProduct() {
         return errorCodeDelegate.getProduct();
     }
 
-    /**
-     * @return the group. Default Value is ALL
-     */
     @Override
     public String getGroup() {
         return errorCodeDelegate.getGroup();
     }
 
-    /**
-     * @return the http status.
-     */
     @Override
     public int getHttpStatus() {
         return errorCodeDelegate.getHttpStatus();
     }
 
-    /**
-     * @return the expected context entries.
-     */
     @Override
     public Collection<String> getExpectedContextEntries() {
         return errorCodeDelegate.getExpectedContextEntries();

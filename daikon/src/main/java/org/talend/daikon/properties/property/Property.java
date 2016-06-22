@@ -56,11 +56,11 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
 
     public enum Flags {
         /**
-         * Encrypt this when storing the {@link Properties} into a serializable form.
+         * Encrypt this when storing the {@link Properties} into a persistent serializable form.
          */
         ENCRYPT,
         /**
-         * Don't log this value in any logs.
+         * Don't log this value in any logs (used for sensitive information).
          */
         SUPPRESS_LOGGING,
         /**
@@ -97,32 +97,39 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
 
     private String currentType;
 
-    public Property(TypeLiteral<T> type, String name, String title) {
+    /**
+     * For internal use only.
+     */
+    Property(TypeLiteral<T> type, String name, String title) {
         this(type.getType(), name, title);
     }
 
-    public Property(TypeLiteral<T> type, String name) {
+    /**
+     * For internal use only.
+     */
+    Property(TypeLiteral<T> type, String name) {
         this(type, name, null);
     }
 
-    public Property(Type type, String name, String title) {
+    /**
+     * For internal use only.
+     */
+    Property(Type type, String name, String title) {
         // we cannot store the type as is because of a serialization issue that will serialised
         // sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl and will fail with jsonio
-        // and also is not portable accros different jvm vendors.
+        // and also is not portable across different jvm vendors.
         this(TypeUtils.toString(type), name, title);
     }
 
     /**
-     * this is package protected because this constructor should only be used when copying a Property at runtime, so it
-     * does not need to be typed.
+     * For internal use only.
      */
     Property(String type, String name) {
         this(type, name, null);
     }
 
     /**
-     * this is package protected because this constructor should only be used when copying a Property at runtime, so it
-     * does not need to be typed.
+     * For internal use only.
      */
     Property(String type, String name, String title) {
         currentType = type;
@@ -131,11 +138,11 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
         setSize(-1);
     }
 
-    public Property(Class<T> type, String name) {
+    Property(Class<T> type, String name) {
         this(type, name, null);
     }
 
-    public Property(Class<T> type, String name, String title) {
+    Property(Class<T> type, String name, String title) {
         this((Type) type, name, title);
     }
 
@@ -165,7 +172,7 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
     }
 
     /**
-     * return the String representing the current type of the object. this string is the same value as
+     * Return the String representing the current type of the object. this string is the same value as
      * {@link TypeUtils#toString(Type)}
      */
     public String getType() {
@@ -249,9 +256,9 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
     }
 
     /**
-     * return a list of possible values for this property. If the property is a simple type or an enum this will
-     * return a list of element with the same type as the Property. But for convinience if this Property is a collection type such
-     * as Map<T> this shall be used to simply return a list of T and not a List<Map<T>>. This will not be enforced at
+     * Return a list of possible values for this property. If the property is a simple type or an enum this will
+     * return a list of element with the same type as the Property. But for convenience if this Property is a collection type such
+     * as {@link Map<T>} this is used to simply return a list of T and not a List<Map<T>>. This will not be enforced at
      * all, just a convention.
      */
     public List<?> getPossibleValues() {
@@ -338,7 +345,9 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
     }
 
     /**
-     * Set this property value with the proper type as oppose to the {@link #setStoredValue(Object)}.
+     * Set the stored value for this property.
+     * 
+     * @see #setStoredValue(Object)
      */
     public Property<T> setValue(T value) {
         storedValue = value;
@@ -346,10 +355,11 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
     }
 
     /**
-     * set the value that will be stored and serialized into this
-     * Property. This does not have to be of the type of the Property
-     * but if that is so you shall provide a {@link PropertyValueEvaluator} to this property so that when the (@link
-     * {@link Property#getValue()} is called, it can convert it to the proper type.
+     * Set the value that will be stored and serialized into this
+     * Property. Sometimes the value will not match the type of the property. For example it may be a string that refers to the
+     * value using some context mechanism.
+     * In this case a {@link PropertyValueEvaluator} is used so that when the (@link {@link Property#getValue()} is called, it is
+     * converted to the proper type.
      */
     public Property<T> setStoredValue(Object value) {
         storedValue = value;
@@ -366,9 +376,9 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
     /**
      * 
      * @return the value of the property. This value may not be the one Stored with setValue(), it may be evaluated with
-     *         {@link PropertyValueEvaluator}.
+     * {@link PropertyValueEvaluator}.
      * @exception ClassCastException is the stored value is not of the property type and no
-     *                PropertyValueEvaluator has been set.
+     * PropertyValueEvaluator has been set.
      */
     @SuppressWarnings("unchecked")
     public T getValue() {
@@ -406,14 +416,14 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
     }
 
     /**
-     * return a i18n String for a given possible value. It will automatically look for the key
-     * {@value Property#I18N_PROPERTY_PREFIX}.possibleValue.toString().
-     * {@value NamedThing#I18N_DISPLAY_NAME_SUFFIX}. if the key is not found it returns the possibleValue.toString().
+     * Return a i18n String for a given possible value. It will automatically look for the key
+     * {@value Property#I18N_PROPERTY_PREFIX}.possibleValue.toString(). {@value NamedThing#I18N_DISPLAY_NAME_SUFFIX}. if the key
+     * is not found it returns the possibleValue.toString().
      * 
      * @return a I18n value or possibleValue.toString if the value is not found.
      * @exception TalendRuntimeException with {@link CommonErrorCodes#UNEXPECTED_ARGUMENT} if the possible value does not belong
-     *                to
-     *                possible values
+     * to
+     * possible values
      */
     public String getPossibleValuesDisplayName(Object possibleValue) {
         // first check that the possibleValue is part of the possible values
