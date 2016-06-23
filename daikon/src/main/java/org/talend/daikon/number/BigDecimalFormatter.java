@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 /**
- * Main goal of this class is to provide BigDecimal instance from a String.
+ * Format a {@link BigDecimal} instance as a {@link String}.
  */
 public class BigDecimalFormatter {
 

@@ -15,7 +15,7 @@ package org.talend.daikon;
 import org.talend.daikon.i18n.TranslatableImpl;
 
 /**
- * Something that is named.
+ * Simple implementation of {@link NamedThing}
  */
 public class SimpleNamedThing extends TranslatableImpl implements NamedThing {
 

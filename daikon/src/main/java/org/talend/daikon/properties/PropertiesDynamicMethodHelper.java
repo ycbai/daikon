@@ -23,7 +23,7 @@ import org.talend.daikon.properties.presentation.Widget;
 import org.talend.daikon.properties.service.Repository;
 
 /**
- * set of helpers method to call Property and Form lifecycles for Properties
+ * Helpers for the implementation methods of the {@link org.talend.daikon.properties.service.PropertiesService}.
  */
 public class PropertiesDynamicMethodHelper {
 
@@ -61,10 +61,10 @@ public class PropertiesDynamicMethodHelper {
     }
 
     public static void storeResult(Properties props, Object result) {
-        if (result instanceof ValidationResult && result != null) {
-            props.validationResult = (ValidationResult) result;
+        if (result instanceof ValidationResult) {
+            ((PropertiesImpl) props).setValidationResult((ValidationResult) result);
         } else {
-            props.validationResult = ValidationResult.OK;
+            ((PropertiesImpl) props).setValidationResult(ValidationResult.OK);
         }
     }
 
@@ -83,7 +83,7 @@ public class PropertiesDynamicMethodHelper {
         Method m = findMethod(props, Properties.METHOD_VALIDATE, propName, REQUIRED);
         try {
             m.setAccessible(true);
-            props.validationResult = (ValidationResult) m.invoke(props);
+            ((PropertiesImpl) props).setValidationResult((ValidationResult) m.invoke(props));
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }

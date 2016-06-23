@@ -16,23 +16,17 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-/**
- * created by sgandon on 11 sept. 2015
- */
 public class ClassLoaderBasedI18nMessagesTest {
 
-    /**
-     * Test method for {@link org.talend.daikon.i18n.I18nMessages#getMessage(java.lang.String, java.lang.Object[])}.
-     */
     @Test
     public void testGetMessageWithSpecificUnknownKeyPrefix() {
         I18nMessages i18nMessages = new ClassLoaderBasedI18nMessages("org.talend.daikon.i18n.testMessage", "!"); //$NON-NLS-1$ //$NON-NLS-2$
-        assertEquals("", i18nMessages.getMessage("ze.empty.key", null));
-        assertEquals("normal", i18nMessages.getMessage("ze.normal.key", null));
+        assertEquals("", i18nMessages.getMessage("ze.empty.key"));
+        assertEquals("normal", i18nMessages.getMessage("ze.normal.key"));
         assertEquals("normal", i18nMessages.getMessage("ze.normal.key", "foo"));
-        assertEquals("test {0} and {1}", i18nMessages.getMessage("ze.message.key", null));
+        assertEquals("test {0} and {1}", i18nMessages.getMessage("ze.message.key"));
         assertEquals("test foo and bar", i18nMessages.getMessage("ze.message.key", "foo", "bar"));
-        assertEquals("!unknown.key", i18nMessages.getMessage("unknown.key", null));
+        assertEquals("!unknown.key", i18nMessages.getMessage("unknown.key"));
     }
 
 }

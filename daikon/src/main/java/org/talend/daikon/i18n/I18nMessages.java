@@ -42,7 +42,7 @@ public abstract class I18nMessages {
     }
 
     /**
-     * get the message bundle and get the value according to the key and then format it all of this using the dynamic
+     * Get the message bundle and get the value according to the key and then format it all of this using the dynamic
      * Locale.
      * 
      * @param key the identifying key for the message

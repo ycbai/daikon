@@ -13,43 +13,48 @@
 package org.talend.daikon.properties.test;
 
 import static org.hamcrest.CoreMatchers.*;
-// import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.rules.ErrorCollector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.talend.daikon.NamedThing;
 import org.talend.daikon.properties.AnyPropertyVisitor;
 import org.talend.daikon.properties.Properties;
-import org.talend.daikon.properties.Properties.Deserialized;
-import org.talend.daikon.properties.Property;
 import org.talend.daikon.properties.presentation.Form;
 import org.talend.daikon.properties.presentation.Widget;
+import org.talend.daikon.properties.property.Property;
 import org.talend.daikon.properties.service.PropertiesService;
+import org.talend.daikon.serialize.SerializerDeserializer;
+
+// import static org.hamcrest.Matchers.*;
 
 public class PropertiesTestUtils {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesTestUtils.class);
+
     public static Properties checkSerialize(Properties props, ErrorCollector errorCollector) {
         String s = props.toSerialized();
-        Deserialized<Properties> d = Properties.fromSerialized(s, Properties.class);
-        Properties deserProps = d.properties;
+        SerializerDeserializer.Deserialized<Properties> d = Properties.Helper.fromSerializedPersistent(s, Properties.class);
+        Properties deserProps = d.object;
         checkAllI18N(deserProps, errorCollector);
-        assertFalse(d.migration.isMigrated());
+        assertFalse(d.migrated);
         List<NamedThing> newProps = deserProps.getProperties();
         List<Form> newForms = deserProps.getForms();
         int i = 0;
         for (NamedThing prop : props.getProperties()) {
-            System.out.println(prop.getName());
+            LOGGER.debug(prop.getName());
             assertEquals(prop.getName(), newProps.get(i).getName());
             i++;
         }
         i = 0;
         for (Form form : props.getForms()) {
-            System.out.println("Form: " + form.getName());
+            LOGGER.debug("Form: " + form.getName());
             Form newForm = newForms.get(i++);
             assertEquals(form.getName(), form.getName());
             for (Widget widget : form.getWidgets()) {
@@ -58,7 +63,7 @@ public class PropertiesTestUtils {
                 if (formChild instanceof Form) {
                     name = ((Form) formChild).getProperties().getName();
                 }
-                System.out.println("  prop: " + formChild.getName() + " name to be used: " + name);
+                LOGGER.debug("  prop: " + formChild.getName() + " name to be used: " + name);
                 NamedThing newChild = newForm.getWidget(name).getContent();
                 String newName = newChild.getName();
                 if (newChild instanceof Form) {
@@ -73,11 +78,7 @@ public class PropertiesTestUtils {
     }
 
     /**
-     * check that all Components have theirs internationnalisation properties setup correctly.
-     * 
-     * @param errorCollector
-     * 
-     * @param componentService service to get the components to be checked.
+     * check that all Components have theirs internationalisation properties setup correctly.
      */
     static public void checkAllI18N(Properties checkedProps, final ErrorCollector errorCollector) {
         if (checkedProps == null) {
@@ -107,15 +108,29 @@ public class PropertiesTestUtils {
 
                 @Override
                 public void visit(Property prop, Properties parent) {
-                    errorCollector.checkThat(
-                            "property [" + parent.getClass().getCanonicalName() + "#" + prop.getName()
-                                    + "] should have a translated message key [property." + prop.getName()
-                                    + ".displayName] in [the proper messages.properties]",
-                            prop.getDisplayName().endsWith(".displayName"), is(false));
+                    chekProperty(errorCollector, prop, parent);
                 }
+
             }, null);
 
         }
+    }
+
+    /**
+     * check that the property has a display name that is translated. We basically checks that is does not end with
+     * ".displayName".
+     * 
+     * @param errorCollector, to collect the error
+     * @param prop the property to check for an i18N {@link Property#getDisplayName()}
+     * @param parent, used only for the error message to identify the origin of the property
+     */
+    static public void chekProperty(final ErrorCollector errorCollector, Property<?> prop, Object parent) {
+        // check that property.getDisplay name has been translated.
+        errorCollector.checkThat(
+                "property [" + parent.getClass().getCanonicalName() + "#" + prop.getName()
+                        + "] should have a translated message key [property." + prop.getName()
+                        + ".displayName] in [the proper messages.properties]",
+                prop.getDisplayName().endsWith(".displayName"), is(false));
     }
 
     /**

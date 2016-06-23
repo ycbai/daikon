@@ -17,14 +17,18 @@ import org.talend.daikon.exception.TalendRuntimeException;
 /**
  * Contains the result of the validation of a components property.
  * <p/>
- * This is to be returned from the {@code validate} methods in {@link Properties}.
+ * This is to be returned from the {@code validate} methods in {@link Properties}. The ValidationResult with the status
+ * {@link ValidationResult.Result#OK} will be shown to the user if a message is set.
+ * </p>
+ * The ValidationResult with the {@link ValidationResult.Result#ERROR} must have a message set to explain the error.
+ * </p>
  */
 public class ValidationResult {
 
     public enum Result {
-                        OK,
-                        WARNING,
-                        ERROR
+        OK,
+        WARNING,
+        ERROR
     }
 
     public static ValidationResult OK = new ValidationResult().setStatus(Result.OK);
@@ -33,15 +37,11 @@ public class ValidationResult {
 
     public int number;
 
-    /**
-     * default constructor with a default status to OK.
-     */
     public ValidationResult() {
-
     }
 
     /**
-     * use the TalendRuntimeException to construct a Validation message. By default the status is set tot Error but this
+     * Use the TalendRuntimeException to construct a Validation message. By default the status is set to Error but this
      * may be changed by the user after creation.
      * 
      * @param tre exception used to construct the message
@@ -60,10 +60,17 @@ public class ValidationResult {
         return this;
     }
 
+    /**
+     * @return the message previously set or null if none. If a message is returned the client will display it.
+     */
     public String getMessage() {
         return message;
     }
 
+    /**
+     * Set the text message related to this validation result. This method must be called with a non null value when the
+     * status is {@link Result#ERROR}.
+     */
     public ValidationResult setMessage(String message) {
         this.message = message;
         return this;

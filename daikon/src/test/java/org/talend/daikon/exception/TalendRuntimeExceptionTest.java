@@ -71,7 +71,7 @@ public class TalendRuntimeExceptionTest {
             fail("No exception");
         } catch (Exception ex) {
             assertTrue(ex instanceof TalendRuntimeException);
-            assertEquals("test exception", ((TalendRuntimeException) ex).getCause().getMessage());
+            assertEquals("test exception", ex.getCause().getMessage());
             assertEquals(CommonErrorCodes.UNEXPECTED_EXCEPTION, ((TalendRuntimeException) ex).getCode());
         }
     }

@@ -22,10 +22,10 @@ public class GlobalI18N {
     protected static I18nMessageProvider i18nMessageProvider;
 
     /**
-     * get the current MessageProvider. this may be set by the current container or set manually by calling
+     * Get the current MessageProvider. this may be set by the current container or set manually by calling
      * {@link GlobalI18N#createI18nMessageProvider(LocaleProvider)}
      * 
-     * @return a massage provider, never null (by default it uses the default Locale)
+     * @return a message provider, never null (by default it uses the default Locale)
      */
     public static I18nMessageProvider getI18nMessageProvider() {
         // create a default provider if none was created by the container (OSGI or Spring).
@@ -44,10 +44,8 @@ public class GlobalI18N {
     }
 
     /**
-     * create a static MessageProvider using the given LocalProvider. Should only be used outside a container such as
+     * Create a static MessageProvider using the given LocalProvider. Should only be used outside a container such as
      * OSGI or Spring
-     * 
-     * @param localeProvider
      */
     public static void createI18nMessageProvider(final LocaleProvider localeProvider) {
         i18nMessageProvider = new I18nMessageProvider() {

@@ -1,5 +1,14 @@
 package org.talend.daikon.avro;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertThat;
+
+import java.util.UUID;
+
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
 import org.apache.avro.generic.GenericData;
@@ -7,11 +16,7 @@ import org.apache.avro.generic.IndexedRecord;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import java.util.UUID;
-
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import org.talend.daikon.avro.converter.IndexedRecordConverter;
 
 /**
  * Unit tests for {AvroRegistry}.
@@ -26,7 +31,8 @@ public class AvroRegistryTest {
     public void testBasic() {
         // Some basic cases for the AvroRegistry.
         AvroRegistry registry = new AvroRegistry();
-        assertThat(registry.inferSchema(UUID.fromString("12341234-1234-1234-1234-123412341234")), is(SchemaBuilder.builder().stringBuilder().prop(SchemaConstants.JAVA_CLASS_FLAG, UUID.class.getCanonicalName()).endString()));
+        assertThat(registry.inferSchema(UUID.fromString("12341234-1234-1234-1234-123412341234")), is(SchemaBuilder.builder()
+                .stringBuilder().prop(SchemaConstants.JAVA_CLASS_FLAG, UUID.class.getCanonicalName()).endString()));
     }
 
     @Test
@@ -35,12 +41,12 @@ public class AvroRegistryTest {
         Object in = "hello";
 
         // Get an adapter factory for it.
-        IndexedRecordAdapterFactory<?, ?> irff = new AvroRegistry().createAdapterFactory(in.getClass());
+        IndexedRecordConverter<?, ?> irff = new AvroRegistry().createIndexedRecordConverter(in.getClass());
         assertThat(irff, not(nullValue()));
 
         // The output is an IndexedRecord that contains one String column.
         @SuppressWarnings({ "rawtypes", "unchecked" })
-        IndexedRecord out = (IndexedRecord) ((IndexedRecordAdapterFactory) irff).convertToAvro(in);
+        IndexedRecord out = (IndexedRecord) ((IndexedRecordConverter) irff).convertToAvro(in);
 
         Schema s = out.getSchema();
         assertThat(s.getType(), is(Schema.Type.RECORD));
@@ -54,16 +60,16 @@ public class AvroRegistryTest {
     @Test
     public void testAdaptorFactoryUnconvertedIndexRecords() {
         // Just create a fake object that is known to be an index record.
-        Object in = new GenericData().newRecord(null, SchemaBuilder.builder().record("testRecord").fields().name("column1")
-                .type().stringType().noDefault().endRecord());
+        Object in = new GenericData().newRecord(null, SchemaBuilder.builder().record("testRecord").fields().name("column1").type()
+                .stringType().noDefault().endRecord());
 
         // Get an adapter factory for it.
-        IndexedRecordAdapterFactory<?, ?> irff = new AvroRegistry().createAdapterFactory(in.getClass());
+        IndexedRecordConverter<?, ?> irff = new AvroRegistry().createIndexedRecordConverter(in.getClass());
         assertThat(irff, not(nullValue()));
 
         // Since it's already an indexed record, the output is the same instance as the input.
         @SuppressWarnings({ "rawtypes", "unchecked" })
-        IndexedRecord out = (IndexedRecord) ((IndexedRecordAdapterFactory) irff).convertToAvro(in);
+        IndexedRecord out = (IndexedRecord) ((IndexedRecordConverter) irff).convertToAvro(in);
         assertThat(out, sameInstance(in));
     }
 
@@ -74,7 +80,7 @@ public class AvroRegistryTest {
         };
 
         // thrown.expect(RuntimeException.class);
-        IndexedRecordAdapterFactory<?, ?> irff = new AvroRegistry().createAdapterFactory(datum.getClass());
+        IndexedRecordConverter<?, ?> irff = new AvroRegistry().createIndexedRecordConverter(datum.getClass());
         assertThat(irff, nullValue());
     }
 

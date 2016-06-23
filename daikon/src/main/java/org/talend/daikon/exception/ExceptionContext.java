@@ -26,22 +26,16 @@ public class ExceptionContext implements Serializable {
     /** The internal context. */
     private Map<String, Object> context;
 
-    /**
-     * private constructor to ensure the build method use.
-     */
     private ExceptionContext() {
         context = new HashMap<>();
     }
 
     /**
-     * creates a context from a builder
-     * 
-     * @param builder
+     * Creates a context from a builder
      */
     private ExceptionContext(ExceptionContextBuilder builder) {
         context = builder.context;
     }
-
 
     public static final String KEY_MESSAGE = "message";
 
@@ -117,10 +111,6 @@ public class ExceptionContext implements Serializable {
 
         /**
          * Adds a new key / value pair in the context
-         * 
-         * @param key
-         * @param value
-         * @return the builder
          */
         public ExceptionContextBuilder put(String key, Object value) {
             context.put(key, value);

@@ -18,8 +18,7 @@ import java.util.MissingResourceException;
  * Look for a i18n <b>.properties</b> file according to the following policy. <br>
  * <ul>
  * <li>first the files with the name <b>clazz.getName() + ".properties" </b> are searched.</li>w
- * <li>if none is found then the files named <b>clazz.getPackage().getName() + ".messages.properties"</b> are searched.
- * </li>
+ * <li>if none is found then the files named <b>clazz.getPackage().getName() + ".messages.properties"</b> are searched.</li>
  * </ul>
  * Not only it looks for the current class with the following policy but if nothing found it applies the policy above to
  * the super class until java.lang.Object is reached.
@@ -46,30 +45,21 @@ public class ClassBasedI18nMessages extends I18nMessages {
     }
 
     /**
-     * same as {@link I18nMessages#I18nMessages(LocaleProvider, Class<?>, String)} with unknowKeyPrefix set to null
-     * 
-     * @param localeProvider, if null the java.util.Locale.getDefault() shall be used
-     * @param clazz, clazz used to find the resource based on the it name or package name.
+     * @see {@link #ClassBasedI18nMessages(LocaleProvider, Class, String)}
      */
     public ClassBasedI18nMessages(LocaleProvider localeProvider, Class<?> clazz) {
         this(localeProvider, clazz, null);
     }
 
     /**
-     * same as {@link I18nMessages#I18nMessages(LocaleProvider, Class<?>, String)} with localeProvider set to null
-     * 
-     * @param clazz, clazz used to find the resource based on the it name or package name.
-     * @param unknowKeyPrefix string used to prefix the returned key if the value was not found (if null then an empty
-     * String is used)
+     * @see {@link #ClassBasedI18nMessages(LocaleProvider, Class, String)}
      */
     public ClassBasedI18nMessages(Class<?> clazz, String unknowKeyPrefix) {
         this(null, clazz, unknowKeyPrefix);
     }
 
     /**
-     * same as {@link I18nMessages#I18nMessages(Class<?>, String)} with unknowKeyPrefix set to null
-     * 
-     * @param clazz, clazz used to find the resource based on the it name or package name.
+     * @see {@link #ClassBasedI18nMessages(LocaleProvider, Class, String)}
      */
     public ClassBasedI18nMessages(Class<?> clazz) {
         this(clazz, null);
