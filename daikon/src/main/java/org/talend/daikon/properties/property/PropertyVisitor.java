@@ -16,7 +16,8 @@ import org.talend.daikon.properties.AnyPropertyVisitor;
 import org.talend.daikon.properties.Properties;
 
 /**
- * Provides a default Properties visitor implementation for visiting only Property typed values
+ * Provides a default {@link AnyPropertyVisitor} implementation which can be used for a subclass that is interested only in
+ * visiting {@link Property} objects.
  */
 public abstract class PropertyVisitor implements AnyPropertyVisitor {
 

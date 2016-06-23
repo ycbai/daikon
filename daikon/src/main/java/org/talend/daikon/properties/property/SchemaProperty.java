@@ -30,16 +30,13 @@ import org.apache.avro.Schema;
  * 5. Some exception is thrown in both constructors.<br>
  * 6. Json-io can't create instance and throws its own exception.<br>
  */
+// FIXME - move this back to TCOMP, see TDKN-66
 public class SchemaProperty extends Property<Schema> {
 
     public SchemaProperty(String name) {
         super(Schema.class, name);
     }
 
-    /**
-     * this is package protected because this constructor should only be used when copying a Property at runtime, so it
-     * does not need to be typed.
-     */
     SchemaProperty(String type, String name) {
         super(type, name);
     }
@@ -53,9 +50,7 @@ public class SchemaProperty extends Property<Schema> {
 
     /**
      * @return the value of the property. This value may not be the one Stored with setValue(), it may be evaluated with
-     *         {@link PropertyValueEvaluator}.
-     * 
-     * 
+     * {@link PropertyValueEvaluator}.
      */
     @Override
     public Schema getValue() {

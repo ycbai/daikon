@@ -23,7 +23,7 @@ import org.talend.daikon.properties.presentation.Widget;
 import org.talend.daikon.properties.service.Repository;
 
 /**
- * set of helpers method to call Property and Form lifecycles for Properties
+ * Helpers for the implementation methods of the {@link org.talend.daikon.properties.service.PropertiesService}.
  */
 public class PropertiesDynamicMethodHelper {
 

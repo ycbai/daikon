@@ -17,15 +17,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.talend.daikon.i18n.package1.package2.TestClass2InheritingTestClass1;
 
-/**
- * created by sgandon on 16 nov. 2015
- */
 public class ClassBasedI18nMessagesTest {
 
-    /**
-     * Test method for
-     * {@link org.talend.daikon.i18n.ClassBasedI18nMessages#getMessage(java.lang.String, java.lang.Object[])}.
-     */
     @Test
     public void testGetMessageValueTopClass() {
         ClassBasedI18nMessages classBasedI18nMessages = new ClassBasedI18nMessages(TestClass2InheritingTestClass1.class);

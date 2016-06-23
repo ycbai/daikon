@@ -308,8 +308,8 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
      * can be reset to the original values when
      * {@link org.talend.daikon.properties.service.PropertiesService#cancelFormValues(Properties, String)} is called.
      * <p/>
-     * FIXME - note we need to work out how this happens with the REST API.
      */
+    // FIXME - TDKN-67 remove the cancelable through the service
     public void setValue(String property, Object value) {
         if (property.contains(".")) {
             throw new IllegalArgumentException(
@@ -334,6 +334,7 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
     /**
      * For internal use only.
      */
+    // FIXME - TDKN-67 remove the cancelable through the service
     public void setCancelable(boolean cancelable) {
         this.cancelable = cancelable;
         originalValues = null;
@@ -351,6 +352,7 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
     /**
      * For internal use only.
      */
+    // FIXME - TDKN-67 remove the cancelable through the service
     public void cancelValues() {
         if (originalValues == null) {
             return;

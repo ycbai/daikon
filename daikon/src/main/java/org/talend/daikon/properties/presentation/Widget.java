@@ -73,8 +73,8 @@ public class Widget implements ToStringIndent {
     public static final String BUTTON_WIDGET_TYPE = "widget.type.button";
 
     /**
-     * A table, the widget content shall be a {@link Properties} that will provide a MAIN form (see
-     * {@link Form#MAIN}). The main form shall contain a list of widget that will represent each table column and
+     * A table, the widget content shall be a {@link Properties} that will provide a MAIN form (see {@link Form#MAIN}). The main
+     * form shall contain a list of widget that will represent each table column and
      * which content should be a Property. Each Property is going to be used as the column definition, the
      * {@link Property#getDisplayName()} shall be used as the Column header. Each Property (=column) has a value of
      * type List<T> in which the first element is the first row element for this column and the second in the list
@@ -173,6 +173,9 @@ public class Widget implements ToStringIndent {
         return this;
     }
 
+    /**
+     * Set or reset this as hidden and mark the underlying {@link Property} or {@link Form} as hidden or not.
+     */
     public Widget setHidden(boolean hidden) {
         this.hidden = hidden;
         if (content != null && content instanceof Form) {

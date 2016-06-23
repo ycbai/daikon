@@ -13,30 +13,86 @@
 package org.talend.daikon.properties.service;
 
 import org.talend.daikon.properties.Properties;
+import org.talend.daikon.properties.presentation.Form;
 
 /**
- * The Main service provided by this project to get access to all registered components and their properties.
+ * The service that drives the user interface (UI) accessing {@link Properties} objects.
+ *
+ * This is a service so that the a single UI can be specified using {@link Properties} objects which can be presented in a local
+ * desktop environment, a web environment (using JSON objects/REST calls), or by scripting.
  */
 public interface PropertiesService<T extends Properties> extends Repository<T> {
 
+    /**
+     * Makes the specified {@link Form} object cancelable, which means that modifications to the values can be canceled.
+     *
+     * This is intended for local use only. When using this with the REST service, the values can simply be reset in the JSON
+     * version of the {@link Form} object, so the cancel operation can be implemented entirely by the client.
+     * @param properties the {@link Properties} object associated with the {@code Form}.
+     * @param formName the name of the form
+     * @return the {@link Properties} object specified as modified by this service.
+     */
+    // FIXME TDKN-67 - remove this
     T makeFormCancelable(T properties, String formName);
 
+    /**
+     * Cancels the changes to the values in the specified {@link Form} object after the it was made cancelable.
+     *
+     * This is intended for local use only. When using this with the REST service, the values can simply be reset in the JSON
+     * version of the {@link Form} object, so the cancel operation can be implemented entirely by the client.
+     * @param properties the {@link Properties} object associated with the {@code Form}.
+     * @param formName the name of the form
+     * @return the {@link Properties} object specified as modified by this service.
+     */
+    // FIXME TDKN-67 - remove this
     T cancelFormValues(T properties, String formName);
 
+    /**
+     * @see {@link Properties} for a description of the meaning of this method.
+     * @return the {@link Properties} object specified as modified by this service.
+     */
     T validateProperty(String propName, T properties) throws Throwable;
 
+    /**
+     * @see {@link Properties} for a description of the meaning of this method.
+     * @return the {@link Properties} object specified as modified by this service.
+     */
     T beforePropertyActivate(String propName, T properties) throws Throwable;
 
+    /**
+     * @see {@link Properties} for a description of the meaning of this method.
+     * @return the {@link Properties} object specified as modified by this service.
+     */
     T beforePropertyPresent(String propName, T properties) throws Throwable;
 
+    /**
+     * @see {@link Properties} for a description of the meaning of this method.
+     * @return the {@link Properties} object specified as modified by this service.
+     */
     T afterProperty(String propName, T properties) throws Throwable;
 
+    /**
+     * @see {@link Properties} for a description of the meaning of this method.
+     * @return the {@link Properties} object specified as modified by this service.
+     */
     T beforeFormPresent(String formName, T properties) throws Throwable;
 
+    /**
+     * @see {@link Properties} for a description of the meaning of this method.
+     * @return the {@link Properties} object specified as modified by this service.
+     */
     T afterFormNext(String formName, T properties) throws Throwable;
 
+    /**
+     * @see {@link Properties} for a description of the meaning of this method.
+     * @return the {@link Properties} object specified as modified by this service.
+     */
     T afterFormBack(String formName, T properties) throws Throwable;
 
+    /**
+     * @see {@link Properties} for a description of the meaning of this method.
+     * @return the {@link Properties} object specified as modified by this service.
+     */
     T afterFormFinish(String formName, T properties) throws Throwable;
 
     /**

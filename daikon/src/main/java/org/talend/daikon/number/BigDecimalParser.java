@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Main goal of this class is to provide BigDecimal instance from a String.
+ * Parse a {@link BigDecimal} instance from a {@link String}.
  */
 public class BigDecimalParser {
 

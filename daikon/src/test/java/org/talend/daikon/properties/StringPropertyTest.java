@@ -29,10 +29,6 @@ import org.talend.daikon.properties.property.StringProperty;
 
 public class StringPropertyTest {
 
-    /**
-     * Test method for
-     * {@link org.talend.daikon.properties.property.StringProperty#setPossibleNamedThingValues(java.util.List)}.
-     */
     @Test
     public void testSetPossibleValuesWithNamedThing() {
         StringProperty stringProperty = new StringProperty("foo");

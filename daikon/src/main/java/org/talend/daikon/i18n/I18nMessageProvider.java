@@ -20,7 +20,7 @@ import org.talend.daikon.i18n.LocaleProvider;
 import java.util.ResourceBundle;
 
 /**
- * This class provides I18n service according to the local provider service
+ * Provides I18n service according to the local provider service
  */
 public abstract class I18nMessageProvider {
 

@@ -32,16 +32,12 @@ public class StringProperty extends Property<String> {
         super(String.class, name);
     }
 
-    /**
-     * this is package protected because this constructor should only be used when copying a Property at runtime, so it
-     * does not need to be typed.
-     */
     StringProperty(String type, String name) {
         super(type, name);
     }
 
     /**
-     * This will add all {@link NamedThing#getName()} as possible values for this string property
+     * Adds all {@link NamedThing#getName()} as possible values for this string property
      * and use the {@link NamedThing#getDisplayName()} as display name for the associated possible value
      */
     public Property<String> setPossibleNamedThingValues(List<NamedThing> possibleValues) {

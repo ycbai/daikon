@@ -14,14 +14,18 @@ package org.talend.daikon.properties;
 
 import org.talend.daikon.SimpleNamedThing;
 import org.talend.daikon.properties.presentation.Form;
+import org.talend.daikon.properties.presentation.Widget;
+import org.talend.daikon.properties.property.Property;
 
 /**
- * A widget that appears in the UI that is not backed by a component property.
+ * Contains a {@link Widget} that appears in the UI that is not backed by a {@link Property}.
+ *
+ * This is used for things like buttons (that require actions) or text items that provide description or instruction.
  */
 public class PresentationItem extends SimpleNamedThing {
 
     /**
-     * The Form to show when this {@code PresentationItem} is activated (the button is pressed).
+     * The {@link Form} to show when this {@code PresentationItem} is activated (the button is pressed).
      */
     private Form formtoShow;
 

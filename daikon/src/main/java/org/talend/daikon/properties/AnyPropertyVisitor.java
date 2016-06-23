@@ -15,22 +15,22 @@ package org.talend.daikon.properties;
 import org.talend.daikon.properties.property.Property;
 
 /**
- * this vitor helps visiting the tree of ComponentProperties
+ * Visit all members of a {@link Properties} object.
  */
 public interface AnyPropertyVisitor {
 
     /**
-     * visit the Property.
+     * Visit the Property.
      * 
      * @param property, the visited property
-     * @param parent, the property parent or null if none.
+     * @param parent, the parent of the enclosing {@link Properties} object, or null if none.
      */
     void visit(Property property, Properties parent);
 
     /**
-     * visit the Properties
+     * Visit the Properties
      * 
-     * @param properties, the visited properties
+     * @param properties, the visited properties object
      * @param parent, the properties parent or null if none.
      */
     void visit(Properties properties, Properties parent);

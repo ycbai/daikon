@@ -16,8 +16,6 @@ import org.talend.daikon.i18n.Translatable;
 
 /**
  * Something that has a name.
- *
- * 
  */
 public interface NamedThing extends Translatable {
 
@@ -28,23 +26,17 @@ public interface NamedThing extends Translatable {
     String I18N_TITLE_NAME_SUFFIX = ".title"; //$NON-NLS-1$
 
     /**
-     * This is a technical name that shall be unique to identify the thing
-     * 
-     * @return a technical name
+     * This is a technical (non i18n) name that shall be unique to identify the thing
      */
     String getName();
 
     /**
      * This is the name that will be displayed to the user, this may be internationalized.
-     * 
-     * @return the name to be displayed to the user.
      */
     String getDisplayName();
 
     /**
      * A multiword title that describes the thing.
-     *
-     * @return the title
      */
     String getTitle();
 

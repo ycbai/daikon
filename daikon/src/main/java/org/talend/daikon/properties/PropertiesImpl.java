@@ -178,8 +178,15 @@ public class PropertiesImpl extends TranslatableImpl implements Properties, AnyP
         return false;// by default all property need to be initialized after setup.
     }
 
-    @Override
-    public void initializeField(Field f, NamedThing value) {
+    /**
+     * This shall set the value holder for all the properties, set the i18n formatter of this current class to the
+     * properties so that the i18n values are computed agains this class message properties. This calls the
+     * initProperties for all field of type {@link Property}
+     *
+     * @param f field to be initialized
+     * @param value associated with this field, never null
+     */
+    protected void initializeField(Field f, NamedThing value) {
         // check that field name matches the NamedThing name
         if (!f.getName().equals(value.getName())) {
             throw new IllegalArgumentException("The java field [" + this.getClass().getCanonicalName() + "." + f.getName()
@@ -279,11 +286,6 @@ public class PropertiesImpl extends TranslatableImpl implements Properties, AnyP
             }
         }
         return null;
-    }
-
-    @Override
-    public String getSimpleClassName() {
-        return getClass().getSimpleName();
     }
 
     @Override

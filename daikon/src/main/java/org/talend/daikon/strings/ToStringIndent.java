@@ -14,7 +14,6 @@ package org.talend.daikon.strings;
 
 /**
  * Indentable toString method.
- *
  */
 public interface ToStringIndent {
 

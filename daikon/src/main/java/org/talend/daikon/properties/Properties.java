@@ -12,7 +12,6 @@
 // ============================================================================
 package org.talend.daikon.properties;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 import org.talend.daikon.NamedThing;
@@ -34,9 +33,9 @@ import org.talend.daikon.strings.ToStringIndent;
  * include those for desktop (Eclipse), web, and scripting. All of these will use the code defined here for their
  * construction and validation.
  * <p/>
- * All aspects of the properties are defined in a subclass of this class using the {@link Property}, {@link
- * PresentationItem}, {@link Widget}, and {@link Form} classes. In addition in cases where user interface decisions are made in
- * code, methods can be added to the subclass to influence the flow of the user interface and help with validation.
+ * All aspects of the properties are defined in a subclass of this class using the {@link Property}, {@link PresentationItem},
+ * {@link Widget}, and {@link Form} classes. In addition in cases where user interface decisions are made in code, methods can be
+ * added to the subclass to influence the flow of the user interface and help with validation.
  * <p/>
  * Each property can be a Java type, both simple types and collections are permitted. In addition, {@code Properties} classes can
  * be composed allowing hierarchies of properties and collections of properties to be reused.
@@ -136,24 +135,16 @@ public interface Properties extends AnyProperty, ToStringIndent {
     Properties initForRuntime();
 
     /**
-     * This shall set the value holder for all the properties, set the i18n formatter of this current class to the
-     * properties so that the i18n values are computed agains this class message properties. This calls the
-     * initProperties for all field of type {@link Property}
-     * 
-     * @param f field to be initialized
-     * @param value associated with this field, never null
-     */
-    void initializeField(Field f, NamedThing value);
-
-    /**
      * Initialize this object, all subclass initialization should override this, and call the super. <br>
-     * WARNING : make sure to call super() first otherwise you may endup with NPE because of not initialised properties
+     * 
+     * @warning call super() first.
      */
     void setupProperties();
 
     /**
      * Declare the widget layout information for each of the properties.<br>
-     * WARNING : make sure to call super() first otherwise you may endup with NPE because of not initialised layout
+     * 
+     * @warning call super() first.
      */
     void setupLayout();
 
@@ -174,12 +165,19 @@ public interface Properties extends AnyProperty, ToStringIndent {
      */
     void refreshLayout(Form form);
 
+    /**
+     * Returns all of the {@link Form} objects associated with this object.
+     */
     List<Form> getForms();
 
+    /**
+     * Gets a particular {@link Form} object.
+     */
     Form getForm(String formName);
 
-    String getSimpleClassName();
-
+    /**
+     * Adds a {@link Form} object to this object.
+     */
     void addForm(Form form);
 
     /**
@@ -211,6 +209,11 @@ public interface Properties extends AnyProperty, ToStringIndent {
      */
     Properties getProperties(String propPath);
 
+    /**
+     * Sets the stored value associated with the specified {@link Property} object.
+     * @param property the name of the {@code Property} object.
+     * @param value the value to set
+     */
     void setValue(String property, Object value);
 
     /**
@@ -229,9 +232,9 @@ public interface Properties extends AnyProperty, ToStringIndent {
     ValidationResult getValidationResult();
 
     /**
-     * This goes through all nested properties recusively and replace them with the newValueProperties given as
+     * This goes through all nested properties recursively and replaces them with the newValueProperties given as
      * parameters as long as they are assignable to the Properties type. <br/>
-     * Once the property is assigned it will not be recusively scanned. But if many nested Properties have the
+     * Once the property is assigned it will not be recursively scanned. But if many nested Properties have the
      * appropriate type they will all be assigned to the new value.
      * 
      * @param newValueProperties list of Properties to be assigned to this instance nested Properties

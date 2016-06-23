@@ -37,15 +37,11 @@ public class ValidationResult {
 
     public int number;
 
-    /**
-     * default constructor with a default status to OK.
-     */
     public ValidationResult() {
-
     }
 
     /**
-     * use the TalendRuntimeException to construct a Validation message. By default the status is set tot Error but this
+     * Use the TalendRuntimeException to construct a Validation message. By default the status is set to Error but this
      * may be changed by the user after creation.
      * 
      * @param tre exception used to construct the message
@@ -72,7 +68,7 @@ public class ValidationResult {
     }
 
     /**
-     * set the message related to this validation result. This method must be called with a non null value when the
+     * Set the text message related to this validation result. This method must be called with a non null value when the
      * status is {@link Result#ERROR}.
      */
     public ValidationResult setMessage(String message) {

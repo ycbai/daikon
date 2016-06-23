@@ -37,6 +37,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * A property that is part of a {@link Properties}.
+ *
+ * In order to resolve the actual values of properties from an indirect definition, like a context variable or system property,
+ * the concept of a "stored value" is support. The stored value could not be the actual value, but a (typically string) key which
+ * is resolved to provide the actual value when needed. The {@link PropertyValueEvaluator} is the mechanism which translates the
+ * stored value to the actual value as returned by {@link #getValue()}.
  */
 public class Property<T> extends SimpleNamedThing implements AnyProperty {
 
@@ -266,7 +271,7 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
     }
 
     @JsonIgnore
-    // to avoid swagger to fail because of the 2 similar following methods.
+    // to avoid swagger failure because of the 2 similar following methods.
     public Property<T> setPossibleValues(List<?> possibleValues) {
         this.possibleValues = possibleValues;
         return this;
@@ -302,7 +307,6 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
             newFlags.addAll(flags);
             flags = newFlags;
         }
-
     }
 
     public void removeFlag(Flags flag) {
@@ -322,10 +326,9 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
     }
 
     /**
-     * Set the value that will be stored and serialized into this
-     * Property. Sometimes the value will not match the type of the property. For example it may be a string that refers to the
-     * value using some context mechanism.
-     * In this case a {@link PropertyValueEvaluator} is used so that when the (@link {@link Property#getValue()} is called, it is
+     * Set the value that will be stored and serialized into this Property. Sometimes the value will not match the type of the
+     * property. For example it may be a string that refers to the value using some context mechanism. In this case a
+     * {@link PropertyValueEvaluator} is used so that when the (@link {@link Property#getValue()} is called, it is
      * converted to the proper type.
      */
     public Property<T> setStoredValue(Object value) {
@@ -341,11 +344,12 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
     }
 
     /**
-     * 
+     * Get the actual value of the property, resolving the stored value if requried.
+     *
      * @return the value of the property. This value may not be the one Stored with setValue(), it may be evaluated with
      * {@link PropertyValueEvaluator}.
-     * @exception ClassCastException is the stored value is not of the property type and no
-     * PropertyValueEvaluator has been set.
+     * @exception ClassCastException is the stored value is not of the property type and no {@code PropertyValueEvaluator} has
+     * been set.
      */
     @SuppressWarnings("unchecked")
     public T getValue() {
@@ -373,8 +377,8 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
     }
 
     /**
-     * If no displayName was specified then the i18n key : {@value Property#I18N_PROPERTY_PREFIX}.name_of_this_property.
-     * {@value NamedThing#I18N_DISPLAY_NAME_SUFFIX} to find the value from the i18n.
+     * If no displayName was specified then the i18n key, then {@link Property#I18N_PROPERTY_PREFIX} + {@code name_of_this_property} +
+     * {@link NamedThing#I18N_DISPLAY_NAME_SUFFIX} to find the value from the i18n.
      */
     @Override
     public String getDisplayName() {
@@ -389,8 +393,7 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
      * 
      * @return a I18n value or possibleValue.toString if the value is not found.
      * @exception TalendRuntimeException with {@link CommonErrorCodes#UNEXPECTED_ARGUMENT} if the possible value does not belong
-     * to
-     * possible values
+     * to possible values
      */
     public String getPossibleValuesDisplayName(Object possibleValue) {
         // first check that the possibleValue is part of the possible values
@@ -419,7 +422,7 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
     }
 
     /**
-     * This store a value with the given key in a map this will be serialized with the component. This may be used to
+     * This stores a value with the given key in a map this will be serialized with the component. This may be used to
      * identify the context of the value, whether is may be some java string or some context value or system properties.
      * Use this tag a will as long as the value is serializable.
      * 
@@ -431,7 +434,7 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
     }
 
     /**
-     * return the previously stored value using {@link Property#setTaggedValue(String, Object)} and the given key.
+     * Return the previously stored value using {@link Property#setTaggedValue(String, Object)} and the given key.
      * 
      * @param key, identify the value to be fetched
      * @return the object stored along with the key or null if none found.
@@ -458,14 +461,14 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
     }
 
     /**
-     * copy all tagged values from the otherProp into this.
+     * Copy all tagged values from the otherProp into this.
      */
     public void copyTaggedValues(Property otherProp) {
         taggedValues.putAll(otherProp.taggedValues);
     }
 
     /**
-     * This will encrypt the stored value or do nothing if there is not implementation for the given type.
+     * Encrypt the stored value or do nothing if there is not implementation for the given type.
      */
     public void encryptStoredValue(boolean encrypt) {
         // do nothing by default see StringProperty for an example

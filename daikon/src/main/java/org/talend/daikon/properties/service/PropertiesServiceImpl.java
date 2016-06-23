@@ -17,14 +17,14 @@ import org.talend.daikon.properties.PropertiesDynamicMethodHelper;
 import org.talend.daikon.properties.presentation.Form;
 
 /**
- * Main Component Service implementation that is not related to any framework (neither OSGI, nor Spring) it uses a
- * ComponentRegistry implementation that will be provided by framework specific Service classes
+ * Implementation of the {@link PropertiesService}.
  */
 public class PropertiesServiceImpl implements PropertiesService<Properties> {
 
     private Repository<Properties> repository;
 
     @Override
+    // FIXME TDKN-67 - remove this
     public Properties makeFormCancelable(Properties properties, String formName) {
         Form form = properties.getForm(formName);
         if (form == null) {
@@ -35,6 +35,7 @@ public class PropertiesServiceImpl implements PropertiesService<Properties> {
     }
 
     @Override
+    // FIXME TDKN-67 - remove this
     public Properties cancelFormValues(Properties properties, String formName) {
         Form form = properties.getForm(formName);
         if (form == null) {

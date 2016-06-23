@@ -19,6 +19,8 @@ import org.apache.commons.lang3.reflect.TypeLiteral;
 
 /**
  * Make new {@link Property} objects.
+ *
+ * This is the onlyh way {@code Property} objects should be created.
  */
 public class PropertyFactory {
 

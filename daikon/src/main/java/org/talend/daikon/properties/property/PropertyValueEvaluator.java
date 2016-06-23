@@ -13,8 +13,9 @@
 package org.talend.daikon.properties.property;
 
 /**
- * This shall be implemented in order to have Properties value interpreted to the actual value if they hold some king of
- * language descriptor such as a context string, or system property value.
+ * Implement this to translate the stored value associated with a {@link Property} object into an actual value for the property.
+ * When this is implemented, the stored value is typically some kind of key which can be looked up in a context to provide the
+ * actual value.
  */
 public interface PropertyValueEvaluator {
 
