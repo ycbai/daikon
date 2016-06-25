@@ -2,7 +2,7 @@ allprojects {
     apply plugin: 'maven'
 
     group = 'org.talend.daikon'
-    version = '0.9.0-SNAPSHOT'
+    version = '0.12.0-SNAPSHOT'
 }
 
 subprojects {
@@ -16,10 +16,13 @@ subprojects {
     }
 
     artifacts.archives packageSources
+
     repositories {
         mavenLocal()
 
         maven { url "http://repo.jenkins-ci.org/public/" }
+        maven { url "http://newbuild.talend.com:8081/nexus/content/repositories/TalendOpenSourceSnapshot/" }
+        maven { url "http://newbuild.talend.com:8081/nexus/content/repositories/TalendOpenSourceRelease/" }
         maven { url "http://repo.maven.apache.org/maven2" }
     }
 
