@@ -1,5 +1,5 @@
 plugins {
-    id "org.dm.bundle" version "0.8.5"
+    id "org.dm.bundle" version "0.8.4"
 }
 
 apply plugin: 'java'
@@ -23,28 +23,33 @@ dependencies {
 jar {
     manifest {
         name "${project.getName()} Library"
-        symbolicName 'org.talend.daikon.lib'
-        instruction 'Dynamic-ImportPackage', '*'
+        attributes 'Bundle-SymbolicName': 'org.talend.daikon.lib'
     }
 }
 
-OsgiPluginConvention conv = getConvention().getPlugins().get('osgi')
+// Applies the bundle plugin to a Jar task
+void applyPlugin(Task jarTask) {
+    def jarBuilderFactory = new org.dm.gradle.plugins.bundle.JarBuilderFactoryDecorator(
+            jarTask, project.bundle.jarBuilderFactory)
+
+    jarTask.deleteAllActions()
+    jarTask.doLast(new org.dm.gradle.plugins.bundle.BundleGenerator(jarBuilderFactory))
+    jarTask.manifest = new org.dm.gradle.plugins.bundle.ManifestSubstitute(jarBuilderFactory, jarTask.manifest)
+}
 
 task bundleJar(type: Jar) {
     from sourceSets.main.output
     classifier 'bundle'
 
-    // FIXME - have to inject the osgi plugin here because this task is not the standard jar task
-    setManifest conv.osgiManifest {
-        setClassesDir sourceSets.main.output.classesDir
-        setClasspath configurations.getByName("runtime");
+    applyPlugin(bundleJar)
 
-        name "${project.getName()} Bundle"
-        symbolicName 'org.talend.daikon'
-        instruction 'Dynamic-ImportPackage', '*'
-        instruction 'Service-Component', '*'
-        instruction 'Embed-Transitive', 'true'
-        instruction 'Embed-Dependency', '*;artifactId=paranamer|snappy-java|commons-compress|xz;inline=true'
+    manifest {
+        attributes 'Bundle-Name': "${project.getName()} Bundle",
+                'Bundle-SymbolicName': 'org.talend.daikon.lib',
+                'Dynamic-ImportPackage': '*',
+                'Service-Component': '*',
+                'Embed-Transitive': 'true',
+                'Embed-Dependency': '*;artifactId=paranamer|snappy-java|commons-compress|xz;inline=true'
     }
 }
 
@@ -52,23 +57,17 @@ task testJar(type: Jar) {
     from sourceSets.test.output
     classifier 'tests'
 
-    // FIXME - have to inject the osgi plugin here because this task is not the standard jar task
-    setManifest conv.osgiManifest {
-        setClassesDir sourceSets.test.output.classesDir
-        setClasspath configurations.getByName("runtime");
+    applyPlugin(bundleJar)
 
-        name "${project.getName()} Tests2"
-        symbolicName 'org.talend.daikon.test'
-        instruction 'Dynamic-ImportPackage', '*'
-
-        //instruction 'Import-Package', 'org.talend*,org.junit*,org.hamcrest*'
-        instruction 'Conditional-Package', 'org.hamcrest.*'
-        instruction 'Fragment-Host', 'org.talend.daikon'
-        instruction 'Embed-Transitive', 'true'
-        instruction 'Embed-Dependency', '*;scope=test;artifactId=!hamcrest-core|junit'
-        //instruction 'Bundle-ClassPath', '.,{maven-dependencies}'
-        //instruction 'Export-Package', 'org.talend.daikon*'
+    manifest {
+        attributes 'Bundle-Name': "${project.getName()} Test",
+                'Bundle-SymbolicName': 'org.talend.daikon.test',
+                'Dynamic-ImportPackage': '*',
+                //'Conditional-Package': 'junit*|org.*',
+                'Private-Package': 'junit*|org.*|com.*'
+               // 'Service-Component': '*'
+                //'Embed-Transitive': 'true',
+              //  'Embed-Dependency': '*;scope=test;artifactId=!hamcrest-core|junit'
     }
 }
-
 jar.dependsOn bundleJar, testJar
