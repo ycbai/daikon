@@ -233,7 +233,15 @@ public class DiOutgoingSchemaEnforcer implements IndexedRecord, DiSchemaConstant
         int dynColN = getNumberOfDynamicColumns();
         for (int j = 0; j < dynColN; j++) {
             Schema.Field se = wrapped.getSchema().getFields().get(outgoingDynamicColumn + j);
-            fields.add(new Schema.Field(se.name(), se.schema(), se.doc(), se.defaultVal()));
+            Schema.Field field = new Schema.Field(se.name(), se.schema(), se.doc(), se.defaultVal());
+            Map<String, Object> fieldProperties = se.getObjectProps();
+            for (String propName : fieldProperties.keySet()) {
+                Object propValue = fieldProperties.get(propName);
+                if (propValue != null) {
+                    field.addProp(propName, propValue);
+                }
+            }
+            fields.add(field);
         }
         return fields;
     }
@@ -276,7 +284,15 @@ public class DiOutgoingSchemaEnforcer implements IndexedRecord, DiSchemaConstant
             if (designColumnsName.contains(se.name())) {
                 continue;
             }
-            fields.add(new Schema.Field(se.name(), se.schema(), se.doc(), se.defaultVal()));
+            Schema.Field field = new Schema.Field(se.name(), se.schema(), se.doc(), se.defaultVal());
+            Map<String, Object> fieldProperties = se.getObjectProps();
+            for (String propName : fieldProperties.keySet()) {
+                Object propValue = fieldProperties.get(propName);
+                if (propValue != null) {
+                    field.addProp(propName, propValue);
+                }
+            }
+            fields.add(field);
         }
         return fields;
     }
