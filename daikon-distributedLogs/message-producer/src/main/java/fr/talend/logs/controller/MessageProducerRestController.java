@@ -27,11 +27,6 @@ public class MessageProducerRestController {
 	@Autowired
 	private ReplySender replySender;
 
-	@Autowired
-	private Tracer tracer;
-//	@Autowired
-//	private SpanAccessor accessor;
-
 	@RequestMapping("/")
 	Map<String, String> message(HttpServletRequest httpRequest) {
 
@@ -39,17 +34,10 @@ public class MessageProducerRestController {
 		String key = "message";
 		Map<String, String> response = new HashMap<>();
 
-		String value = "Hi, from a REST endpoint: "
-				+ System.currentTimeMillis();
+		String value = "Hi, from a REST endpoint: "	+ System.currentTimeMillis();
 
 		response.put(key, value);
-
-		headers.stream().filter(h -> httpRequest.getHeader(h) != null)
-				.forEach(h -> response.put(h, httpRequest.getHeader(h)));
-
-		Span currentSpan = tracer.getCurrentSpan();
-		tracer.addTag("IP", httpRequest.getRemoteAddr());
-		currentSpan.logEvent("IP");
+		headers.stream().filter(h -> httpRequest.getHeader(h) != null).forEach(h -> response.put(h, httpRequest.getHeader(h)));
 
 		this.replySender.sendMessage(value);
 
@@ -59,21 +47,7 @@ public class MessageProducerRestController {
 	@RequestMapping(value="/person", method=RequestMethod.POST)
 	public void addPerson(HttpServletRequest request, @RequestBody Person p){
 		log.info("RequestBody - lastname : " + p.getLastname());
-
-		Map<String, String> response = new HashMap<>();
-		response.put("id", String.valueOf(p.getId()));
-		response.put("firstname", p.getFirstname());
-		response.put("lastname", p.getLastname());
-
-		//Span currentSpan = tracer.getCurrentSpan();
-		tracer.addTag("IP", request.getRemoteAddr());
-		tracer.addTag("http.method", request.getMethod());
-		tracer.addTag("remote.user", request.getRemoteUser());
-		tracer.addTag("id", String.valueOf(p.getId()));
-		tracer.addTag("firstname", p.getFirstname());
-		tracer.addTag("lastname", p.getLastname());
-	
 		this.replySender.sendMessage(p.getLastname());
-	
 	}
+	
 }

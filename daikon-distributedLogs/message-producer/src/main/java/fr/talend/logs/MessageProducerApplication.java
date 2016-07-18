@@ -22,7 +22,6 @@ import fr.talend.logs.injector.CustomHttpServletResponseSpanInjector;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @IntegrationComponentScan
 @SpringBootApplication
-@EnableAutoConfiguration
 @EnableBinding(Source.class)
 public class MessageProducerApplication {
 	
