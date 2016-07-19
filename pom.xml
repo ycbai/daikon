@@ -28,6 +28,7 @@
 		<org.talend.daikon.version>0.6.0-SNAPSHOT</org.talend.daikon.version>
 		<project.inceptionYear>2015</project.inceptionYear>
 		<project.organization>Talend</project.organization>
+		<talend_snapshots>http://newbuild.talend.com:8081/nexus/content/repositories/TalendOpenSourceSnapshot/</talend_snapshots>
 	</properties>
 	<modules>
 		<module>daikon</module>
@@ -40,7 +41,7 @@
 	<distributionManagement>
 		<snapshotRepository>
 			<id>talend_nexus_deployment</id>
-			<url>http://newbuild.talend.com:8081/nexus/content/repositories/TalendOpenSourceSnapshot/</url>
+			<url>${talend_snapshots}</url>
 		</snapshotRepository>
 		<repository>
 			<id>talend_nexus_deployment</id>
