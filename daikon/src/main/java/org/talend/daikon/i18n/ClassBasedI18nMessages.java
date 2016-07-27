@@ -17,7 +17,7 @@ import java.util.MissingResourceException;
 /**
  * Look for a i18n <b>.properties</b> file according to the following policy. <br>
  * <ul>
- * <li>first the files with the name <b>clazz.getName() + ".properties" </b> are searched.</li>w
+ * <li>first the files with the name <b>clazz.getName() + ".properties" </b> are searched.</li>
  * <li>if none is found then the files named <b>clazz.getPackage().getName() + ".messages.properties"</b> are searched.</li>
  * </ul>
  * Not only it looks for the current class with the following policy but if nothing found it applies the policy above to
@@ -45,21 +45,21 @@ public class ClassBasedI18nMessages extends I18nMessages {
     }
 
     /**
-     * @see {@link #ClassBasedI18nMessages(LocaleProvider, Class, String)}
+     * @see #ClassBasedI18nMessages(LocaleProvider, Class, String)
      */
     public ClassBasedI18nMessages(LocaleProvider localeProvider, Class<?> clazz) {
         this(localeProvider, clazz, null);
     }
 
     /**
-     * @see {@link #ClassBasedI18nMessages(LocaleProvider, Class, String)}
+     * @see #ClassBasedI18nMessages(LocaleProvider, Class, String)
      */
     public ClassBasedI18nMessages(Class<?> clazz, String unknowKeyPrefix) {
         this(null, clazz, unknowKeyPrefix);
     }
 
     /**
-     * @see {@link #ClassBasedI18nMessages(LocaleProvider, Class, String)}
+     * @see #ClassBasedI18nMessages(LocaleProvider, Class, String)
      */
     public ClassBasedI18nMessages(Class<?> clazz) {
         this(clazz, null);

@@ -263,7 +263,7 @@ public class Property<T> extends SimpleNamedThing implements AnyProperty {
     /**
      * Return a list of possible values for this property. If the property is a simple type or an enum this will
      * return a list of element with the same type as the Property. But for convenience if this Property is a collection type such
-     * as {@link Map<T>} this is used to simply return a list of T and not a List<Map<T>>. This will not be enforced at
+     * as {@link Map} this is used to simply return a list of T and not a List&lt;Map&lt;T&gt;&gt;. This will not be enforced at
      * all, just a convention.
      */
     public List<?> getPossibleValues() {

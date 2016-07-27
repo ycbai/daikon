@@ -32,14 +32,14 @@ import org.talend.daikon.strings.ToStringIndent;
  * definition and as well no custom graphical UI is required for most components. The types of UIs that can be defined
  * include those for desktop (Eclipse), web, and scripting. All of these will use the code defined here for their
  * construction and validation.
- * <p/>
+ * <p>
  * All aspects of the properties are defined in a subclass of this class using the {@link Property}, {@link PresentationItem},
  * {@link Widget}, and {@link Form} classes. In addition in cases where user interface decisions are made in code, methods can be
  * added to the subclass to influence the flow of the user interface and help with validation.
- * <p/>
+ * <p>
  * Each property can be a Java type, both simple types and collections are permitted. In addition, {@code Properties} classes can
  * be composed allowing hierarchies of properties and collections of properties to be reused.
- * <p/>
+ * <p>
  * A property is defined using a field in a subclass of this class. Each property field is initialized with one of the following:
  * <ol>
  * <li>For a single property, a {@link Property} object, usually using a static method from the {@link PropertyFactory}.</li>
@@ -47,11 +47,11 @@ import org.talend.daikon.strings.ToStringIndent;
  * <li>For a presentation item that's not actually a property, but is necessary for the user interface, a {@link PresentationItem}
  * .</li>
  * </ol>
- * <p/>
+ * <p>
  * For construction of user interfaces, properties are grouped into {@link Form} objects which can be presented in various ways by
  * the user interface (for example, a wizard page, a tab in a property sheet, or a dialog). The same property can appear in
  * multiple forms.
- * <p/>
+ * <p>
  * Methods can be added in subclasses according to the conventions below to help direct the UI. These methods will be
  * automatically called by the UI code.
  * <ul>
@@ -64,7 +64,7 @@ import org.talend.daikon.strings.ToStringIndent;
  * <li>{@code beforeFormPresent<FormName>} - Called before the form is displayed.</li>
  * </ul>
  * {@code PropertyName} and {@code FormName} are the property or form name with their first in letter uppercase.
- * </p>
+ * <p>
  * wizard lifecycle related form methods are :
  * <ul>
  * <li>{@code afterFormBack<FormName>} - Called when the current edited form is &lt;FormName&gt; and when the user has pressed the
@@ -75,10 +75,10 @@ import org.talend.daikon.strings.ToStringIndent;
  * and when the finish button is pressed. this method is supposed to serialize the current Properties instance and it's sub
  * properties</li>
  * </ul>
- * <p/>
+ * <p>
  * Once the Properties is create by the service, the {@link Properties#setupProperties()} and {@link Properties#setupLayout()} is
  * called.
- * <p/>
+ * <p>
  * <b>WARNING</b> - It is not recommanded to instanciate a Property field after {@link Properties#setupProperties()} is called. If
  * you want to create the property later you'll have to call {@link Property#setI18nMessageFormatter(I18nMessages)} manually.
  */
@@ -137,14 +137,14 @@ public interface Properties extends AnyProperty, ToStringIndent {
     /**
      * Initialize this object, all subclass initialization should override this, and call the super. <br>
      * 
-     * @warning call super() first.
+     * Warning: call super() first.
      */
     void setupProperties();
 
     /**
      * Declare the widget layout information for each of the properties.<br>
      * 
-     * @warning call super() first.
+     * Warning: call super() first.
      */
     void setupLayout();
 
@@ -190,7 +190,7 @@ public interface Properties extends AnyProperty, ToStringIndent {
     /**
      * Returns {@link Property} or a {@link Properties} as specified by a qualifed property name string representing the
      * field name.
-     * <p/>
+     *
      * The first component is the property name within this object. The optional subsequent components, separated by a "." are
      * property names in the nested {@link Properties} objects.
      *
@@ -233,7 +233,7 @@ public interface Properties extends AnyProperty, ToStringIndent {
 
     /**
      * This goes through all nested properties recursively and replaces them with the newValueProperties given as
-     * parameters as long as they are assignable to the Properties type. <br/>
+     * parameters as long as they are assignable to the Properties type.
      * Once the property is assigned it will not be recursively scanned. But if many nested Properties have the
      * appropriate type they will all be assigned to the new value.
      * 

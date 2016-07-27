@@ -23,7 +23,7 @@ import org.apache.avro.Schema;
  * 2. During deserialization Json-io library tries to create instance of Schema$RecordSchema.<br>
  * 3. Schema$RecordSchema has 2 constructors<br>
  * RecordSchema(Name name, String doc, boolean isError)<br>
- * RecordSchema(Name name, String doc, boolean isError, List<Field> fields)<br>
+ * RecordSchema(Name name, String doc, boolean isError, List&lt;Field&gt; fields)<br>
  * 4. Json-io passes default values for primitives and null for objects as arguments:<br>
  * RecordSchema(null, null, false)<br>
  * RecordSchema(null, null, false, null)<br>

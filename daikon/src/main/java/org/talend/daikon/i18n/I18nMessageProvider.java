@@ -31,7 +31,7 @@ public abstract class I18nMessageProvider {
      * 
      * @param classLoader, use to create the underlying resource bundle.
      * @param baseName, used to create the underlying resource bundle, see
-     * {@link ResourceBundle#getBundle(String, java.util.Locale, ClassLoader, java.util.ResourceBundle.Control))}
+     * {@link ResourceBundle#getBundle(String, java.util.Locale, ClassLoader, java.util.ResourceBundle.Control)}
      * @return a DynamicLocalFormatedI18n instance to handle i18n.
      */
     public I18nMessages getI18nMessages(ClassLoader classLoader, String baseName) {

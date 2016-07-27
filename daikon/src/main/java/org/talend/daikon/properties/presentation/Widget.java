@@ -77,7 +77,7 @@ public class Widget implements ToStringIndent {
      * form shall contain a list of widget that will represent each table column and
      * which content should be a Property. Each Property is going to be used as the column definition, the
      * {@link Property#getDisplayName()} shall be used as the Column header. Each Property (=column) has a value of
-     * type List<T> in which the first element is the first row element for this column and the second in the list
+     * type List&lt;T&gt; in which the first element is the first row element for this column and the second in the list
      * is the second row value for this column.
      * 
      */

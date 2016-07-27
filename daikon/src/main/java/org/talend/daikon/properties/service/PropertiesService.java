@@ -48,49 +48,49 @@ public interface PropertiesService<T extends Properties> extends Repository<T> {
     T cancelFormValues(T properties, String formName);
 
     /**
-     * @see {@link Properties} for a description of the meaning of this method.
+     * @see Properties for a description of the meaning of this method.
      * @return the {@link Properties} object specified as modified by this service.
      */
     T validateProperty(String propName, T properties) throws Throwable;
 
     /**
-     * @see {@link Properties} for a description of the meaning of this method.
+     * @see Properties for a description of the meaning of this method.
      * @return the {@link Properties} object specified as modified by this service.
      */
     T beforePropertyActivate(String propName, T properties) throws Throwable;
 
     /**
-     * @see {@link Properties} for a description of the meaning of this method.
+     * @see Properties for a description of the meaning of this method.
      * @return the {@link Properties} object specified as modified by this service.
      */
     T beforePropertyPresent(String propName, T properties) throws Throwable;
 
     /**
-     * @see {@link Properties} for a description of the meaning of this method.
+     * @see Properties for a description of the meaning of this method.
      * @return the {@link Properties} object specified as modified by this service.
      */
     T afterProperty(String propName, T properties) throws Throwable;
 
     /**
-     * @see {@link Properties} for a description of the meaning of this method.
+     * @see Properties for a description of the meaning of this method.
      * @return the {@link Properties} object specified as modified by this service.
      */
     T beforeFormPresent(String formName, T properties) throws Throwable;
 
     /**
-     * @see {@link Properties} for a description of the meaning of this method.
+     * @see Properties for a description of the meaning of this method.
      * @return the {@link Properties} object specified as modified by this service.
      */
     T afterFormNext(String formName, T properties) throws Throwable;
 
     /**
-     * @see {@link Properties} for a description of the meaning of this method.
+     * @see Properties for a description of the meaning of this method.
      * @return the {@link Properties} object specified as modified by this service.
      */
     T afterFormBack(String formName, T properties) throws Throwable;
 
     /**
-     * @see {@link Properties} for a description of the meaning of this method.
+     * @see Properties for a description of the meaning of this method.
      * @return the {@link Properties} object specified as modified by this service.
      */
     T afterFormFinish(String formName, T properties) throws Throwable;

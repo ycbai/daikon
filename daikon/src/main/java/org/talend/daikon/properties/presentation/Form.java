@@ -307,7 +307,7 @@ public class Form extends SimpleNamedThing implements ToStringIndent {
      * {@link org.talend.daikon.properties.service.PropertiesService#makeFormCancelable(Properties, String)}) the values
      * can be reset to the original values when
      * {@link org.talend.daikon.properties.service.PropertiesService#cancelFormValues(Properties, String)} is called.
-     * <p/>
+     *
      */
     // FIXME - TDKN-67 remove the cancelable through the service
     public void setValue(String property, Object value) {

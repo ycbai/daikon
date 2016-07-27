@@ -24,7 +24,7 @@ public interface Translatable {
      * 
      * @param key the key to identify the message
      * @param arguments the arguments that shall be used to format the message using
-     * {@link java.text.MessageFormat#format(String, Object...))}
+     * {@link java.text.MessageFormat#format(String, Object...)}
      * @return the formatted string or the key if no message was found
      * @exception org.talend.daikon.exception.TalendRuntimeException thrown with the code
      * {@link CommonErrorCodes#MISSING_I18N_TRANSLATOR} if the
