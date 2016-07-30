@@ -3,6 +3,7 @@ plugins {
 }
 
 apply plugin: 'java'
+apply plugin: 'project-report'
 
 description = 'Daikon main shared library'
 
@@ -23,8 +24,28 @@ dependencies {
 jar {
     manifest {
         name "${project.getName()} Library"
-        attributes 'Bundle-SymbolicName': 'org.talend.daikon.lib'
+        attributes 'Bundle-SymbolicName': 'org.talend.daikon.lib',
+                'Export-Package': 'org.talend.daikon*'
     }
+}
+
+javadoc {
+    source = sourceSets.main.allJava
+    classpath = configurations.compile
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+}
+
+
+bundle {
+    trace = true
 }
 
 // Applies the bundle plugin to a Jar task
@@ -37,6 +58,23 @@ void applyPlugin(Task jarTask) {
     jarTask.manifest = new org.dm.gradle.plugins.bundle.ManifestSubstitute(jarBuilderFactory, jarTask.manifest)
 }
 
+task listJars << {
+    configurations.compile.getResolvedConfiguration().getFirstLevelModuleDependencies().each
+            { ResolvedDependency dep ->
+                dep.getModuleArtifacts().each
+                        {
+                            println dep.getModuleGroup() + ':' + dep.getModuleName() + ':' + dep.getModuleVersion() + ' ' + it.getFile().getName()
+                        }
+            }
+}
+
+task listArts << {
+    configurations.compile.allArtifacts.each { println it.name }
+}
+
+// Embed-Dependency is not a gradle thing; use Include-Resource and update the classpath
+// based on the dependent jar files (similar to the issue 2 stuff). -
+
 task bundleJar(type: Jar) {
     from sourceSets.main.output
     classifier 'bundle'
@@ -46,12 +84,42 @@ task bundleJar(type: Jar) {
     manifest {
         attributes 'Bundle-Name': "${project.getName()} Bundle",
                 'Bundle-SymbolicName': 'org.talend.daikon.lib',
+                'Export-Package': 'org.talend.daikon.*',
                 'Dynamic-ImportPackage': '*',
                 'Service-Component': '*',
                 'Embed-Transitive': 'true',
                 'Embed-Dependency': '*;artifactId=paranamer|snappy-java|commons-compress|xz;inline=true'
     }
 }
+
+def addDependency(list, ResolvedDependency dep) {
+    println "addDep: ${dep.getModuleName()}"
+    dep.getModuleArtifacts().each {
+        println "  addDep2: ${it.getFile().getName()}"
+        list.add("${it.getFile().getName()};mvn:${dep.getModuleGroup()}/${dep.getModuleName()}/${dep.getModuleVersion()}")
+    }
+    dep.getChildren().each { addDependency(list, it) }
+    println "addDep list: " + list
+}
+
+def bundleClassPath() {
+    def list = ['.']
+    configurations.compile.getResolvedConfiguration().getFirstLevelModuleDependencies().each
+            { addDependency(list, it)
+            }
+    println list.join(',')
+    list
+}
+
+
+def includeResource() {
+    def list = []
+    configurations.testCompile.each {
+        list += it.name
+    }
+    list.join(',')
+}
+
 
 task testJar(type: Jar) {
     from sourceSets.test.output
@@ -62,12 +130,15 @@ task testJar(type: Jar) {
     manifest {
         attributes 'Bundle-Name': "${project.getName()} Test",
                 'Bundle-SymbolicName': 'org.talend.daikon.test',
+                'Export-Package': 'org.talend.daikon.*',
+                'Bundle-ClassPath': bundleClassPath(),
+                'Include-Resource': includeResource(),
                 'Dynamic-ImportPackage': '*',
                 //'Conditional-Package': 'junit*|org.*',
                 'Private-Package': 'junit*|org.*|com.*'
-               // 'Service-Component': '*'
-                //'Embed-Transitive': 'true',
-              //  'Embed-Dependency': '*;scope=test;artifactId=!hamcrest-core|junit'
+        // 'Service-Component': '*'
+        //'Embed-Transitive': 'true',
+        //  'Embed-Dependency': '*;scope=test;artifactId=!hamcrest-core|junit'
     }
 }
-jar.dependsOn bundleJar, testJar
+jar.dependsOn bundleJar, testJar, javadocJar
