@@ -1,6 +1,5 @@
 package org.talend.daikon.avro;
 
-
 /**
  * Constants and enums used for avro schema custom properties.
  * <p/>
@@ -14,7 +13,8 @@ public final class SchemaExternalConstants {
     /**
      * This utility class is best used as a static import.
      */
-    private SchemaExternalConstants() {}
+    private SchemaExternalConstants() {
+    }
 
     // -------------------------------------------------------------------------
     // General purpose properties
@@ -123,9 +123,20 @@ public final class SchemaExternalConstants {
      * structures can be serialized to or deserialized from.
      */
     public enum Representation {
-        XML, JSON, AVRO, X12, EDIFACT, HL7V2, COBOL, TEXT_DELIMITED, TEXT_POSITIONAL, SAP_IDOC, JAVA, MAP, NCPDP, DATABASE
+        XML,
+        JSON,
+        AVRO,
+        X12,
+        EDIFACT,
+        HL7V2,
+        COBOL,
+        TEXT_DELIMITED,
+        TEXT_POSITIONAL,
+        SAP_IDOC,
+        JAVA,
+        MAP,
+        NCPDP,
+        DATABASE
     };
-
-
 
 }

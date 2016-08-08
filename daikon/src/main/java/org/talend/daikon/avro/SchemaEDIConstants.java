@@ -11,7 +11,8 @@ public final class SchemaEDIConstants {
     /**
      * This utility class is best used as a static import.
      */
-    private SchemaEDIConstants() {}
+    private SchemaEDIConstants() {
+    }
 
     /**
      * EDI element type. @link(EDIElementType) for possible values.
@@ -35,7 +36,11 @@ public final class SchemaEDIConstants {
      * An EDI type for an element. These match classical EDI types.
      */
     public enum EDIElementType {
-        TRANSACTION, SEGMENT, COMPOSITE, LOOP, ELEMENT
+        TRANSACTION,
+        SEGMENT,
+        COMPOSITE,
+        LOOP,
+        ELEMENT
     };
 
 }
