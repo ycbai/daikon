@@ -1,9 +1,28 @@
+buildscript {
+    repositories {
+        maven {
+            url nexusOpenUrl
+            credentials {
+                username nexusOpenUsername
+                password nexusOpenPassword
+            }
+        }
+    }
+
+    dependencies {
+        classpath group: 'org.talend.buildtools', name: 'talend-root', version: '0.1.0-SNAPSHOT'
+    }
+}
+
 plugins {
     id "org.dm.bundle" version "0.8.4"
+//    id "org.talend.buildtools.talend-root"
 }
+
 
 apply plugin: 'java'
 apply plugin: 'project-report'
+apply plugin: 'org.talend.buildtools.talend-root'
 
 description = 'Daikon main shared library'
 
@@ -92,21 +111,25 @@ task bundleJar(type: Jar) {
     }
 }
 
-def addDependency(list, ResolvedDependency dep) {
-    println "addDep: ${dep.getModuleName()}"
+def addDependency(gavMap, ResolvedDependency dep) {
     dep.getModuleArtifacts().each {
-        println "  addDep2: ${it.getFile().getName()}"
-        list.add("${it.getFile().getName()};mvn:${dep.getModuleGroup()}/${dep.getModuleName()}/${dep.getModuleVersion()}")
+        def gav = "${dep.getModuleGroup()}/${dep.getModuleName()}/${dep.getModuleVersion()}"
+        gavMap.put(gav, it.getFile().getName());
     }
-    dep.getChildren().each { addDependency(list, it) }
-    println "addDep list: " + list
+    dep.getChildren().each { addDependency(gavMap, it) }
 }
 
 def bundleClassPath() {
-    def list = ['.']
+    def gavMap = [:]
     configurations.compile.getResolvedConfiguration().getFirstLevelModuleDependencies().each
-            { addDependency(list, it)
+            {
+                addDependency(gavMap, it)
             }
+
+    def list = ['.']
+    gavMap.each { key, value ->
+        list.add("${value};mvn:${key}")
+    }
     println list.join(',')
     list
 }
