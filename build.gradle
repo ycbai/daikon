@@ -1,12 +1,31 @@
+buildscript {
+    repositories {
+        maven {
+            url nexusOpenUrl
+            credentials {
+                username nexusOpenUsername
+                password nexusOpenPassword
+            }
+        }
+    }
+
+    dependencies {
+        classpath group: 'org.talend.buildtools', name: 'talend-root', version: '0.1.0-SNAPSHOT'
+    }
+}
+
+
 allprojects {
     apply plugin: 'maven'
+    apply plugin: 'java'
+    apply plugin: 'project-report'
+    apply plugin: 'org.talend.buildtools.talend-root'
 
     group = 'org.talend.daikon'
     version = '0.13.0-SNAPSHOT'
 }
 
 subprojects {
-    apply plugin: 'java'
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
 

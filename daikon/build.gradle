@@ -1,28 +1,6 @@
-buildscript {
-    repositories {
-        maven {
-            url nexusOpenUrl
-            credentials {
-                username nexusOpenUsername
-                password nexusOpenPassword
-            }
-        }
-    }
-
-    dependencies {
-        classpath group: 'org.talend.buildtools', name: 'talend-root', version: '0.1.0-SNAPSHOT'
-    }
-}
-
 plugins {
     id "org.dm.bundle" version "0.8.4"
-//    id "org.talend.buildtools.talend-root"
 }
-
-
-apply plugin: 'java'
-apply plugin: 'project-report'
-apply plugin: 'org.talend.buildtools.talend-root'
 
 description = 'Daikon main shared library'
 
@@ -42,25 +20,25 @@ dependencies {
 
 jar {
     manifest {
-        name "${project.getName()} Library"
+      //  name " Library"
         attributes 'Bundle-SymbolicName': 'org.talend.daikon.lib',
                 'Export-Package': 'org.talend.daikon*'
     }
 }
 
-javadoc {
-    source = sourceSets.main.allJava
-    classpath = configurations.compile
-}
+//javadoc {
+//    source = sourceSets.main.allJava
+//    classpath = configurations.compile
+//}
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
+//task javadocJar(type: Jar, dependsOn: javadoc) {
+//    classifier = 'javadoc'
+//    from javadoc.destinationDir
+//}
 
-artifacts {
-    archives javadocJar
-}
+//artifacts {
+//    archives javadocJar
+//}
 
 
 bundle {
