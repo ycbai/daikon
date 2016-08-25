@@ -85,7 +85,7 @@ public class ClassLoaderIsolatedSystemProperties extends Properties {
             }
 
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Isolating classLoader '" + classloader.toString() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+                LOGGER.debug("Isolating ClassLoader '" + classloader.toString() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
             }
             // we are cloning here cause the new Properties(Properties default) is using default as a backup when a key is not
             // found and does not have any key/values in it's properties
@@ -101,7 +101,7 @@ public class ClassLoaderIsolatedSystemProperties extends Properties {
     public void stopIsolateClassLoader(ClassLoader classLoader) {
         synchronized (classLoaderProperties) {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Integrating thread '" + classLoader.toString() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+                LOGGER.debug("Stops isolating ClassLoader '" + classLoader.toString() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
             }
             classLoaderProperties.remove(classLoader);
         }

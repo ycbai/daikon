@@ -36,9 +36,12 @@ public class SandboxedInstance implements AutoCloseable {
 
     boolean useCurrentJvmProperties;
 
-    SandboxedInstance(Object instance, boolean useCurrentJvmProperties) {
+    private ClassLoader sandboxClassLoader;
+
+    SandboxedInstance(Object instance, boolean useCurrentJvmProperties, ClassLoader sandboxClassLoader) {
         this.instance = instance;
         this.useCurrentJvmProperties = useCurrentJvmProperties;
+        this.sandboxClassLoader = sandboxClassLoader;
     }
 
     /**
@@ -53,14 +56,14 @@ public class SandboxedInstance implements AutoCloseable {
      */
     @Override
     public void close() {
+        instance = null;
         if (isolatedThread != null) {// in case getInstance was not called.
             isolatedThread.setContextClassLoader(previousContextClassLoader);
         }
-        ClassLoader instanceClassLoader = instance.getClass().getClassLoader();
-        ClassLoaderIsolatedSystemProperties.getInstance().stopIsolateClassLoader(instanceClassLoader);
-        if (instanceClassLoader instanceof AutoCloseable) {
+        ClassLoaderIsolatedSystemProperties.getInstance().stopIsolateClassLoader(sandboxClassLoader);
+        if (sandboxClassLoader instanceof AutoCloseable) {
             try {
-                ((AutoCloseable) instanceClassLoader).close();
+                ((AutoCloseable) sandboxClassLoader).close();
             } catch (Exception e) {
                 new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
             }
@@ -76,7 +79,7 @@ public class SandboxedInstance implements AutoCloseable {
      * Also make sure that the instance returned is used in the current thread used to call this method or in one of it's child
      * threads (assuming they use the same contextClassLoader).
      *
-     * @return the instance
+     * @return the instance or null if the {@link #close()} method has been called.
      */
     public Object getInstance() {
         if (isolatedThread == null) {
@@ -85,9 +88,8 @@ public class SandboxedInstance implements AutoCloseable {
             Properties isolatedProperties = useCurrentJvmProperties
                     ? ClassLoaderIsolatedSystemProperties.getInstance().getDefaultSystemProperties()
                     : StandardPropertiesStrategyFactory.create().getStandardProperties();
-            ClassLoaderIsolatedSystemProperties.getInstance().startIsolateClassLoader(instance.getClass().getClassLoader(),
-                    isolatedProperties);
-            isolatedThread.setContextClassLoader(instance.getClass().getClassLoader());
+            ClassLoaderIsolatedSystemProperties.getInstance().startIsolateClassLoader(sandboxClassLoader, isolatedProperties);
+            isolatedThread.setContextClassLoader(sandboxClassLoader);
         }
         return this.instance;
     }

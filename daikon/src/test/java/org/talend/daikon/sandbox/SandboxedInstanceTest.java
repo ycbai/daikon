@@ -54,7 +54,8 @@ public class SandboxedInstanceTest {
     @Test
     public void testClose() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         Object initialInstance = createNewInstanceWithNewClassLoader();
-        SandboxedInstance sandboxedInstance = new SandboxedInstance(initialInstance, false);
+        SandboxedInstance sandboxedInstance = new SandboxedInstance(initialInstance, false,
+                initialInstance.getClass().getClassLoader());
         ClassLoader previousClassLoader = Thread.currentThread().getContextClassLoader();
         sandboxedInstance.getInstance();
         assertTrue(ClassLoaderIsolatedSystemProperties.getInstance().isIsolated(initialInstance.getClass().getClassLoader()));
@@ -76,14 +77,15 @@ public class SandboxedInstanceTest {
     public void testGetInstanceWithDefault() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         Object initialInstance = createNewInstanceWithNewClassLoader();
         ClassLoader classLoader = initialInstance.getClass().getClassLoader();
-        try (SandboxedInstance sandboxedInstance = new SandboxedInstance(initialInstance, true)) {
+        Object instance = null;
+        try (SandboxedInstance sandboxedInstance = new SandboxedInstance(initialInstance, true, classLoader)) {
             assertNull(sandboxedInstance.isolatedThread);
             assertNull(sandboxedInstance.previousContextClassLoader);
             assertTrue(sandboxedInstance.useCurrentJvmProperties);
             ClassLoader previousClassLoader = Thread.currentThread().getContextClassLoader();
             assertNotEquals(classLoader, previousClassLoader);
             assertFalse(ClassLoaderIsolatedSystemProperties.getInstance().isIsolated(classLoader));
-            Object instance = sandboxedInstance.getInstance();
+            instance = sandboxedInstance.getInstance();
             assertTrue(ClassLoaderIsolatedSystemProperties.getInstance().isIsolated(classLoader));
             assertEquals(initialInstance, instance);
             assertEquals(Thread.currentThread(), sandboxedInstance.isolatedThread);
@@ -98,7 +100,8 @@ public class SandboxedInstanceTest {
             throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         Object initialInstance = createNewInstanceWithNewClassLoader();
         ClassLoader classLoader = initialInstance.getClass().getClassLoader();
-        try (SandboxedInstance sandboxedInstance = new SandboxedInstance(initialInstance, false)) {
+        SandboxedInstance sandboxedInstance = new SandboxedInstance(initialInstance, false, classLoader);
+        try {
             assertNull(sandboxedInstance.isolatedThread);
             assertNull(sandboxedInstance.previousContextClassLoader);
             assertFalse(sandboxedInstance.useCurrentJvmProperties);
@@ -112,7 +115,11 @@ public class SandboxedInstanceTest {
             assertEquals(previousClassLoader, sandboxedInstance.previousContextClassLoader);
             assertEquals(classLoader, Thread.currentThread().getContextClassLoader());
             assertNotEquals(previous, System.getProperties());
+        } finally {
+            sandboxedInstance.close();
         }
+        // check that null is returned once the close is called.
+        assertNull(sandboxedInstance.getInstance());
     }
 
     public Object createNewInstanceWithNewClassLoader()

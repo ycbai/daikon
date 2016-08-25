@@ -70,7 +70,7 @@ public class SandboxInstanceFactory {
                     parentClassLoader);
 
             Class<?> clazz = sandboxClassLoader.loadClass(classToInstanciated);
-            return new SandboxedInstance(clazz.newInstance(), useCurrentJvmProperties);
+            return new SandboxedInstance(clazz.newInstance(), useCurrentJvmProperties, sandboxClassLoader);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             throw new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
         }
