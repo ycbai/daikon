@@ -1,0 +1,67 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    # This ends up as the service name in zipkin
+    name: zipkinCollector
+  sleuth:
+ #   integration:
+ #     enabled: true
+ #   enabled: true
+    sampler:
+      percentage: 1.0
+  cloud:
+    stream:
+      bindings:
+        output:
+          destination: messages
+          group: aNecessaryGroup
+      kafka:
+        binder:
+          headers:
+            - X-B3-TraceId
+            - X-B3-SpanId
+            - X-B3-Sampled
+            - X-B3-ParentSpanId
+            - X-Span-Name
+            - X-Process-Id
+
+
+zipkin:
+  self-tracing:
+    # Set to true to enable self-tracing.
+    enabled: false
+    # percentage to self-traces to retain
+    sample-rate: 1.0
+  collector:
+    # percentage to traces to retain
+    sample-rate: 1.0
+    kafka:
+      # ZooKeeper host string, comma-separated host:port value.
+      zookeeper: localhost:2181
+      # Name of topic to poll for spans
+      topic: sleuth
+      # Consumer group this process is consuming on behalf of.
+      #group-id: ${KAFKA_GROUP_ID:zipkin}
+      # Maximum size of a message containing spans in bytes
+      max-message-size: ${KAFKA_MAX_MESSAGE_SIZE:1048576}
+    scribe:
+      enabled: false
+  storage:
+    type: elasticsearch
+    elasticsearch:
+      cluster: elasticsearch
+      hosts: localhost:9300
+      index: zipkin
+      index-shards: 5
+      index-replicas: 1
+
+logging:
+  level:
+    org:
+      talend: DEBUG
+ #     netflix:
+ #       eureka: OFF
+ #       discovery: OFF
+  file: application.log

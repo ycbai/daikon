@@ -1,0 +1,42 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    # This ends up as the service name in zipkin
+    name: producer
+  #zipkin:
+    # Uncomment to send to zipkin, replacing 192.168.99.100 with your zipkin IP address
+    # baseUrl: http://192.168.99.100:9411/
+    #baseUrl: http://localhost:8080
+  sleuth:
+ #   integration:
+ #     enabled: true
+ #   enabled: true
+    sampler:
+      percentage: 1.0
+  cloud:
+    stream:
+      bindings:
+        output:
+          destination: messages
+          group: aNecessaryGroup
+      kafka:
+        binder:
+          headers:
+            - X-B3-TraceId
+            - X-B3-SpanId
+            - X-B3-Sampled
+            - X-B3-ParentSpanId
+            - X-Span-Name
+            - X-Process-Id
+logging:
+  level:
+    org:
+      talend: DEBUG
+ #     netflix:
+ #       eureka: OFF
+ #       discovery: OFF
+  file: application.log
+#logging.pattern.console='%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} %clr([trace=%X{X-Trace-Id:-},span=%X{X-Span-Id:-}]){yellow} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wex'
+

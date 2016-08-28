@@ -1,0 +1,14 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    # This ends up as the service name in zipkin
+    name: producer
+  zipkin:
+    # Uncomment to send to zipkin, replacing 192.168.99.100 with your zipkin IP address
+    # baseUrl: http://192.168.99.100:9411/
+    baseUrl: http://localhost:8080
+  sleuth:
+    sampler:
+      percentage: 1.0
