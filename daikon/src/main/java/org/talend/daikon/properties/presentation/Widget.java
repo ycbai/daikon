@@ -150,6 +150,11 @@ public class Widget implements ToStringIndent {
     public static final String READ_ONLY = "widget.conf.readonly";
 
     /**
+     * Tell the client whether hide the toolbar or not.
+     */
+    public static final String HIDE_TOOLBAR = "widget.conf.hide.toolbar";
+
+    /**
      * The row in the form where this property is to be presented. Starting with 1.
      */
     private int row;
