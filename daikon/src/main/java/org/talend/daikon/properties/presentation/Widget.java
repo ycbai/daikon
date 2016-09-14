@@ -147,7 +147,12 @@ public class Widget implements ToStringIndent {
     /**
      * Tell the client whether the widget is readonly or not.
      */
-    public static final String READ_ONLY = "widget.conf.readonly";
+    public static final String READ_ONLY_WIDGET_CONF = "widget.conf.readonly";
+
+    /**
+     * Tell the client whether hide the toolbar or not. For example can set it as "true" to hide the toolbar of a table widget.
+     */
+    public static final String HIDE_TOOLBAR_WIDGET_CONF = "widget.conf.hide.toolbar";
 
     /**
      * The row in the form where this property is to be presented. Starting with 1.
@@ -332,11 +337,11 @@ public class Widget implements ToStringIndent {
     }
 
     public boolean isReadonly() {
-        return Boolean.valueOf(String.valueOf(getConfigurationValue(READ_ONLY)));
+        return Boolean.valueOf(String.valueOf(getConfigurationValue(READ_ONLY_WIDGET_CONF)));
     }
 
     public void setReadonly(boolean readonly) {
-        setConfigurationValue(READ_ONLY, readonly);
+        setConfigurationValue(READ_ONLY_WIDGET_CONF, readonly);
     }
 
     /**
