@@ -26,18 +26,20 @@ public class WidgetTest {
     @Test
     public void testConfigurationValuesInPropertiesSerialization() {
         TestProperties props = (WidgetTestProperties) new WidgetTestProperties("props").init();
-        assertEquals(true, props.getForm(Form.MAIN).getWidget("readonlyProperty").getConfigurationValue(Widget.READ_ONLY));
+        assertEquals(true,
+                props.getForm(Form.MAIN).getWidget("readonlyProperty").getConfigurationValue(Widget.READ_ONLY_WIDGET_CONF));
         TestProperties desProps = Properties.Helper.fromSerializedPersistent(props.toSerialized(), TestProperties.class).object;
-        assertEquals(true, desProps.getForm(Form.MAIN).getWidget("readonlyProperty").getConfigurationValue(Widget.READ_ONLY));
+        assertEquals(true,
+                desProps.getForm(Form.MAIN).getWidget("readonlyProperty").getConfigurationValue(Widget.READ_ONLY_WIDGET_CONF));
     }
 
     @Test
     public void testReadonly() {
         Widget widget = widget(newString("w1"));
         assertFalse(widget.isReadonly());
-        widget.setConfigurationValue(Widget.READ_ONLY, true);
+        widget.setConfigurationValue(Widget.READ_ONLY_WIDGET_CONF, true);
         assertTrue(widget.isReadonly());
-        widget.setConfigurationValue(Widget.READ_ONLY, false);
+        widget.setConfigurationValue(Widget.READ_ONLY_WIDGET_CONF, false);
         assertFalse(widget.isReadonly());
     }
 
@@ -52,7 +54,7 @@ public class WidgetTest {
         @Override
         public void setupLayout() {
             super.setupLayout();
-            getForm(Form.MAIN).addRow(widget(readonlyProperty).setConfigurationValue(Widget.READ_ONLY, true));
+            getForm(Form.MAIN).addRow(widget(readonlyProperty).setConfigurationValue(Widget.READ_ONLY_WIDGET_CONF, true));
         }
     }
 
