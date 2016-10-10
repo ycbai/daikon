@@ -11,25 +11,25 @@ http://www.talend.com
 ## Contents
 
 This repository contains the source files of shared libraries for all products. 
-it contains :
-* daikon : the core library with a restricted set of depenencies.
-* daikon-spring : spring specific classes that can be shaed by projects.
+It contains:
+* daikon: The core library with a restricted set of dependencies.
+* daikon-spring: Spring specific classes that can be shared by projects.
 
 
 ## Support
 
-You can ask for help on our [Forum](http://www.talend.com/services/global-technical-support).
+You can ask for help on our [forum](http://www.talend.com/services/global-technical-support).
 
 
 ## Contributing
 
 We welcome contributions of all kinds from anyone.
 
-Using the bug tracker [Talend bugtracker](http://jira.talendforge.org/) is the best channel for bug reports, feature requests and submitting pull requests.
+Using the [Talend bugtracker](http://jira.talendforge.org/) is the best channel for bug reports, feature requests and submitting pull requests.
 
 Feel free to share your Talend components on [Talend Exchange](http://www.talendforge.org/exchange).
 
-For code formatting, please use the configuration file and setup for eclipse or intelliJ that you find here : https://github.com/Talend/tools/tree/tools-java-formatter/0.1.0/tools-java-formatter
+For code formatting, please use the configuration file and setup for Eclipse or IntelliJ that you find here : https://github.com/Talend/tools/tree/tools-java-formatter/0.1.0/tools-java-formatter
 
 ## License
 
