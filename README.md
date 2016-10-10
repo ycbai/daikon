@@ -10,10 +10,11 @@ http://www.talend.com
 
 ## Contents
 
-This repository contains the source files of shared libraries for all products. 
+This repository contains commonly used classes that are expected to be shared across all Talend products.
 It contains:
 * daikon: The core library with a restricted set of dependencies.
 * daikon-spring: Spring specific classes that can be shared by projects.
+* daikon-service: Common service utilities.
 
 
 ## Support
@@ -25,11 +26,10 @@ You can ask for help on our [forum](http://www.talend.com/services/global-techni
 
 We welcome contributions of all kinds from anyone.
 
-Using the [Talend bugtracker](http://jira.talendforge.org/) is the best channel for bug reports, feature requests and submitting pull requests.
+Using the [Talend bugtracker](https://jira.talendforge.org/projects/TDKN) is the best channel for bug reports and feature requests. Use [GitHub](https://github.com/Talend/daikon) to submit pull requests.
 
-Feel free to share your Talend components on [Talend Exchange](http://www.talendforge.org/exchange).
+For code formatting, please use the configuration file and setup for Eclipse or IntelliJ that you find here: https://github.com/Talend/tools/tree/master/tools-java-formatter
 
-For code formatting, please use the configuration file and setup for Eclipse or IntelliJ that you find here : https://github.com/Talend/tools/tree/tools-java-formatter/0.1.0/tools-java-formatter
 
 ## License
 
@@ -38,4 +38,5 @@ Copyright (c) 2006-2016 Talend
 Licensed under the [Apache Licence v2](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
 ## Name origin
-The Daikon is a root vegetable and since this project is supposed to be the root of many projects we thought is was a fun and appropriate name.
+
+The Daikon is a root vegetable and since this project is supposed to be the root of many projects we thought it was a fun and appropriate name.
