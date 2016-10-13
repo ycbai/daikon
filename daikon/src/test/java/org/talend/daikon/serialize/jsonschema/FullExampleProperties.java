@@ -21,9 +21,8 @@ import org.talend.daikon.properties.property.EnumProperty;
 import org.talend.daikon.properties.property.Property;
 
 /**
- * TODO This is a duplicate one by org.talend.components.fullexample.FullExampleProperties,
- * but for test json schema serialize,
- * can be moved or removed if there is a better way
+ * TODO This is a duplicate one by org.talend.components.fullexample.FullExampleProperties, but for test json schema
+ * serialize, can be moved or removed if there is a better way
  */
 public class FullExampleProperties extends PropertiesImpl {
 
@@ -31,109 +30,42 @@ public class FullExampleProperties extends PropertiesImpl {
      * table property to use with table widget.
      */
     static final String POPUP_FORM_NAME = "popup";
-
-    public static class CommonProperties extends PropertiesImpl {
-
-        public enum ColEnum {
-            FOO,
-            BAR
-        }
-
-        public final Property<String> colString = newString("colString");
-
-        public final EnumProperty<ColEnum> colEnum = newEnum("colEnum", ColEnum.class);
-
-        public final Property<Boolean> colBoolean = newBoolean("colBoolean");
-
-        public CommonProperties(String name) {
-            super(name);
-        }
-
-        @Override
-        public void setupLayout() {
-            Form mainForm = new Form(this, Form.MAIN);
-            mainForm.addRow(colString);
-            mainForm.addRow(colEnum);
-            mainForm.addRow(colBoolean);
-        }
-    }
-
-    public static class TableProperties extends PropertiesImpl {
-        private static final TypeLiteral<List<String>> LIST_STRING_TYPE = new TypeLiteral<List<String>>() {// empty
-        };
-        public enum ColEnum {
-            FOO,
-            BAR
-        }
-        public static final TypeLiteral<List<ColEnum>> LIST_ENUM_TYPE = new TypeLiteral<List<ColEnum>>() {// empty
-        };
-
-        private static final TypeLiteral<List<Boolean>> LIST_BOOLEAN_TYPE = new TypeLiteral<List<Boolean>>() {// empty
-        };
-
-        public Property<List<String>> colListString = newProperty(LIST_STRING_TYPE, "colListString");
-
-        public Property<List<ColEnum>> colListEnum = newProperty(LIST_ENUM_TYPE, "colListEnum");
-
-        public Property<List<Boolean>> colListBoolean = newProperty(LIST_BOOLEAN_TYPE, "colListBoolean");
-        @Override
-        public void setupLayout() {
-            super.setupLayout();
-            Form mainForm = new Form(this, Form.MAIN);
-            mainForm.addColumn(colListString);
-            mainForm.addColumn(colListEnum);
-            mainForm.addColumn(colListBoolean);
-        }
-
-        public TableProperties(String name) {
-            super(name);
-        }
-    }
-
     /** use the default widget for this String type */
     public final Property<String> stringProp = newString("stringProp", "initialValue");
-
     /** this shall hide stringProp widget according to it value. */
     public final Property<Boolean> hideStringPropProp = newBoolean("hideStringPropProp", false);
 
-    /** property to check the {@link WidgetType#NAME_SELECTION_AREA} and {@link WidgetType#NAME_SELECTION_REFERENCE} widgets. */
+    /**
+     * property to check the {@link WidgetType#NAME_SELECTION_AREA} and {@link WidgetType#NAME_SELECTION_REFERENCE}
+     * widgets.
+     */
     public final Property<String> multipleSelectionProp = newProperty("multipleSelectionProp");
-
-    // TODO some Component Reference widget use case.
-
     /** checking {@link WidgetType#BUTTON} */
     public final PresentationItem showNewForm = new PresentationItem("showNewForm", "Show new form");
-
     /** checking {@link WidgetType#TABLE} */
     public final TableProperties tableProp = new TableProperties("tableProp");
 
+    // TODO some Component Reference widget use case.
     /** reuse common properties */
     public final CommonProperties commonProp = new CommonProperties("commonProp");
-
     /** checking {@link WidgetType#FILE} */
     public final Property<String> filepathProp = newString("filepathProp");
-
     /** checking {@link WidgetType#HIDDEN_TEXT} */
     public final Property<String> hiddenTextProp = newString("hiddenTextProp");
-
     /** use the default widget for this Date type */
     public final Property<Integer> integerProp = newInteger("integerProp").setRequired();
-
     /** use the default widget for this Integer type */
     public final Property<Date> dateProp = newDate("dateProp").setRequired();
-
     /** checking {@link WidgetType#TEXT_AREA} */
     public final Property<String> textareaProp = newString("textareaProp");
-
+    
     /**
-     * uses 2 widgets, {@link WidgetType#SCHEMA_EDITOR} in the Main form and {@link WidgetType#SCHEMA_REFERENCE} on the REFERENCE
-     * form
+     * uses 2 widgets, {@link WidgetType#SCHEMA_EDITOR} in the Main form and {@link WidgetType#SCHEMA_REFERENCE} on the
+     * REFERENCE form
      */
     public final Property<Schema> schema = newSchema("schema"); //$NON-NLS-1$
-
     public final PresentationItem validateAllCallbackCalled = new PresentationItem("validateAllCallbackCalled",
             "Validate All Callbacks called");
-
     private List<String> methodCalled = new ArrayList<>();
 
     public FullExampleProperties(String name) {
@@ -303,6 +235,68 @@ public class FullExampleProperties extends PropertiesImpl {
             return ValidationResult.OK;
         } else {
             return new ValidationResult().setStatus(Result.ERROR).setMessage("some method where not called :" + methodCalled);
+        }
+    }
+
+    public static class CommonProperties extends PropertiesImpl {
+
+        public final Property<String> colString = newString("colString");
+
+        public final EnumProperty<ColEnum> colEnum = newEnum("colEnum", ColEnum.class);
+
+        public final Property<Boolean> colBoolean = newBoolean("colBoolean");
+
+        public CommonProperties(String name) {
+            super(name);
+        }
+
+        @Override
+        public void setupLayout() {
+            Form mainForm = new Form(this, Form.MAIN);
+            mainForm.addRow(colString);
+            mainForm.addRow(colEnum);
+            mainForm.addRow(colBoolean);
+        }
+
+        public enum ColEnum {
+            FOO,
+            BAR
+        }
+    }
+
+    public static class TableProperties extends PropertiesImpl {
+
+        public static final TypeLiteral<List<ColEnum>> LIST_ENUM_TYPE = new TypeLiteral<List<ColEnum>>() {// empty
+        };
+
+        private static final TypeLiteral<List<String>> LIST_STRING_TYPE = new TypeLiteral<List<String>>() {// empty
+        };
+
+        private static final TypeLiteral<List<Boolean>> LIST_BOOLEAN_TYPE = new TypeLiteral<List<Boolean>>() {// empty
+        };
+
+        public Property<List<String>> colListString = newProperty(LIST_STRING_TYPE, "colListString");
+
+        public Property<List<ColEnum>> colListEnum = newProperty(LIST_ENUM_TYPE, "colListEnum");
+
+        public Property<List<Boolean>> colListBoolean = newProperty(LIST_BOOLEAN_TYPE, "colListBoolean");
+
+        public TableProperties(String name) {
+            super(name);
+        }
+
+        @Override
+        public void setupLayout() {
+            super.setupLayout();
+            Form mainForm = new Form(this, Form.MAIN);
+            mainForm.addColumn(colListString);
+            mainForm.addColumn(colListEnum);
+            mainForm.addColumn(colListBoolean);
+        }
+
+        public enum ColEnum {
+            FOO,
+            BAR
         }
     }
 
