@@ -13,11 +13,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public class JsonUtil {
 
-    static final String TAG_JSON_SCHEMA = "jsonschema";
+    static final String TAG_JSON_SCHEMA = "jsonSchema";
 
-    static final String TAG_JSON_UI = "uischema";
+    static final String TAG_JSON_UI = "uiSchema";
 
-    static final String TAG_JSON_DATA = "jsondata";
+    static final String TAG_JSON_DATA = "properties";
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
