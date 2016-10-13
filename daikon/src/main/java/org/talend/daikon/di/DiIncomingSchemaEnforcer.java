@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.daikon.di;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,8 +26,8 @@ import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.IndexedRecord;
-import org.talend.daikon.avro.SchemaConstants;
 import org.talend.daikon.avro.AvroUtils;
+import org.talend.daikon.avro.SchemaConstants;
 
 /**
  * <b>You should almost certainly not be using this class.</b>
@@ -120,6 +121,16 @@ public class DiIncomingSchemaEnforcer implements DiSchemaConstants {
             fieldSchema = Schema.create(Schema.Type.DOUBLE);
         } else if ("id_Float".equals(type)) {
             fieldSchema = Schema.create(Schema.Type.FLOAT);
+        } else if ("id_Byte".equals(type)) {
+            fieldSchema = AvroUtils._byte();
+        } else if ("id_Short".equals(type)) {
+            fieldSchema = AvroUtils._short();
+        } else if ("id_BigDecimal".equals(type)) {
+            fieldSchema = AvroUtils._decimal();
+        } else if ("id_Date".equals(type)) {
+            fieldSchema = AvroUtils._date();
+        } else {
+            throw new UnsupportedOperationException("Unrecognized type " + type);
         }
 
         if (isNullable) {
@@ -237,6 +248,14 @@ public class DiIncomingSchemaEnforcer implements DiSchemaConstants {
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
                 }
+            }
+        }
+
+        if ("id_BigDecimal".equals(talendType) || "java.math.BigDecimal".equals(javaClass)) {
+            if (v instanceof BigDecimal) {
+                datum = v;
+            } else if (v instanceof String) {
+                datum = new BigDecimal((String) v);
             }
         }
 

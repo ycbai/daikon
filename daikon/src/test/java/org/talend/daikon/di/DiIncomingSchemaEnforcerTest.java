@@ -5,7 +5,9 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.apache.avro.Schema;
@@ -233,4 +235,69 @@ public class DiIncomingSchemaEnforcerTest {
         assertThat(adapted.get(0), is((Object) new Date(1234567891000L)));
     }
 
+    @Test
+    public void testDynamicColumnALLSupportedType() {
+        Schema talend6Schema = SchemaBuilder.builder().record("Record").fields() //
+                .name("valid").type().booleanType().noDefault() //
+                .endRecord();
+        talend6Schema = AvroUtils.setIncludeAllFields(talend6Schema, true);
+        talend6Schema = AvroUtils.setProperty(talend6Schema, DiSchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION, "0");
+
+        DiIncomingSchemaEnforcer enforcer = new DiIncomingSchemaEnforcer(talend6Schema);
+
+        // The enforcer isn't usable yet.
+        assertThat(enforcer.getDesignSchema(), is(talend6Schema));
+        assertThat(enforcer.needsInitDynamicColumns(), is(true));
+        assertThat(enforcer.getRuntimeSchema(), nullValue());
+
+        enforcer.initDynamicColumn("Test_String", null, "id_String", null, 0, 0, 0, null, null, false, false, null, null);
+        enforcer.initDynamicColumn("Test_Boolean", null, "id_Boolean", null, 0, 0, 0, null, null, false, false, null, null);
+        enforcer.initDynamicColumn("Test_Integer", null, "id_Integer", null, 0, 0, 0, null, null, false, false, null, null);
+        enforcer.initDynamicColumn("Test_Long", null, "id_Long", null, 0, 0, 0, null, null, false, false, null, null);
+        enforcer.initDynamicColumn("Test_Double", null, "id_Double", null, 0, 0, 0, null, null, false, false, null, null);
+        enforcer.initDynamicColumn("Test_Float", null, "id_Float", null, 0, 0, 0, null, null, false, false, null, null);
+        enforcer.initDynamicColumn("Test_BigDecimal", null, "id_BigDecimal", null, 0, 0, 0, null, null, false, false, null, null);
+        enforcer.initDynamicColumn("Test_Date", null, "id_Date", null, 0, 0, 0, null, null, false, false, null, null);
+        enforcer.initDynamicColumn("Test_Byte", null, "id_Byte", null, 0, 0, 0, null, null, false, false, null, null);
+        enforcer.initDynamicColumn("Test_Short", null, "id_Short", null, 0, 0, 0, null, null, false, false, null, null);
+        try {
+            // Throw an exception rather than put schema null to avoid NPE
+            enforcer.initDynamicColumn("Test_Unsupported", null, "id_Unsupported", null, 0, 0, 0, null, null, false, false, null,
+                    null);
+            fail("Expect to get unsupported type exception!");
+        } catch (UnsupportedOperationException e) {
+        }
+        assertThat(enforcer.needsInitDynamicColumns(), is(true));
+        enforcer.initDynamicColumnsFinished();
+        assertThat(enforcer.needsInitDynamicColumns(), is(false));
+
+        // Check the run-time schema was created.
+        assertThat(enforcer.getDesignSchema(), is(talend6Schema));
+        assertThat(enforcer.getRuntimeSchema(), not(nullValue()));
+
+        // Put values into the enforcer and get them as an IndexedRecord.
+        enforcer.put(0, "string value");
+        enforcer.put(1, true);
+        enforcer.put(2, 100);
+        enforcer.put(3, 1234567891011L);
+        enforcer.put(4, 2.15);
+        enforcer.put(5, 3.6f);
+        enforcer.put(6, new BigDecimal("630.1020"));
+        enforcer.put(7, new Date(1234567891011L));
+        enforcer.put(8, Byte.parseByte("20"));
+        enforcer.put(9, Short.parseShort("2016"));
+
+        IndexedRecord adapted = enforcer.createIndexedRecord();
+
+        assertThat(adapted.get(0), is((Object) "string value"));
+        assertThat(adapted.get(1), is((Object) true));
+        assertThat(adapted.get(2), is((Object) 100));
+        assertThat(adapted.get(3), is((Object) 1234567891011L));
+        assertThat(adapted.get(4), is((Object) 2.15));
+        assertThat(adapted.get(5), is((Object) 3.6f));
+        assertThat(adapted.get(6), is((Object) new BigDecimal("630.1020")));
+        assertThat(adapted.get(7), is((Object) new Date(1234567891011L)));
+        assertThat(adapted.get(8), is((Object) 20));
+        assertThat(adapted.get(9), is((Object) 2016));
+    }
 }
