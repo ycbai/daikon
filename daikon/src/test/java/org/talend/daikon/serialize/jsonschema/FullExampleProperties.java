@@ -30,8 +30,10 @@ public class FullExampleProperties extends PropertiesImpl {
      * table property to use with table widget.
      */
     static final String POPUP_FORM_NAME = "popup";
+
     /** use the default widget for this String type */
     public final Property<String> stringProp = newString("stringProp", "initialValue");
+
     /** this shall hide stringProp widget according to it value. */
     public final Property<Boolean> hideStringPropProp = newBoolean("hideStringPropProp", false);
 
@@ -40,32 +42,41 @@ public class FullExampleProperties extends PropertiesImpl {
      * widgets.
      */
     public final Property<String> multipleSelectionProp = newProperty("multipleSelectionProp");
+
     /** checking {@link WidgetType#BUTTON} */
     public final PresentationItem showNewForm = new PresentationItem("showNewForm", "Show new form");
+
     /** checking {@link WidgetType#TABLE} */
     public final TableProperties tableProp = new TableProperties("tableProp");
 
     // TODO some Component Reference widget use case.
     /** reuse common properties */
     public final CommonProperties commonProp = new CommonProperties("commonProp");
+
     /** checking {@link WidgetType#FILE} */
     public final Property<String> filepathProp = newString("filepathProp");
+
     /** checking {@link WidgetType#HIDDEN_TEXT} */
     public final Property<String> hiddenTextProp = newString("hiddenTextProp");
+
     /** use the default widget for this Date type */
     public final Property<Integer> integerProp = newInteger("integerProp").setRequired();
+
     /** use the default widget for this Integer type */
     public final Property<Date> dateProp = newDate("dateProp").setRequired();
+
     /** checking {@link WidgetType#TEXT_AREA} */
     public final Property<String> textareaProp = newString("textareaProp");
-    
+
     /**
      * uses 2 widgets, {@link WidgetType#SCHEMA_EDITOR} in the Main form and {@link WidgetType#SCHEMA_REFERENCE} on the
      * REFERENCE form
      */
     public final Property<Schema> schema = newSchema("schema"); //$NON-NLS-1$
+
     public final PresentationItem validateAllCallbackCalled = new PresentationItem("validateAllCallbackCalled",
             "Validate All Callbacks called");
+
     private List<String> methodCalled = new ArrayList<>();
 
     public FullExampleProperties(String name) {

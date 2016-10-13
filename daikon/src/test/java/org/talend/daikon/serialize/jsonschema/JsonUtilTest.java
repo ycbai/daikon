@@ -16,7 +16,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class JsonUtilTest {
 
     @Test
-    public void test() throws URISyntaxException, IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+    public void test() throws URISyntaxException, IOException, ClassNotFoundException, NoSuchMethodException,
+            InstantiationException, IllegalAccessException, InvocationTargetException {
         String jsonStr = readJson("FullExampleProperties.json").trim();
 
         Properties properties = JsonUtil.fromJson(jsonStr);
