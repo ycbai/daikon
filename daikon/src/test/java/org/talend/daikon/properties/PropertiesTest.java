@@ -414,7 +414,7 @@ public class PropertiesTest {
         };
         props.init();
         String s = props.toSerialized();
-        TestProperties desProp = Properties.Helper.fromSerializedPersistent(s, TestProperties.class).object;
+        TestVersionProperties desProp = Properties.Helper.fromSerializedPersistent(s, TestVersionProperties.class).object;
         assertEquals(Integer.valueOf(100), desProp.integer.getValue());
     }
 
