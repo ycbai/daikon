@@ -40,6 +40,7 @@ import org.talend.daikon.properties.property.StringProperty;
 import org.talend.daikon.properties.test.PropertiesTestUtils;
 import org.talend.daikon.properties.testproperties.PropertiesWithDefinedI18N;
 import org.talend.daikon.properties.testproperties.TestProperties;
+import org.talend.daikon.properties.testproperties.TestVersionProperties;
 import org.talend.daikon.properties.testproperties.nestedprop.NestedNestedProperties;
 import org.talend.daikon.properties.testproperties.nestedprop.NestedProperties;
 import org.talend.daikon.properties.testproperties.nestedprop.inherited.InheritedProperties;
@@ -392,6 +393,29 @@ public class PropertiesTest {
         assertNull(props.date.getTaggedValue("foo"));
         TestProperties desProp = Properties.Helper.fromSerializedPersistent(s, TestProperties.class).object;
         assertEquals("bar0", desProp.date.getTaggedValue("foo"));
+    }
+
+    @Test
+    public void testVersion() {
+        TestVersionProperties props = new TestVersionProperties("test") {
+
+            @Override
+            public boolean postDeserialize(int version, PostDeserializeSetup setup, boolean persistent) {
+                boolean result = super.postDeserialize(version, setup, persistent);
+
+                if (version < 1) {
+                    this.integer.setValue(100);// migrate to the new value 100
+                    result = true;
+                }
+
+                return result;
+            }
+
+        };
+        props.init();
+        String s = props.toSerialized();
+        TestProperties desProp = Properties.Helper.fromSerializedPersistent(s, TestProperties.class).object;
+        assertEquals(Integer.valueOf(100), desProp.integer.getValue());
     }
 
     @Test
