@@ -157,14 +157,19 @@ public class SerializerDeserializer {
      * object.
      */
     public static <T> String toSerialized(T object, boolean persistent) {
+        return toSerialized(object, persistent, null);
+    }
+
+    public static <T> String toSerialized(T object, boolean persistent, Map<String, Object> otherArgs) {
         JsonWriter.JsonClassWriterEx writer = new JsonWriter.JsonClassWriterEx() {
 
             @Override
             public void write(Object o, boolean showType, Writer output, Map<String, Object> args) throws IOException {
-                JsonWriter writer = JsonWriter.JsonClassWriterEx.Support.getWriter(args);
                 int version = ((SerializeSetVersion) o).getVersionNumber();
                 if (version > 0)
                     output.write("\"" + VERSION_FIELD + "\":" + version + ",");
+
+                JsonWriter writer = JsonWriter.JsonClassWriterEx.Support.getWriter(args);
                 writer.writeObject(o, false, true);
             }
         };
@@ -174,6 +179,10 @@ public class SerializerDeserializer {
 
         final Map<String, Object> args = new HashMap<>();
         args.put(JsonWriter.CUSTOM_WRITER_MAP, writerMap);
+
+        if (otherArgs != null) {
+            args.putAll(otherArgs);
+        }
 
         return JsonWriter.objectToJson(object, args);
     }

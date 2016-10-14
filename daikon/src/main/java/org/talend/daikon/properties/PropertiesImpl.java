@@ -35,6 +35,7 @@ import org.talend.daikon.properties.property.PropertyValueEvaluator;
 import org.talend.daikon.properties.property.PropertyVisitor;
 import org.talend.daikon.serialize.PostDeserializeHandler;
 import org.talend.daikon.serialize.PostDeserializeSetup;
+import org.talend.daikon.serialize.SerializerDeserializer;
 import org.talend.daikon.strings.ToStringIndent;
 import org.talend.daikon.strings.ToStringIndentUtil;
 
@@ -240,7 +241,7 @@ public class PropertiesImpl extends TranslatableImpl implements Properties, AnyP
         fields.add("forms");
         fieldBlackLists.put(PropertiesImpl.class, fields);
         try {
-            return JsonWriter.objectToJson(this,
+            return SerializerDeserializer.toSerialized(this, true,
                     Collections.singletonMap(JsonWriter.FIELD_NAME_BLACK_LIST, (Object) fieldBlackLists));
         } finally {
             handleAllPropertyEncryption(!ENCRYPT);
