@@ -19,6 +19,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.talend.daikon.avro.AvroUtils;
+import org.talend.daikon.avro.SchemaConstants;
 
 /**
  * Unit tests for {DiIncomingSchemaEnforcer}.
@@ -242,7 +243,10 @@ public class DiIncomingSchemaEnforcerTest {
                 .endRecord();
         talend6Schema = AvroUtils.setIncludeAllFields(talend6Schema, true);
         talend6Schema = AvroUtils.setProperty(talend6Schema, DiSchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION, "0");
+        talend6Schema = AvroUtils.setProperty(talend6Schema, DiSchemaConstants.TALEND6_COLUMN_PATTERN,
+                "yyyy-MM-dd'T'HH:mm:ss'000Z'");
 
+        // 1) Test all type which supported in dynamic
         DiIncomingSchemaEnforcer enforcer = new DiIncomingSchemaEnforcer(talend6Schema);
 
         // The enforcer isn't usable yet.
@@ -257,9 +261,11 @@ public class DiIncomingSchemaEnforcerTest {
         enforcer.initDynamicColumn("Test_Double", null, "id_Double", null, 0, 0, 0, null, null, false, false, null, null);
         enforcer.initDynamicColumn("Test_Float", null, "id_Float", null, 0, 0, 0, null, null, false, false, null, null);
         enforcer.initDynamicColumn("Test_BigDecimal", null, "id_BigDecimal", null, 0, 0, 0, null, null, false, false, null, null);
-        enforcer.initDynamicColumn("Test_Date", null, "id_Date", null, 0, 0, 0, null, null, false, false, null, null);
+        enforcer.initDynamicColumn("Test_Date", null, "id_Date", null, 0, 0, 0, "yyyy-MM-dd'T'HH:mm:ss'000Z'", null, false, false,
+                null, null);
         enforcer.initDynamicColumn("Test_Byte", null, "id_Byte", null, 0, 0, 0, null, null, false, false, null, null);
         enforcer.initDynamicColumn("Test_Short", null, "id_Short", null, 0, 0, 0, null, null, false, false, null, null);
+        enforcer.initDynamicColumn("Test_Character", null, "id_Character", null, 0, 0, 0, null, null, false, true, null, null);
         try {
             // Throw an exception rather than put schema null to avoid NPE
             enforcer.initDynamicColumn("Test_Unsupported", null, "id_Unsupported", null, 0, 0, 0, null, null, false, false, null,
@@ -286,6 +292,9 @@ public class DiIncomingSchemaEnforcerTest {
         enforcer.put(7, new Date(1234567891011L));
         enforcer.put(8, Byte.parseByte("20"));
         enforcer.put(9, Short.parseShort("2016"));
+        enforcer.put(10, 'A');
+        assertThat(enforcer.getRuntimeSchema().getFields().get(7).getProp(SchemaConstants.TALEND_COLUMN_PATTERN),
+                is((Object) "yyyy-MM-dd'T'HH:mm:ss'000Z'"));
 
         IndexedRecord adapted = enforcer.createIndexedRecord();
 
@@ -299,5 +308,36 @@ public class DiIncomingSchemaEnforcerTest {
         assertThat(adapted.get(7), is((Object) new Date(1234567891011L)));
         assertThat(adapted.get(8), is((Object) 20));
         assertThat(adapted.get(9), is((Object) 2016));
+        assertThat(adapted.get(10), is((Object) "A"));
+
+        // To date with specified pattern "yyyy-MM-dd'T'HH:mm:ss'000Z'"
+        enforcer.put(7, "2009-02-13T23:31:31.000Z");
+        adapted = enforcer.createIndexedRecord();
+        assertThat(adapted.get(7), is((Object) new Date(1234567891000L)));
+
+        // 2) Test BigDecimal and Date when nullable is true
+        enforcer = new DiIncomingSchemaEnforcer(talend6Schema);
+        assertThat(enforcer.getDesignSchema(), is(talend6Schema));
+        assertThat(enforcer.needsInitDynamicColumns(), is(true));
+        assertThat(enforcer.getRuntimeSchema(), nullValue());
+        enforcer.initDynamicColumn("Test_BigDecimal", null, "id_BigDecimal", null, 0, 0, 0, null, null, false, true, null, null);
+        enforcer.initDynamicColumn("Test_Date", null, "id_Date", null, 0, 0, 0, "yyyy-MM-dd'T'HH:mm:ss'000Z'", null, false, true,
+                null, null);
+        assertThat(enforcer.needsInitDynamicColumns(), is(true));
+        enforcer.initDynamicColumnsFinished();
+        assertThat(enforcer.needsInitDynamicColumns(), is(false));
+
+        // Check the run-time schema was created.
+        assertThat(enforcer.getDesignSchema(), is(talend6Schema));
+        assertThat(enforcer.getRuntimeSchema(), not(nullValue()));
+
+        enforcer.put(0, new BigDecimal("630.1020"));
+        enforcer.put(1, new Date(1234567891011L));
+        assertThat(enforcer.getRuntimeSchema().getFields().get(1).getProp(SchemaConstants.TALEND_COLUMN_PATTERN),
+                is((Object) "yyyy-MM-dd'T'HH:mm:ss'000Z'"));
+
+        adapted = enforcer.createIndexedRecord();
+        assertThat(adapted.get(0), is((Object) new BigDecimal("630.1020")));
+        assertThat(adapted.get(1), is((Object) new Date(1234567891011L)));
     }
 }
