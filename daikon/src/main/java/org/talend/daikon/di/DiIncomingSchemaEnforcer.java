@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.daikon.di;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,8 +26,8 @@ import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.IndexedRecord;
-import org.talend.daikon.avro.SchemaConstants;
 import org.talend.daikon.avro.AvroUtils;
+import org.talend.daikon.avro.SchemaConstants;
 
 /**
  * <b>You should almost certainly not be using this class.</b>
@@ -120,12 +121,29 @@ public class DiIncomingSchemaEnforcer implements DiSchemaConstants {
             fieldSchema = Schema.create(Schema.Type.DOUBLE);
         } else if ("id_Float".equals(type)) {
             fieldSchema = Schema.create(Schema.Type.FLOAT);
+        } else if ("id_Byte".equals(type)) {
+            fieldSchema = AvroUtils._byte();
+        } else if ("id_Short".equals(type)) {
+            fieldSchema = AvroUtils._short();
+        } else if ("id_Character".equals(type)) {
+            fieldSchema = AvroUtils._character();
+        } else if ("id_BigDecimal".equals(type)) {
+            fieldSchema = AvroUtils._decimal();
+        } else if ("id_Date".equals(type)) {
+            fieldSchema = AvroUtils._date();
+        } else {
+            throw new UnsupportedOperationException("Unrecognized type " + type);
         }
 
         if (isNullable) {
             fieldSchema = SchemaBuilder.nullable().type(fieldSchema);
         }
-        fieldsFromDynamicColumns.add(new Schema.Field(name, fieldSchema, description, (Object) null));
+        Schema.Field field = new Schema.Field(name, fieldSchema, description, (Object) null);
+        // Set pattern for date type
+        if ("id_Date".equals(type) && format != null) {
+            field.addProp(SchemaConstants.TALEND_COLUMN_PATTERN, format);
+        }
+        fieldsFromDynamicColumns.add(field);
     }
 
     /**
@@ -207,7 +225,7 @@ public class DiIncomingSchemaEnforcer implements DiSchemaConstants {
 
         // TODO(rskraba): This is pretty rough -- fix with a general type conversion strategy.
         String talendType = f.getProp(DiSchemaConstants.TALEND6_COLUMN_TALEND_TYPE);
-        String javaClass = f.schema().getProp(SchemaConstants.JAVA_CLASS_FLAG);
+        String javaClass = fieldSchema.getProp(SchemaConstants.JAVA_CLASS_FLAG);
         if ("id_Date".equals(talendType) || "java.util.Date".equals(javaClass)) {
             if (v instanceof Date) {
                 datum = v;
@@ -237,6 +255,14 @@ public class DiIncomingSchemaEnforcer implements DiSchemaConstants {
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
                 }
+            }
+        }
+
+        if ("id_BigDecimal".equals(talendType) || "java.math.BigDecimal".equals(javaClass)) {
+            if (v instanceof BigDecimal) {
+                datum = v;
+            } else if (v instanceof String) {
+                datum = new BigDecimal((String) v);
             }
         }
 
