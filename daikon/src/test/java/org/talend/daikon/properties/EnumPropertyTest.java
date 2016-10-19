@@ -12,10 +12,8 @@
 // ============================================================================
 package org.talend.daikon.properties;
 
-import static org.hamcrest.Matchers.contains;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import java.util.List;
 
@@ -26,15 +24,25 @@ import org.talend.daikon.properties.property.EnumProperty;
 import org.talend.daikon.properties.property.Property;
 import org.talend.daikon.properties.property.PropertyFactory;
 import org.talend.daikon.properties.property.PropertyValueEvaluator;
+import org.talend.daikon.serialize.SerializerDeserializer;
 
 public class EnumPropertyTest {
 
-    private final class EnumPropForI18NTest extends EnumProperty {
+    public final class EnumPropForI18NTest extends EnumProperty {
 
-        private EnumPropForI18NTest(Class zeEnumType, String name) {
+        public EnumPropForI18NTest(Class zeEnumType, String name) {
             super(zeEnumType, name);
         }
     }
+
+    public static class PropertiesWithOneEnum extends PropertiesImpl {
+
+        public PropertiesWithOneEnum() {
+            super("");
+        }
+
+        public EnumProperty<TestEnum> enumProperty = new EnumProperty<>(TestEnum.class, "enumProperty");
+    };
 
     public enum TestEnum {
         FOO,
@@ -77,6 +85,18 @@ public class EnumPropertyTest {
         } catch (TalendRuntimeException e) {
             assertEquals(CommonErrorCodes.UNEXPECTED_ARGUMENT, e.getCode());
         }
+    }
+
+    @Test
+    public void testDeserialization() {
+        // Properties prop = new PropertiesWithOneEnum();
+        // System.out.println(prop.toSerialized());
+
+        String oldEnumSerialized = "{\"@type\":\"org.talend.daikon.properties.EnumPropertyTest$PropertiesWithOneEnum\",\"enumProperty\":{\"flags\":null,\"taggedValues\":{\"@type\":\"java.util.HashMap\"},\"storedValue\":null,\"size\":-1,\"occurMinTimes\":0,\"occurMaxTimes\":0,\"precision\":0,\"pattern\":null,\"nullable\":false,\"possibleValues\":{\"@type\":\"java.util.Arrays$ArrayList\",\"@items\":[{\"@type\":\"org.talend.daikon.properties.EnumPropertyTest$TestEnum\",\"name\":\"FOO\",\"ordinal\":0},{\"@type\":\"org.talend.daikon.properties.EnumPropertyTest$TestEnum\",\"name\":\"BAR\",\"ordinal\":1}]},\"children\":{\"@type\":\"java.util.ArrayList\"},\"currentType\":\"org.talend.daikon.properties.EnumPropertyTest.TestEnum\",\"name\":\"enumProperty\",\"displayName\":null,\"title\":null},\"name\":\"\",\"validationResult\":null}\n"
+                + "";
+        Properties prop = SerializerDeserializer.fromSerializedPersistent(oldEnumSerialized, Properties.class).object;
+        EnumProperty<?> enumProp = (EnumProperty<?>) prop.getProperty("enumProperty");
+        assertEquals(3, enumProp.getPossibleValues().size());
     }
 
 }

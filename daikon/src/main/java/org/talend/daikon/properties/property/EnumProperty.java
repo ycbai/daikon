@@ -15,11 +15,13 @@ package org.talend.daikon.properties.property;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.talend.daikon.exception.TalendRuntimeException;
+import org.talend.daikon.serialize.PostDeserializeHandler;
+import org.talend.daikon.serialize.PostDeserializeSetup;
 
 /**
  * Property that contains an enum
  */
-public class EnumProperty<T extends Enum<T>> extends Property<T> {
+public class EnumProperty<T extends Enum<T>> extends Property<T> implements PostDeserializeHandler {
 
     public EnumProperty(Class<T> zeEnumType, String name) {
         super(zeEnumType, name, null);
@@ -31,7 +33,7 @@ public class EnumProperty<T extends Enum<T>> extends Property<T> {
 
     /*
      * This is package protected because this constructor should only be used when copying a Property at runtime, so it
-     * does not need to be typed.
+     * does not need to be typed and for json-io deserialization
      */
     EnumProperty(String type, String name) {
         super(type, name);
@@ -61,6 +63,24 @@ public class EnumProperty<T extends Enum<T>> extends Property<T> {
      */
     String convertToInnerClassString(String type) {
         return StringUtils.replacePattern(type, "([a-z0-9]*\\\\.[A-Z][^.]*)?((\\\\.)([A-Z][a-z0-9]*))", "$1\\$$4");
+    }
+
+    @Override
+    public boolean postDeserialize(int version, PostDeserializeSetup setup, boolean persistent) {
+        // initialize the possible values
+        try {
+            @SuppressWarnings("unchecked")
+            Class<T> enumClass = (Class<T>) ClassUtils.getClass(getType());
+            T[] enumConstants = enumClass.getEnumConstants();
+            // enum has changed so update it
+            if (enumConstants.length != getPossibleValues().size()) {
+                setPossibleValues(enumConstants);
+                return true;
+            }
+        } catch (ClassNotFoundException e) {
+            TalendRuntimeException.unexpectedException(e);
+        }
+        return false;
     }
 
 }
