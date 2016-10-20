@@ -18,7 +18,7 @@ public class JsonUtilTest {
     @Test
     public void test() throws URISyntaxException, IOException, ClassNotFoundException, NoSuchMethodException,
             InstantiationException, IllegalAccessException, InvocationTargetException {
-        String jsonStr = readJson("FullExampleProperties.json").trim();
+        String jsonStr = readJson("FullExampleProperties.json");
 
         Properties properties = JsonUtil.fromJson(jsonStr);
         properties.init();
@@ -27,9 +27,9 @@ public class JsonUtilTest {
         assertEquals(jsonStr, jsonResult);
     }
 
-    private static String readJson(String path) throws URISyntaxException, IOException {
+    public static String readJson(String path) throws URISyntaxException, IOException {
         java.net.URL url = JsonUtilTest.class.getResource(path);
         java.nio.file.Path resPath = java.nio.file.Paths.get(url.toURI());
-        return new String(java.nio.file.Files.readAllBytes(resPath), "UTF8");
+        return new String(java.nio.file.Files.readAllBytes(resPath), "UTF8").trim();
     }
 }

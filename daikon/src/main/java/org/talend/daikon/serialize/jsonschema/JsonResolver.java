@@ -4,8 +4,10 @@ import static org.talend.daikon.serialize.jsonschema.JsonBaseTool.*;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.avro.Schema;
@@ -13,47 +15,30 @@ import org.talend.daikon.properties.Properties;
 import org.talend.daikon.properties.property.Property;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JsonResolver {
 
-    protected static final ObjectMapper mapper = new ObjectMapper();
-
-    protected Properties resolveJson(String jsonSchemaStr, String jsonDataStr) throws NoSuchMethodException, IOException,
+    protected Properties resolveJson(ObjectNode jsonSchema, ObjectNode jsonData) throws NoSuchMethodException, IOException,
             InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException {
-        JsonNode jsonSchema = mapper.readTree(jsonSchemaStr);
-        if (jsonSchema.isObject()) {
-            JsonNode classNameNode = jsonSchema.get(JsonSchemaConstants.CUSTOM_TAG_ID);
-            Class<?> aClass = Class.forName(classNameNode.textValue());
-            Constructor<?> declaredConstructor = aClass.getDeclaredConstructor(String.class);
-            Properties cProperties = (Properties) declaredConstructor.newInstance("root");
-            return resolveJson(jsonDataStr, cProperties);
-        }
-        return null;
+        JsonNode classNameNode = jsonSchema.get(JsonSchemaConstants.CUSTOM_TAG_ID);
+        Class<?> aClass = Class.forName(classNameNode.textValue());
+        Constructor<?> declaredConstructor = aClass.getDeclaredConstructor(String.class);
+        Properties cProperties = (Properties) declaredConstructor.newInstance("root");
+        return resolveJson(jsonData, cProperties);
     }
 
-    protected Properties resolveJson(String jsonDataStr, Properties cProperties) throws IOException, ClassNotFoundException,
+    private Properties resolveJson(ObjectNode jsonData, Properties cProperties) throws IOException, ClassNotFoundException,
             NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        JsonNode jsonData = mapper.readTree(jsonDataStr);
 
         List<Property> propertyList = getSubProperty(cProperties);
-        Field[] declaredFields = cProperties.getClass().getDeclaredFields();
         for (Property property : propertyList) {
-            for (Field declaredField : declaredFields) {
-                String fieldName = declaredField.getName();
-                if (fieldName.equals(property.getName())) {
-                    property.setValue(getTPropertyValue(property, jsonData.get(fieldName)));
-                }
-            }
+            property.setValue(getTPropertyValue(property, jsonData.get(property.getName())));
         }
         List<Properties> propertiesList = getSubProperties(cProperties);
         for (Properties properties : propertiesList) {
-            for (Field declaredField : declaredFields) {
-                String fieldName = declaredField.getName();
-                if (fieldName.equals(properties.getName())) {
-                    resolveJson(jsonData.get(fieldName).toString(), cProperties.getProperties(fieldName));
-                }
-            }
+            resolveJson((ObjectNode) jsonData.get(properties.getName()), cProperties.getProperties(properties.getName()));
         }
         return cProperties;
     }
@@ -62,24 +47,42 @@ public class JsonResolver {
         String javaType = property.getType();
         if (dataNode == null || dataNode.isNull()) {
             return null;
-        } else if (JsonSchemaConstants.TYPE_STRING.equals(JsonSchemaConstants.getTypeMapping().get(javaType))) {
-            return dataNode.textValue();
-        } else if (JsonSchemaConstants.TYPE_INTEGER.equals(JsonSchemaConstants.getTypeMapping().get(javaType))) {
-            return dataNode.intValue();
-        } else if (JsonSchemaConstants.TYPE_NUMBER.equals(JsonSchemaConstants.getTypeMapping().get(javaType))) {
-            if (Float.class.getName().equals(javaType)) {
-                return dataNode.numberValue().floatValue();
+        } else if (isListClass(javaType)) {
+            Class type = findClass(getListInnerClassName(javaType));
+            ArrayNode arrayNode = ((ArrayNode) dataNode);
+            List values = new ArrayList();
+            for (int i = 0; i < arrayNode.size(); i++) {
+                values.add(getValue(arrayNode.get(i), type));
             }
-            return dataNode.numberValue();
-        } else if (JsonSchemaConstants.TYPE_BOOLEAN.equals(JsonSchemaConstants.getTypeMapping().get(javaType))) {
-            return dataNode.booleanValue();
-        } else if (Schema.class.getName().equals(javaType)) {
-            return new Schema.Parser().parse(dataNode.textValue());
-        } else if (findClass(javaType).isEnum()) {
-            return Enum.valueOf(findClass(javaType), dataNode.textValue());
+            return values;
         } else {
-            throw new RuntimeException("do not support " + javaType + " now.");
+            return getValue(dataNode, findClass(javaType));
         }
+    }
 
+    private Object getValue(JsonNode dataNode, Class type) {
+        if (String.class.equals(type)) {
+            return dataNode.textValue();
+        } else if (Integer.class.equals(type)) {
+            return dataNode.intValue();
+        } else if (Double.class.equals(type)) {
+            return dataNode.numberValue();
+        } else if (Float.class.equals(type)) {
+            return dataNode.numberValue().floatValue();
+        } else if (Boolean.class.equals(type)) {
+            return dataNode.booleanValue();
+        } else if (Schema.class.equals(type)) {
+            return new Schema.Parser().parse(dataNode.textValue());
+        } else if (type.isEnum()) {
+            return Enum.valueOf(type, dataNode.textValue());
+        } else if (Date.class.equals(type)) {
+            try {
+                return dateFormatter.parse(dataNode.textValue());
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            throw new RuntimeException("Do not support type " + type + " yet.");
+        }
     }
 }

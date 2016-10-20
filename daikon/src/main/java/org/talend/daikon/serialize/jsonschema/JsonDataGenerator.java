@@ -2,12 +2,14 @@ package org.talend.daikon.serialize.jsonschema;
 
 import static org.talend.daikon.serialize.jsonschema.JsonBaseTool.*;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.avro.Schema;
 import org.talend.daikon.properties.Properties;
 import org.talend.daikon.properties.property.Property;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -39,24 +41,59 @@ public class JsonDataGenerator {
         if (pValue == null) {
             // unset if the value is null
             // node.set(pName, node.nullNode());
-        } else if (String.class.getName().equals(javaType)) {
-            node.put(pName, (String) pValue);
-        } else if (Integer.class.getName().equals(javaType)) {
-            node.put(pName, (Integer) pValue);
-        } else if (findClass(javaType).isEnum()) {
-            node.put(pName, pValue.toString());
-        } else if (Boolean.class.getName().equals(javaType)) {
-            node.put(pName, (Boolean) pValue);
-        } else if (Schema.class.getName().equals(javaType)) {
-            node.put(pName, pValue.toString());
-        } else if (Double.class.getName().equals(javaType)) {
-            node.put(pName, (Double) pValue);
-        } else if (Float.class.getName().equals(javaType)) {
-            node.put(pName, (Float) pValue);
+        } else if (isListClass(javaType)) {
+            Class type = findClass(getListInnerClassName(javaType));
+            ArrayNode arrayNode = node.putArray(pName);
+            for (Object value : ((List) pValue)) {
+                fillValue(arrayNode, type, value);
+            }
         } else {
-            throw new RuntimeException("do not support " + javaType + " now.");
+            fillValue(node, findClass(javaType), pName, pValue);
         }
-
         return node;
+    }
+
+    private void fillValue(ArrayNode node, Class type, Object value) {
+        if (String.class.equals(type)) {
+            node.add((String) value);
+        } else if (Integer.class.equals(type)) {
+            node.add((Integer) value);
+        } else if (type.isEnum()) {
+            node.add(value.toString());
+        } else if (Boolean.class.equals(type)) {
+            node.add((Boolean) value);
+        } else if (Schema.class.equals(type)) {
+            node.add(value.toString());
+        } else if (Double.class.equals(type)) {
+            node.add((Double) value);
+        } else if (Float.class.equals(type)) {
+            node.add((Float) value);
+        } else if (Date.class.equals(type)) {
+            node.add(dateFormatter.format((Date) value));
+        } else {
+            throw new RuntimeException("Do not support type " + type + " yet.");
+        }
+    }
+
+    private void fillValue(ObjectNode node, Class type, String key, Object value) {
+        if (String.class.equals(type)) {
+            node.put(key, (String) value);
+        } else if (Integer.class.equals(type)) {
+            node.put(key, (Integer) value);
+        } else if (type.isEnum()) {
+            node.put(key, value.toString());
+        } else if (Boolean.class.equals(type)) {
+            node.put(key, (Boolean) value);
+        } else if (Schema.class.equals(type)) {
+            node.put(key, value.toString());
+        } else if (Double.class.equals(type)) {
+            node.put(key, (Double) value);
+        } else if (Float.class.equals(type)) {
+            node.put(key, (Float) value);
+        } else if (Date.class.equals(type)) {
+            node.put(key, dateFormatter.format((Date) value));
+        } else {
+            throw new RuntimeException("Do not support type " + type + " yet.");
+        }
     }
 }
