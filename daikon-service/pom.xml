@@ -12,7 +12,7 @@
 
     <groupId>org.talend.daikon</groupId>
     <artifactId>daikon-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <modules>
         <module>service-common</module>
         <module>service-docs</module>
