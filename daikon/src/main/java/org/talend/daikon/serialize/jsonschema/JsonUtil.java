@@ -1,6 +1,8 @@
 package org.talend.daikon.serialize.jsonschema;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 
 import org.talend.daikon.properties.Properties;
 
@@ -32,9 +34,7 @@ public class JsonUtil {
     public static Properties fromJson(String jsonStr) {
         try {
             JsonNode jsonNode = mapper.readTree(jsonStr);
-            Properties root = resolver.resolveJson(jsonNode.get(TAG_JSON_SCHEMA).toString(),
-                    jsonNode.get(TAG_JSON_DATA).toString());
-            return root;
+            return fromJson(jsonNode);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -43,13 +43,21 @@ public class JsonUtil {
     public static Properties fromJson(InputStream jsonIS) {
         try {
             JsonNode jsonNode = mapper.readTree(jsonIS);
-            Properties root = resolver.resolveJson(jsonNode.get(TAG_JSON_SCHEMA).toString(),
-                    jsonNode.get(TAG_JSON_DATA).toString());
-
-            return root;
+            return fromJson(jsonNode);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static Properties fromJson(JsonNode jsonNode) throws NoSuchMethodException, IOException, InstantiationException,
+            IllegalAccessException, InvocationTargetException, ClassNotFoundException {
+        JsonNode jsonSchema = jsonNode.get(TAG_JSON_SCHEMA);
+        JsonNode jsonData = jsonNode.get(TAG_JSON_DATA);
+        if (jsonSchema == null || jsonData == null) {
+            throw new RuntimeException(TAG_JSON_SCHEMA + " or " + TAG_JSON_DATA + " should not be null");
+        }
+        Properties root = resolver.resolveJson((ObjectNode) jsonSchema, (ObjectNode) jsonData);
+        return root;
     }
 
     public static String toJson(Properties cp, boolean hasWidget) {

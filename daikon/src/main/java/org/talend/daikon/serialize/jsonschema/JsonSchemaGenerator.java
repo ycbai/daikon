@@ -64,12 +64,12 @@ public class JsonSchemaGenerator {
                 }
                 enumList.add(value);
             }
-        } else if (property.getType().startsWith("java.util.List")) {
+        } else if (isListClass(property.getType())) {
             resolveList(schema, property);
         } else {
             schema.put(JsonSchemaConstants.TAG_TYPE, JsonSchemaConstants.getTypeMapping().get(property.getType()));
             if (Date.class.getName().equals(property.getType())) {
-                schema.put(JsonSchemaConstants.TAG_FORMAT, "date-time");
+                schema.put(JsonSchemaConstants.TAG_FORMAT, "date-time");//Do not support other format for date till Property support it
             }
         }
         return schema;
@@ -80,7 +80,7 @@ public class JsonSchemaGenerator {
         schema.put(JsonSchemaConstants.TAG_TYPE, JsonSchemaConstants.TYPE_ARRAY);
         ObjectNode items = JsonNodeFactory.instance.objectNode();
         schema.set(JsonSchemaConstants.TAG_ITEMS, items);
-        String innerClassName = className.substring("java.util.List<".length(), className.length() - 1);
+        String innerClassName = getListInnerClassName(className);
         Class<?> aClass = findClass(innerClassName);
         if (aClass.isEnum()) {
             items.put(JsonSchemaConstants.TAG_TYPE, JsonSchemaConstants.TYPE_STRING);

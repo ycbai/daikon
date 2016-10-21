@@ -1,7 +1,5 @@
 package org.talend.daikon.serialize.jsonschema;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -85,9 +83,9 @@ public class JsonSchemaConstants {
     private static Map<String, String> TYPE_MAPPING = new HashMap<>();
 
     static {
-        TYPE_MAPPING.put(Character.class.getName(), JsonSchemaConstants.TYPE_STRING);
+        // TYPE_MAPPING.put(Character.class.getName(), JsonSchemaConstants.TYPE_STRING);
         TYPE_MAPPING.put(String.class.getName(), JsonSchemaConstants.TYPE_STRING);
-        TYPE_MAPPING.put(CharSequence.class.getName(), JsonSchemaConstants.TYPE_STRING);
+        // TYPE_MAPPING.put(CharSequence.class.getName(), JsonSchemaConstants.TYPE_STRING);
         TYPE_MAPPING.put(Schema.class.getName(), JsonSchemaConstants.TYPE_STRING);
         TYPE_MAPPING.put(Date.class.getName(), JsonSchemaConstants.TYPE_STRING);
 
@@ -95,13 +93,13 @@ public class JsonSchemaConstants {
 
         TYPE_MAPPING.put(Float.class.getName(), JsonSchemaConstants.TYPE_NUMBER);
         TYPE_MAPPING.put(Double.class.getName(), JsonSchemaConstants.TYPE_NUMBER);
-        TYPE_MAPPING.put(BigDecimal.class.getName(), JsonSchemaConstants.TYPE_NUMBER);
+        // TYPE_MAPPING.put(BigDecimal.class.getName(), JsonSchemaConstants.TYPE_NUMBER);
 
-        TYPE_MAPPING.put(Byte.class.getName(), JsonSchemaConstants.TYPE_INTEGER);
-        TYPE_MAPPING.put(Short.class.getName(), JsonSchemaConstants.TYPE_INTEGER);
+        // TYPE_MAPPING.put(Byte.class.getName(), JsonSchemaConstants.TYPE_INTEGER);
+        // TYPE_MAPPING.put(Short.class.getName(), JsonSchemaConstants.TYPE_INTEGER);
         TYPE_MAPPING.put(Integer.class.getName(), JsonSchemaConstants.TYPE_INTEGER);
-        TYPE_MAPPING.put(Long.class.getName(), JsonSchemaConstants.TYPE_INTEGER);
-        TYPE_MAPPING.put(BigInteger.class.getName(), JsonSchemaConstants.TYPE_INTEGER);
+        // TYPE_MAPPING.put(Long.class.getName(), JsonSchemaConstants.TYPE_INTEGER);
+        // TYPE_MAPPING.put(BigInteger.class.getName(), JsonSchemaConstants.TYPE_INTEGER);
 
         TYPE_MAPPING = Collections.unmodifiableMap(TYPE_MAPPING);
     }
