@@ -17,11 +17,13 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.talend.daikon.NamedThing;
 import org.talend.daikon.exception.ExceptionContext;
 import org.talend.daikon.exception.TalendRuntimeException;
@@ -332,13 +334,16 @@ public class PropertiesImpl extends TranslatableImpl implements Properties, AnyP
 
     @Override
     public void accept(AnyPropertyVisitor visitor, Properties parent) {
-        Set<Properties> visited = new HashSet();
+        // uses a set that uses reference-equality instead of instance-equality to avoid stackoveflow with hashcode() using a
+        // visitor.
+        Set<Properties> visited = Collections.newSetFromMap(new IdentityHashMap<Properties, Boolean>());
         acceptInternal(visitor, parent, visited);
     }
 
     private void acceptInternal(AnyPropertyVisitor visitor, Properties parent, Set<Properties> visited) {
-        if (visited.contains(this))
+        if (visited.contains(this)) {
             return;
+        }
         visited.add(this);
         List<NamedThing> properties = getProperties();
         for (NamedThing nt : properties) {
@@ -361,21 +366,27 @@ public class PropertiesImpl extends TranslatableImpl implements Properties, AnyP
         return AnyProperty.class.isAssignableFrom(clazz);
     }
 
+    /**
+     * @return a Namething from a property path wich allow to recurse into nested properties using the . as a separator
+     *         for Properties names and the final Property. Or null if none found
+     */
     @Override
-    public NamedThing getProperty(String propName) {
-        String[] propComps = propName.split("\\.");
-        PropertiesImpl currentProps = this;
-        int i = 0;
-        for (String prop : propComps) {
-            if (i++ == propComps.length - 1) {
-                return currentProps.getLocalProperty(prop);
+    public NamedThing getProperty(String propPath) {
+        if (propPath != null) {
+            String[] propComps = propPath.split("\\.");
+            PropertiesImpl currentProps = this;
+            int i = 0;
+            for (String prop : propComps) {
+                if (i++ == propComps.length - 1) {
+                    return currentProps.getLocalProperty(prop);
+                }
+                NamedThing se = currentProps.getLocalProperty(prop);
+                if (!(se instanceof PropertiesImpl)) {
+                    return null;
+                }
+                currentProps = (PropertiesImpl) se;
             }
-            NamedThing se = currentProps.getLocalProperty(prop);
-            if (!(se instanceof PropertiesImpl)) {
-                return null;
-            }
-            currentProps = (PropertiesImpl) se;
-        }
+        } // else propName is null so return null
         return null;
     }
 
@@ -602,6 +613,54 @@ public class PropertiesImpl extends TranslatableImpl implements Properties, AnyP
             sb.append("\n" + form.toStringIndent(indent + 6));
         }
         return sb.toString();
+    }
+
+    /**
+     * hashcode is compute with the recursive Property name and values.
+     */
+    @Override
+    public int hashCode() {
+        final HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(17, 5);
+        accept(new PropertyVisitor() {
+
+            @Override
+            public void visit(Property property, Properties parent) {
+                // use the property name
+                hashCodeBuilder.append(property.getName());
+                // and the property value
+                hashCodeBuilder.append(property.getStoredValue());
+            }
+        }, null);
+        return hashCodeBuilder.toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        PropertiesImpl other = (PropertiesImpl) obj;
+        return computeEqualityWith(this, other);
+    }
+
+    boolean computeEqualityWith(Properties current, Properties other) {
+        final EqualsBuilder equalsBuilder = new EqualsBuilder();
+        List<NamedThing> properties = current.getProperties();
+        for (NamedThing nt : properties) {
+            if (nt instanceof PropertiesImpl) {
+                equalsBuilder.append(nt, other.getProperties(nt.getName()));
+            } else if (nt instanceof Property<?>) {
+                equalsBuilder.append(nt, other.getValuedProperty(nt.getName()));
+            }
+        }
+        return equalsBuilder.isEquals();
+
     }
 
 }
