@@ -58,6 +58,7 @@
                 <version>${enunciate-version}</version>
                 <executions>
                     <execution>
+                        <id>gen-doc</id>
                         <goals>
                             <goal>docs</goal>
                         </goals>
@@ -86,6 +87,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>package-service</id>
                         <goals>
                             <goal>jar</goal>
                         </goals>
@@ -108,6 +110,7 @@
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>enforce-deps</id>
                         <goals>
                             <goal>enforce</goal>
                         </goals>
