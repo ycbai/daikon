@@ -44,8 +44,9 @@ public class DiOutgoingSchemaEnforcerBenchmark {
     
     /**
      * {@link State} class for Enforcer without dynamic columns in Schema
+     * and by index field matching mode
      */
-    public static class WithoutDynamicEnforcerState extends EnforcerState {
+    public static class WithoutDynamicByIndexEnforcerState extends EnforcerState {
 
         /**
          * Initializes Enforcer with Schema, which doesn't contain dynamic columns.
@@ -55,6 +56,7 @@ public class DiOutgoingSchemaEnforcerBenchmark {
         @Override
         public void initializeEnforcer() {
             Schema nonDynamicDesignSchema = SchemaBuilder.builder().record("designNotDynamic").fields()
+                    .name("col0").type().stringType().noDefault()
                     .name("col1").type().stringType().noDefault()
                     .name("col2").type().stringType().noDefault()
                     .name("col3").type().stringType().noDefault()
@@ -64,22 +66,64 @@ public class DiOutgoingSchemaEnforcerBenchmark {
                     .name("col7").type().stringType().noDefault()
                     .name("col8").type().stringType().noDefault()
                     .name("col9").type().stringType().noDefault()
-                    .name("col10").type().stringType().noDefault()
                     .endRecord();
             
             IndexedRecord nonDynamicRecord = new GenericData.Record(nonDynamicDesignSchema);
-            nonDynamicRecord.put(0, "value1");
-            nonDynamicRecord.put(1, "value2");
-            nonDynamicRecord.put(2, "value3");
-            nonDynamicRecord.put(3, "value4");
-            nonDynamicRecord.put(4, "value5");
-            nonDynamicRecord.put(5, "value6");
-            nonDynamicRecord.put(6, "value7");
-            nonDynamicRecord.put(7, "value8");
-            nonDynamicRecord.put(8, "value9");
-            nonDynamicRecord.put(9, "value10");
+            nonDynamicRecord.put(0, "value0");
+            nonDynamicRecord.put(1, "value1");
+            nonDynamicRecord.put(2, "value2");
+            nonDynamicRecord.put(3, "value3");
+            nonDynamicRecord.put(4, "value4");
+            nonDynamicRecord.put(5, "value5");
+            nonDynamicRecord.put(6, "value6");
+            nonDynamicRecord.put(7, "value7");
+            nonDynamicRecord.put(8, "value8");
+            nonDynamicRecord.put(9, "value9");
             
             enforcer = new DiOutgoingSchemaEnforcer(nonDynamicDesignSchema, true);
+            enforcer.setWrapped(nonDynamicRecord);
+        }
+    }
+    
+    /**
+     * {@link State} class for Enforcer without dynamic columns in Schema
+     * and by name field matching mode
+     */
+    public static class WithoutDynamicByNameEnforcerState extends EnforcerState {
+
+        /**
+         * Initializes Enforcer with Schema, which doesn't contain dynamic columns.
+         * This method is called only once for benchmark method. See {@link Level#Trial}
+         */
+        @Setup(Level.Trial)
+        @Override
+        public void initializeEnforcer() {
+            Schema nonDynamicDesignSchema = SchemaBuilder.builder().record("designNotDynamic").fields()
+                    .name("col0").type().stringType().noDefault()
+                    .name("col1").type().stringType().noDefault()
+                    .name("col2").type().stringType().noDefault()
+                    .name("col3").type().stringType().noDefault()
+                    .name("col4").type().stringType().noDefault()
+                    .name("col5").type().stringType().noDefault()
+                    .name("col6").type().stringType().noDefault()
+                    .name("col7").type().stringType().noDefault()
+                    .name("col8").type().stringType().noDefault()
+                    .name("col9").type().stringType().noDefault()
+                    .endRecord();
+            
+            IndexedRecord nonDynamicRecord = new GenericData.Record(nonDynamicDesignSchema);
+            nonDynamicRecord.put(0, "value0");
+            nonDynamicRecord.put(1, "value1");
+            nonDynamicRecord.put(2, "value2");
+            nonDynamicRecord.put(3, "value3");
+            nonDynamicRecord.put(4, "value4");
+            nonDynamicRecord.put(5, "value5");
+            nonDynamicRecord.put(6, "value6");
+            nonDynamicRecord.put(7, "value7");
+            nonDynamicRecord.put(8, "value8");
+            nonDynamicRecord.put(9, "value9");
+            
+            enforcer = new DiOutgoingSchemaEnforcer(nonDynamicDesignSchema, false);
             enforcer.setWrapped(nonDynamicRecord);
         }
     }
@@ -100,31 +144,30 @@ public class DiOutgoingSchemaEnforcerBenchmark {
             Schema dynamicDesignSchema = SchemaBuilder.builder().record("designDynamic")
                     .prop(SchemaConstants.INCLUDE_ALL_FIELDS, "true")
                     .prop(DiSchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION, "2").fields()
+                    .name("col0").type().stringType().noDefault()
                     .name("col1").type().stringType().noDefault()
-                    .name("col2").type().stringType().noDefault()
                     .name("col3").type().stringType().noDefault()
                     .name("col4").type().stringType().noDefault()
-                    .name("col5").type().stringType().noDefault()
                     .endRecord();
             
             Schema dynamicActualSchema = SchemaBuilder.builder().record("actualDynamic").fields()
+                    .name("col0").type().stringType().noDefault()
                     .name("col1").type().stringType().noDefault()
-                    .name("col2").type().stringType().noDefault()
-                    .name("col3_1").type().stringType().noDefault()
-                    .name("col3_2").type().stringType().noDefault()
-                    .name("col3_3").type().stringType().noDefault()
+                    .name("col2_0").type().stringType().noDefault()
+                    .name("col2_1").type().stringType().noDefault()
+                    .name("col2_2").type().stringType().noDefault()
+                    .name("col3").type().stringType().noDefault()
                     .name("col4").type().stringType().noDefault()
-                    .name("col5").type().stringType().noDefault()
                     .endRecord();
             
             IndexedRecord dynamicRecord = new GenericData.Record(dynamicActualSchema);
-            dynamicRecord.put(0, "value1");
-            dynamicRecord.put(1, "value2");
-            dynamicRecord.put(2, "value3");
-            dynamicRecord.put(3, "value4");
-            dynamicRecord.put(4, "value5");
-            dynamicRecord.put(5, "value6");
-            dynamicRecord.put(6, "value7");
+            dynamicRecord.put(0, "value0");
+            dynamicRecord.put(1, "value1");
+            dynamicRecord.put(2, "value2_0");
+            dynamicRecord.put(3, "value2_1");
+            dynamicRecord.put(4, "value2_2");
+            dynamicRecord.put(5, "value3");
+            dynamicRecord.put(6, "value4");
             
             enforcer = new DiOutgoingSchemaEnforcer(dynamicDesignSchema, true);
             enforcer.setWrapped(dynamicRecord);
@@ -147,31 +190,30 @@ public class DiOutgoingSchemaEnforcerBenchmark {
             Schema dynamicDesignSchema = SchemaBuilder.builder().record("designDynamic")
                     .prop(SchemaConstants.INCLUDE_ALL_FIELDS, "true")
                     .prop(DiSchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION, "2").fields()
+                    .name("col0").type().stringType().noDefault()
                     .name("col1").type().stringType().noDefault()
-                    .name("col2").type().stringType().noDefault()
                     .name("col3").type().stringType().noDefault()
                     .name("col4").type().stringType().noDefault()
-                    .name("col5").type().stringType().noDefault()
                     .endRecord();
             
             Schema dynamicActualSchema = SchemaBuilder.builder().record("actualDynamic").fields()
+                    .name("col0").type().stringType().noDefault()
                     .name("col1").type().stringType().noDefault()
-                    .name("col2").type().stringType().noDefault()
-                    .name("col3_1").type().stringType().noDefault()
-                    .name("col3_2").type().stringType().noDefault()
-                    .name("col3_3").type().stringType().noDefault()
+                    .name("col2_0").type().stringType().noDefault()
+                    .name("col2_1").type().stringType().noDefault()
+                    .name("col2_2").type().stringType().noDefault()
+                    .name("col3").type().stringType().noDefault()
                     .name("col4").type().stringType().noDefault()
-                    .name("col5").type().stringType().noDefault()
                     .endRecord();
             
             IndexedRecord dynamicRecord = new GenericData.Record(dynamicActualSchema);
-            dynamicRecord.put(0, "value1");
-            dynamicRecord.put(1, "value2");
-            dynamicRecord.put(2, "value3");
-            dynamicRecord.put(3, "value4");
-            dynamicRecord.put(4, "value5");
-            dynamicRecord.put(5, "value6");
-            dynamicRecord.put(6, "value7");
+            dynamicRecord.put(0, "value0");
+            dynamicRecord.put(1, "value1");
+            dynamicRecord.put(2, "value2_0");
+            dynamicRecord.put(3, "value2_1");
+            dynamicRecord.put(4, "value2_2");
+            dynamicRecord.put(5, "value3");
+            dynamicRecord.put(6, "value4");
             
             enforcer = new DiOutgoingSchemaEnforcer(dynamicDesignSchema, false);
             enforcer.setWrapped(dynamicRecord);
@@ -179,12 +221,24 @@ public class DiOutgoingSchemaEnforcerBenchmark {
     }
 
     /**
+     * Design schema doesn't contain dynamic field, field matching is by index
      * Get non dynamic column value
      */
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    public Object benchmarkGetWithoutDynamic(WithoutDynamicEnforcerState state) {
+    public Object benchmarkGetWithoutDynamicByIndex(WithoutDynamicByIndexEnforcerState state) {
+        return state.enforcer.get(0);
+    }
+    
+    /**
+     * Design schema doesn't contain dynamic field, field matching is by name
+     * Get non dynamic column value
+     */
+    @Benchmark
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    public Object benchmarkGetWithoutDynamicByName(WithoutDynamicByNameEnforcerState state) {
         return state.enforcer.get(0);
     }
   
@@ -200,6 +254,17 @@ public class DiOutgoingSchemaEnforcerBenchmark {
     }
     
     /**
+     * Get non dynamic column value from Schema, which contains dynamic column
+     * ByName mode is used
+     */
+    @Benchmark
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    public Object benchmarkGetNonDynamicByName(DynamicByNameEnforcerState state) {
+        return state.enforcer.get(0);
+    }
+    
+    /**
      * Get dynamic column value from Schema, which contains dynamic column
      * ByIndex mode is used
      */
@@ -211,14 +276,14 @@ public class DiOutgoingSchemaEnforcerBenchmark {
     }
     
     /**
-     * Get non dynamic column value from Schema, which contains dynamic column
+     * Get dynamic column value from Schema, which contains dynamic column
      * ByName mode is used
      */
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    public Object benchmarkGetNonDynamicByName(DynamicByNameEnforcerState state) {
-        return state.enforcer.get(0);
+    public Object benchmarkGetDynamicByName(DynamicByNameEnforcerState state) {
+        return state.enforcer.get(2);
     }
 
     /**
