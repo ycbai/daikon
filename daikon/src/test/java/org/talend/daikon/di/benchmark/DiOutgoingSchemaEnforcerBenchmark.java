@@ -22,6 +22,7 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.talend.daikon.avro.SchemaConstants;
 import org.talend.daikon.di.DiOutgoingSchemaEnforcer;
 import org.talend.daikon.di.DiSchemaConstants;
+import org.talend.daikon.di.EnforcerCreator;
 
 /**
  * Benchmarks for {@link DiOutgoingSchemaEnforcer} class
@@ -68,6 +69,19 @@ public class DiOutgoingSchemaEnforcerBenchmark {
                     .name("col9").type().stringType().noDefault()
                     .endRecord();
             
+            Schema nonDynamicRuntimeSchema = SchemaBuilder.builder().record("designNotDynamic").fields()
+                    .name("col0").type().stringType().noDefault()
+                    .name("col1").type().stringType().noDefault()
+                    .name("col2").type().stringType().noDefault()
+                    .name("col3").type().stringType().noDefault()
+                    .name("col4").type().stringType().noDefault()
+                    .name("col5").type().stringType().noDefault()
+                    .name("col6").type().stringType().noDefault()
+                    .name("col7").type().stringType().noDefault()
+                    .name("col8").type().stringType().noDefault()
+                    .name("col9").type().stringType().noDefault()
+                    .endRecord();
+            
             IndexedRecord nonDynamicRecord = new GenericData.Record(nonDynamicDesignSchema);
             nonDynamicRecord.put(0, "value0");
             nonDynamicRecord.put(1, "value1");
@@ -80,7 +94,7 @@ public class DiOutgoingSchemaEnforcerBenchmark {
             nonDynamicRecord.put(8, "value8");
             nonDynamicRecord.put(9, "value9");
             
-            enforcer = new DiOutgoingSchemaEnforcer(nonDynamicDesignSchema, true);
+            enforcer = EnforcerCreator.createOutgoingEnforcer(nonDynamicDesignSchema, nonDynamicRuntimeSchema, true);
             enforcer.setWrapped(nonDynamicRecord);
         }
     }
@@ -111,6 +125,19 @@ public class DiOutgoingSchemaEnforcerBenchmark {
                     .name("col9").type().stringType().noDefault()
                     .endRecord();
             
+            Schema nonDynamicRuntimeSchema = SchemaBuilder.builder().record("designNotDynamic").fields()
+                    .name("col0").type().stringType().noDefault()
+                    .name("col1").type().stringType().noDefault()
+                    .name("col2").type().stringType().noDefault()
+                    .name("col3").type().stringType().noDefault()
+                    .name("col4").type().stringType().noDefault()
+                    .name("col5").type().stringType().noDefault()
+                    .name("col6").type().stringType().noDefault()
+                    .name("col7").type().stringType().noDefault()
+                    .name("col8").type().stringType().noDefault()
+                    .name("col9").type().stringType().noDefault()
+                    .endRecord();
+            
             IndexedRecord nonDynamicRecord = new GenericData.Record(nonDynamicDesignSchema);
             nonDynamicRecord.put(0, "value0");
             nonDynamicRecord.put(1, "value1");
@@ -123,7 +150,7 @@ public class DiOutgoingSchemaEnforcerBenchmark {
             nonDynamicRecord.put(8, "value8");
             nonDynamicRecord.put(9, "value9");
             
-            enforcer = new DiOutgoingSchemaEnforcer(nonDynamicDesignSchema, false);
+            enforcer = EnforcerCreator.createOutgoingEnforcer(nonDynamicDesignSchema, nonDynamicRuntimeSchema, false);
             enforcer.setWrapped(nonDynamicRecord);
         }
     }
@@ -169,7 +196,7 @@ public class DiOutgoingSchemaEnforcerBenchmark {
             dynamicRecord.put(5, "value3");
             dynamicRecord.put(6, "value4");
             
-            enforcer = new DiOutgoingSchemaEnforcer(dynamicDesignSchema, true);
+            enforcer = EnforcerCreator.createOutgoingEnforcer(dynamicDesignSchema, dynamicActualSchema, true);
             enforcer.setWrapped(dynamicRecord);
         }
     }
@@ -215,7 +242,7 @@ public class DiOutgoingSchemaEnforcerBenchmark {
             dynamicRecord.put(5, "value3");
             dynamicRecord.put(6, "value4");
             
-            enforcer = new DiOutgoingSchemaEnforcer(dynamicDesignSchema, false);
+            enforcer = EnforcerCreator.createOutgoingEnforcer(dynamicDesignSchema, dynamicActualSchema, false);
             enforcer.setWrapped(dynamicRecord);
         }
     }

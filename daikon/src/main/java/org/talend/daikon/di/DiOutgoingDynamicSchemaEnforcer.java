@@ -15,7 +15,7 @@ package org.talend.daikon.di;
 import static org.talend.daikon.di.IndexMapper.DYNAMIC;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -139,7 +139,7 @@ public class DiOutgoingDynamicSchemaEnforcer extends DiOutgoingSchemaEnforcer {
      * @return map with dynamic values
      */
     private Map<String, Object> getDynamicValues() {
-        Map<String, Object> dynamicValues = new LinkedHashMap<>();
+        Map<String, Object> dynamicValues = new HashMap<>();
         for (int dynamicIndex : dynamicFieldsIndexes) {
             Field dynamicField = runtimeFields.get(dynamicIndex);
             String dynamicFieldName = dynamicField.name();
