@@ -94,7 +94,7 @@ public class DiOutgoingSchemaEnforcerBenchmark {
             nonDynamicRecord.put(8, "value8");
             nonDynamicRecord.put(9, "value9");
             
-            enforcer = EnforcerCreator.createOutgoingEnforcer(nonDynamicDesignSchema, nonDynamicRuntimeSchema, true);
+            enforcer = EnforcerCreator.createOutgoingEnforcer(nonDynamicDesignSchema, true);
             enforcer.setWrapped(nonDynamicRecord);
         }
     }
@@ -150,7 +150,7 @@ public class DiOutgoingSchemaEnforcerBenchmark {
             nonDynamicRecord.put(8, "value8");
             nonDynamicRecord.put(9, "value9");
             
-            enforcer = EnforcerCreator.createOutgoingEnforcer(nonDynamicDesignSchema, nonDynamicRuntimeSchema, false);
+            enforcer = EnforcerCreator.createOutgoingEnforcer(nonDynamicDesignSchema, false);
             enforcer.setWrapped(nonDynamicRecord);
         }
     }
@@ -196,7 +196,7 @@ public class DiOutgoingSchemaEnforcerBenchmark {
             dynamicRecord.put(5, "value3");
             dynamicRecord.put(6, "value4");
             
-            enforcer = EnforcerCreator.createOutgoingEnforcer(dynamicDesignSchema, dynamicActualSchema, true);
+            enforcer = EnforcerCreator.createOutgoingEnforcer(dynamicDesignSchema, true);
             enforcer.setWrapped(dynamicRecord);
         }
     }
@@ -242,7 +242,7 @@ public class DiOutgoingSchemaEnforcerBenchmark {
             dynamicRecord.put(5, "value3");
             dynamicRecord.put(6, "value4");
             
-            enforcer = EnforcerCreator.createOutgoingEnforcer(dynamicDesignSchema, dynamicActualSchema, false);
+            enforcer = EnforcerCreator.createOutgoingEnforcer(dynamicDesignSchema, false);
             enforcer.setWrapped(dynamicRecord);
         }
     }
