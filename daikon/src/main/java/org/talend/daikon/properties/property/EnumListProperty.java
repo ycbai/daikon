@@ -1,5 +1,6 @@
 package org.talend.daikon.properties.property;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.TypeLiteral;
 import org.talend.daikon.exception.TalendRuntimeException;
 
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
-
 /**
  * Property that contains a list of enum
  */
@@ -19,7 +18,7 @@ public class EnumListProperty<T extends Enum<T>> extends Property<List<T>> {
     public EnumListProperty(TypeLiteral<List<T>> type, String name) {
         super(type, name, null);
         // set the possible values accoording with all the enum types.
-        T[] enumConstants = (T[]) ((Class) ((Type[]) ((ParameterizedTypeImpl) type.value).getActualTypeArguments())[0])
+        T[] enumConstants = (T[]) ((Class) ((Type[]) ((ParameterizedType) type.value).getActualTypeArguments())[0])
                 .getEnumConstants();
         this.setPossibleValues(enumConstants);
     }
