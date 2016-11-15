@@ -63,7 +63,7 @@
         </repository>
         <repository>
             <id>talend_nexus</id>
-            <url>${talend_snapshots}</url>
+            <url>http://newbuild.talend.com:8081/nexus/content/repositories/TalendOpenSourceSnapshot/</url>
         </repository>
     </repositories>
 	<build>
