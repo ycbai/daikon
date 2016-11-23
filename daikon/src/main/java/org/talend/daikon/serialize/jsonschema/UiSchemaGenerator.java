@@ -166,12 +166,12 @@ public class UiSchemaGenerator {
 
     /** Take an UPPER_CASE String and returns its lowerCase couterpart. Used to serialize enums. **/
     private static String fromUpperCaseToCamel(String upperCase) {
-            StringBuilder builder = new StringBuilder();
-            String[] tokens = upperCase.toLowerCase().split("_");
-            for (String token : tokens) {
-                builder.append(StringUtils.capitalize(token));
-            }
-            return StringUtils.uncapitalize(builder.toString());
+        StringBuilder builder = new StringBuilder();
+        String[] tokens = upperCase.toLowerCase().split("_");
+        for (String token : tokens) {
+            builder.append(StringUtils.capitalize(token));
+        }
+        return StringUtils.uncapitalize(builder.toString());
     }
 
     private List<JsonWidget> listTypedWidget(Form form) {
