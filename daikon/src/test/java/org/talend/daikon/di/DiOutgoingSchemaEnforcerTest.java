@@ -3,14 +3,18 @@ package org.talend.daikon.di;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.apache.avro.LogicalType;
+import org.apache.avro.LogicalTypes;
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
 import org.apache.avro.SchemaBuilder;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.IndexedRecord;
+import org.joda.time.LocalDate;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.talend.daikon.avro.AvroUtils;
@@ -38,11 +42,15 @@ public class DiOutgoingSchemaEnforcerTest {
      */
     private static IndexedRecord record;
 
+    private static int NUM_DAYS = 1000;
+
+    private static Date DATE_COMPARE = new LocalDate(1970, 1, 1).plusDays(1000).toDate();
+
     /**
      * Creates runtime schema, design schema and record, which is used as test arguments
      */
     @BeforeClass
-    public static void setup() {
+    public static void setup() throws Exception {
         runtimeSchema = SchemaBuilder.builder().record("Record").fields() //
                 .name("id").type().intType().noDefault() //
                 .name("name").type().stringType().noDefault() //
@@ -51,6 +59,9 @@ public class DiOutgoingSchemaEnforcerTest {
                 .name("createdDate").prop(DiSchemaConstants.TALEND6_COLUMN_TALEND_TYPE, "id_Date") //
                 .prop(DiSchemaConstants.TALEND6_COLUMN_PATTERN, "yyyy-MM-dd'T'HH:mm:ss'000Z'").type().nullable().longType() //
                 .noDefault() //
+                .name("logicalDate").type(AvroUtils._logicalDate()).noDefault() //
+                .name("logicalTime").type(AvroUtils._logicalTime()).noDefault() //
+                .name("logicalTimestamp").type(AvroUtils._logicalTimestamp()).noDefault() //
                 .endRecord(); //
 
         talend6Schema = SchemaBuilder.builder().record("Record").fields() //
@@ -61,6 +72,9 @@ public class DiOutgoingSchemaEnforcerTest {
                 .name("createdDate").prop(DiSchemaConstants.TALEND6_COLUMN_TALEND_TYPE, "id_Date") //
                 .prop(DiSchemaConstants.TALEND6_COLUMN_PATTERN, "yyyy-MM-dd'T'HH:mm:ss'000Z'").type().nullable().longType()
                 .noDefault() //
+                .name("logicalDate").type(AvroUtils._logicalDate()).noDefault() //
+                .name("logicalTime").type(AvroUtils._logicalTime()).noDefault() //
+                .name("logicalTimestamp").type(AvroUtils._logicalTimestamp()).noDefault() //
                 .endRecord(); //
 
         record = new GenericData.Record(runtimeSchema);
@@ -69,6 +83,9 @@ public class DiOutgoingSchemaEnforcerTest {
         record.put(2, 100);
         record.put(3, true);
         record.put(4, new Date(1467170137872L));
+        record.put(5, NUM_DAYS);
+        record.put(6, 1000);
+        record.put(7, 1467170137872L);
     }
 
     /**
@@ -99,6 +116,9 @@ public class DiOutgoingSchemaEnforcerTest {
         assertThat(enforcer.get(2), equalTo((Object) 100));
         assertThat(enforcer.get(3), equalTo((Object) true));
         assertThat(enforcer.get(4), equalTo((Object) new Date(1467170137872L)));
+        assertThat(enforcer.get(5), equalTo((Object) DATE_COMPARE));
+        assertThat(enforcer.get(6), equalTo((Object) 1000));
+        assertThat(enforcer.get(7), equalTo((Object) new Date(1467170137872L)));
     }
 
     /**
@@ -139,7 +159,7 @@ public class DiOutgoingSchemaEnforcerTest {
         DiOutgoingSchemaEnforcer enforcer = new DiOutgoingSchemaEnforcer(talend6Schema, indexMapper);
         enforcer.setWrapped(record);
 
-        enforcer.get(5);
+        enforcer.get(10);
     }
 
     /**
