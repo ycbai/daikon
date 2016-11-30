@@ -73,7 +73,21 @@ public class DiIncomingSchemaEnforcer implements DiSchemaConstants {
      * Access the indexed fields by their name. We should prefer accessing them by index for performance, but this
      * complicates the logic of dynamic columns quite a bit.
      */
-    private final Map<String, Integer> columnToFieldIndex = new HashMap<>();
+    private final Map<String, Integer> columnNameToFieldIndex = new HashMap<>();
+
+    /**
+     * Access the indexed fields by their real column name in the data source.
+     * A example :
+     * In some data source system(A) have a schema with a column name like "long", it's valid in the data source system.
+     * In AVRO runtime schema(B), we will keep it "long" as it's valid for AVRO schema.
+     * In Talend studio(C), we will change it to another name like "newColumn1" as it's not valid for java.
+     * So now the AVRO runtime field name may be different with the design AVRO field name which is the same with Talend studio
+     * column name.
+     * So the "columnNameToFieldIndex" will not work for that case. So we need the real column name which will be the same in
+     * A,B,C
+     * Even we need to consider the very special case : there is three different name for A,B,C
+     */
+    private final Map<String, Integer> realColumnNameToFieldIndex = new HashMap<>();
 
     // TODO(rskraba): fix with a general type conversion strategy.
     private final Map<String, SimpleDateFormat> dateFormatCache = new HashMap<>();
@@ -93,7 +107,7 @@ public class DiIncomingSchemaEnforcer implements DiSchemaConstants {
         // Add all of the runtime columns except any dynamic column to the index map.
         for (Schema.Field f : incoming.getFields()) {
             if (f.pos() != incomingDynamicColumn) {
-                columnToFieldIndex.put(f.name(), f.pos());
+                setFieldIndex(f);
             }
         }
     }
@@ -143,6 +157,10 @@ public class DiIncomingSchemaEnforcer implements DiSchemaConstants {
         if ("id_Date".equals(type) && format != null) {
             field.addProp(SchemaConstants.TALEND_COLUMN_PATTERN, format);
         }
+
+        if (dbName != null && !dbName.isEmpty()) {
+            field.addProp(TALEND6_COLUMN_ORIGINAL_DB_COLUMN_NAME, dbName);
+        }
         fieldsFromDynamicColumns.add(field);
     }
 
@@ -181,11 +199,19 @@ public class DiIncomingSchemaEnforcer implements DiSchemaConstants {
 
         // Map all of the fields from the runtime Schema to their index.
         for (Schema.Field f : incomingRuntimeSchema.getFields()) {
-            columnToFieldIndex.put(f.name(), f.pos());
+            setFieldIndex(f);
         }
 
         // And indicate that initialization is finished.
         fieldsFromDynamicColumns = null;
+    }
+
+    private void setFieldIndex(Schema.Field f) {
+        columnNameToFieldIndex.put(f.name(), f.pos());
+        String realName = f.getProp(TALEND6_COLUMN_ORIGINAL_DB_COLUMN_NAME);
+        if (realName != null) {
+            realColumnNameToFieldIndex.put(realName, f.pos());
+        }
     }
 
     /**
@@ -205,7 +231,21 @@ public class DiIncomingSchemaEnforcer implements DiSchemaConstants {
     }
 
     public void put(String name, Object v) {
-        put(columnToFieldIndex.get(name), v);
+        put(columnNameToFieldIndex.get(name), v);
+    }
+
+    public void put(String name, String realName, Object v) {
+        if (realName == null || realName.isEmpty()) {
+            put(name, v);
+            return;
+        }
+
+        Integer index = realColumnNameToFieldIndex.get(realName);
+        if (index == null) {
+            put(name, v);
+        } else {
+            put(index, v);
+        }
     }
 
     public void put(int i, Object v) {
