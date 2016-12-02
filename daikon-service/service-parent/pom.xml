@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>service-parent</artifactId>
-	<version>0.1.1</version>
+	<version>0.1.2</version>
 	<packaging>pom</packaging>
 	<name>service-parent</name>
 	<properties>
@@ -65,6 +65,17 @@
             <url>http://newbuild.talend.com:8081/nexus/content/repositories/TalendOpenSourceSnapshot/</url>
         </repository>
     </repositories>
+    <!-- for the enunciate plugin that depends on our artifact. -->
+    <pluginRepositories>
+        <pluginRepository>
+            <id>releases</id>
+            <url>http://newbuild.talend.com:8081/nexus/content/repositories/TalendOpenSourceRelease/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>talend_nexus</id>
+            <url>http://newbuild.talend.com:8081/nexus/content/repositories/TalendOpenSourceSnapshot/</url>
+        </pluginRepository>
+    </pluginRepositories>    
 	<build>
 		<plugins>
 			<plugin>
