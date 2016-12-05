@@ -1,6 +1,6 @@
 package org.talend.daikon.serialize.jsonschema;
 
-import static org.talend.daikon.properties.presentation.Widget.widget;
+import static org.talend.daikon.properties.presentation.Widget.*;
 import static org.talend.daikon.properties.property.PropertyFactory.*;
 
 import java.util.ArrayList;
