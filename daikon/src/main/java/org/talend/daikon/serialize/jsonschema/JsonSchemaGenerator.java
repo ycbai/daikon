@@ -8,6 +8,10 @@ import static org.talend.daikon.serialize.jsonschema.JsonBaseTool.isListClass;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.talend.daikon.NamedThing;
 import org.talend.daikon.properties.Properties;
 import org.talend.daikon.properties.ReferenceProperties;
@@ -16,17 +20,12 @@ import org.talend.daikon.properties.property.EnumListProperty;
 import org.talend.daikon.properties.property.EnumProperty;
 import org.talend.daikon.properties.property.Property;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 /**
  * Provide methods to create JSON Schema documents from a {@link Properties}.
- *
+ * <p>
  * This JSON Schema can be used to validate a Properties in its "reduced JSON" format as provided by
  * {@link JsonDataGenerator}.
- *
+ * <p>
  * <ul>
  * <li>https://spacetelescope.github.io/understanding-json-schema/</li>
  * </ul>
@@ -35,16 +34,21 @@ public class JsonSchemaGenerator {
 
     /**
      * @param properties the properties to create a JSON Schema representation for.
+     * @param formName   the formName to use to get the title for the form.
      * @return the JSON Schema representation.
      */
-    protected ObjectNode genSchema(Properties properties) {
-        return processTProperties(properties);
+    protected ObjectNode genSchema(Properties properties, String formName) {
+        return processTProperties(properties, formName);
     }
 
-    private ObjectNode processTProperties(Properties cProperties) {
+    private ObjectNode processTProperties(Properties cProperties, String formName) {
         ObjectNode schema = JsonNodeFactory.instance.objectNode();
-        if (cProperties.getForm(Form.MAIN) != null) {
-            schema.put(JsonSchemaConstants.TAG_TITLE, cProperties.getForm(Form.MAIN).getTitle());
+        Form form = null;
+        if (formName != null) {
+            form = cProperties.getPreferredForm(formName);
+        }
+        if (form != null) {
+            schema.put(JsonSchemaConstants.TAG_TITLE, form.getTitle());
         }
         schema.put(JsonSchemaConstants.TAG_TYPE, JsonSchemaConstants.TYPE_OBJECT);
         schema.putObject(JsonSchemaConstants.TAG_PROPERTIES);
@@ -66,7 +70,7 @@ public class JsonSchemaGenerator {
                 ((ObjectNode) schema.get(JsonSchemaConstants.TAG_PROPERTIES)).set(name,
                         processReferenceProperties(referenceProperties));
             } else {
-                ((ObjectNode) schema.get(JsonSchemaConstants.TAG_PROPERTIES)).set(name, processTProperties(properties));
+                ((ObjectNode) schema.get(JsonSchemaConstants.TAG_PROPERTIES)).set(name, processTProperties(properties, formName));
             }
         }
         return schema;
@@ -108,8 +112,8 @@ public class JsonSchemaGenerator {
             schema.put(JsonSchemaConstants.TAG_TYPE, JsonSchemaConstants.getTypeMapping().get(property.getType()));
             if (Date.class.getName().equals(property.getType())) {
                 schema.put(JsonSchemaConstants.TAG_FORMAT, "date-time");// Do not support other format for date till
-                                                                        // Property
-                                                                        // support it
+                // Property
+                // support it
             }
         }
         return schema;
