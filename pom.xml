@@ -25,6 +25,8 @@
         <module>daikon</module>
         <module>daikon-spring</module>
         <module>daikon-service</module>
+	<module>daikon-mongo</module>
+	<module>daikon-kafka</module>
     </modules>
     <scm>
         <connection>scm:git:https://github.com/Talend/daikon.git</connection>

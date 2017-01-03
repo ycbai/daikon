@@ -1,0 +1,40 @@
+{
+  "pendingRecords": [
+    {
+      "id": "pr1",
+      "applicationName": "testApp",
+      "creationDate": 100,
+      "lastUpdateDate": 101,
+      "topic": "topic",
+      "partition": 0,
+      "key": "key1",
+      "value": "value1",
+      "timestamp": 10,
+      "priority": "LOW"
+    },
+    {
+      "id": "pr2",
+      "applicationName": "testApp",
+      "creationDate": 100,
+      "lastUpdateDate": 101,
+      "topic": "topic",
+      "partition": 0,
+      "key": "key2",
+      "value": "value2",
+      "timestamp": 10,
+      "priority": "LOW"
+    },
+    {
+      "id": "pr3",
+      "applicationName": "otherApp",
+      "creationDate": 100,
+      "lastUpdateDate": 101,
+      "topic": "topic",
+      "partition": 0,
+      "key": "key3",
+      "value": "value3",
+      "timestamp": 10,
+      "priority": "LOW"
+    }
+  ]
+}
