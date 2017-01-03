@@ -23,10 +23,10 @@ public class TestPendingRecordRepository extends TestRepositoryAbstract {
 
     @Test
     public void testSavePendingRecord() {
-        mongoRepository.savePendingRecord(
-                new PendingRecord<>("externalApp1", new ProducerRecord<>("topic1", "key1", "value1"), LOW));
-        mongoRepository.savePendingRecord(
-                new PendingRecord<>("externalApp2", new ProducerRecord<>("topic2", "key2", "value2"), LOW));
+        mongoRepository
+                .savePendingRecord(new PendingRecord<>("externalApp1", new ProducerRecord<>("topic1", "key1", "value1"), LOW));
+        mongoRepository
+                .savePendingRecord(new PendingRecord<>("externalApp2", new ProducerRecord<>("topic2", "key2", "value2"), LOW));
 
         List<PendingRecord> pendingRecords = mongoTemplate.findAll(PendingRecord.class, "pendingRecords");
 
@@ -58,12 +58,12 @@ public class TestPendingRecordRepository extends TestRepositoryAbstract {
 
     @Test
     public void testFindPendingRecordByApplication() {
-        PendingRecord<String, String> pr1 =
-                new PendingRecord<>("externalApp1", new ProducerRecord<>("topic1", "key1", "value1"), LOW);
-        PendingRecord<String, String> pr2 =
-                new PendingRecord<>("externalApp2", new ProducerRecord<>("topic2", "key2", "value2"), LOW);
-        PendingRecord<String, String> pr3 =
-                new PendingRecord<>("externalApp2", new ProducerRecord<>("topic3", "key3", "value3"), LOW);
+        PendingRecord<String, String> pr1 = new PendingRecord<>("externalApp1", new ProducerRecord<>("topic1", "key1", "value1"),
+                LOW);
+        PendingRecord<String, String> pr2 = new PendingRecord<>("externalApp2", new ProducerRecord<>("topic2", "key2", "value2"),
+                LOW);
+        PendingRecord<String, String> pr3 = new PendingRecord<>("externalApp2", new ProducerRecord<>("topic3", "key3", "value3"),
+                LOW);
         mongoRepository.savePendingRecord(pr1);
         mongoRepository.savePendingRecord(pr2);
         mongoRepository.savePendingRecord(pr3);
@@ -80,12 +80,12 @@ public class TestPendingRecordRepository extends TestRepositoryAbstract {
 
     @Test
     public void testHasHighPriorityPendingRecords() {
-        PendingRecord<String, String> pr1 =
-                new PendingRecord<>("externalApp1", new ProducerRecord<>("topic1", "key1", "value1"), LOW);
-        PendingRecord<String, String> pr2 =
-                new PendingRecord<>("externalApp2", new ProducerRecord<>("topic2", "key2", "value2"), LOW);
-        PendingRecord<String, String> pr3 =
-                new PendingRecord<>("externalApp2", new ProducerRecord<>("topic3", "key3", "value3"), LOW);
+        PendingRecord<String, String> pr1 = new PendingRecord<>("externalApp1", new ProducerRecord<>("topic1", "key1", "value1"),
+                LOW);
+        PendingRecord<String, String> pr2 = new PendingRecord<>("externalApp2", new ProducerRecord<>("topic2", "key2", "value2"),
+                LOW);
+        PendingRecord<String, String> pr3 = new PendingRecord<>("externalApp2", new ProducerRecord<>("topic3", "key3", "value3"),
+                LOW);
         pr3.setRecordPriority(RecordPriority.HIGH);
 
         mongoRepository.savePendingRecord(pr1);
@@ -101,12 +101,12 @@ public class TestPendingRecordRepository extends TestRepositoryAbstract {
 
     @Test
     public void testDelete() {
-        PendingRecord<String, String> pr1 = mongoRepository.savePendingRecord(
-                new PendingRecord<>("externalApp1", new ProducerRecord<>("topic1", "key1", "value1"), LOW));
-        PendingRecord<String, String> pr2 = mongoRepository.savePendingRecord(
-                new PendingRecord<>("externalApp2", new ProducerRecord<>("topic2", "key2", "value2"), LOW));
-        PendingRecord<String, String> pr3 = mongoRepository.savePendingRecord(
-                new PendingRecord<>("externalApp2", new ProducerRecord<>("topic3", "key3", "value3"), LOW));
+        PendingRecord<String, String> pr1 = mongoRepository
+                .savePendingRecord(new PendingRecord<>("externalApp1", new ProducerRecord<>("topic1", "key1", "value1"), LOW));
+        PendingRecord<String, String> pr2 = mongoRepository
+                .savePendingRecord(new PendingRecord<>("externalApp2", new ProducerRecord<>("topic2", "key2", "value2"), LOW));
+        PendingRecord<String, String> pr3 = mongoRepository
+                .savePendingRecord(new PendingRecord<>("externalApp2", new ProducerRecord<>("topic3", "key3", "value3"), LOW));
 
         mongoRepository.delete(pr2.getId());
 
