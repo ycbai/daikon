@@ -17,6 +17,7 @@ package org.talend.daikon.kafka.util;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -113,8 +114,8 @@ public class TestKafkaConfiguration {
             kafkaUnit.shutdown();
         }
 
-        public void waitForMessages(String topic, int nbMessages) throws Exception {
-            this.kafkaUnit.readMessages(topic, nbMessages);
+        public List<String> waitForMessages(String topic, int nbMessages) throws Exception {
+            return this.kafkaUnit.readMessages(topic, nbMessages);
         }
     }
 }

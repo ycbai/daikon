@@ -95,7 +95,11 @@ public class TestIntegrationKafkaProducerWrapper extends TestRepositoryAbstract 
 
         wrapper.sendPendingRecords();
 
-        kafkaUnit.waitForMessages("topic", 2);
+        List<String> messages = kafkaUnit.waitForMessages("topic", 2);
+        // messages are sent chronologically following the creation date
+        assertEquals("value2", messages.get(0));
+        assertEquals("value1", messages.get(1));
+        // only messages for the parametrized application are sent
         assertEquals(0, repository.findPendingRecordByApplication(applicationName).size());
         assertEquals(1, repository.findPendingRecordByApplication("otherApp").size());
     }
