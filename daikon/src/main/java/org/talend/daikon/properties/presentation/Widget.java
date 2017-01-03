@@ -79,7 +79,7 @@ public class Widget implements ToStringIndent {
      * {@link Property#getDisplayName()} shall be used as the Column header. Each Property (=column) has a value of
      * type List<T> in which the first element is the first row element for this column and the second in the list
      * is the second row value for this column.
-     * 
+     *
      */
     public static final String TABLE_WIDGET_TYPE = "widget.type.table";
 
@@ -88,10 +88,15 @@ public class Widget implements ToStringIndent {
      */
     public static final String HIDDEN_TEXT_WIDGET_TYPE = "widget.type.hidden.text";
 
-    /*
-     * a File widget.
+    /**
+     * A file widget with button select file from local system. The widget content shall be a {@link Property}<{@link String}>
      */
     public static final String FILE_WIDGET_TYPE = "widget.type.file";
+
+    /**
+     * A directory widget with button select directory from local system. The widget content shall be a {@link Property}<{@link String}>
+     */
+    public static final String DIRECTORY_WIDGET_TYPE = "widget.type.directory";
 
     /**
      * Tell the client that the property possible values ({@link Property#getPossibleValues()} must be used as
