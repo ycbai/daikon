@@ -16,7 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.talend.daikon.mongo.model.ModelBuilders;
 import org.talend.daikon.mongo.model.PendingRecord;
 import org.talend.daikon.mongo.model.RecordPriority;
 import org.talend.daikon.mongo.repo.PendingRecordRepository;
@@ -48,10 +47,10 @@ public class TestKafkaProducerWrapper {
 
     @Test
     public void testSendPendingRecords() {
-        PendingRecord<String, String> p1 = new ModelBuilders.PendingRecordBuilder<String, String>().applicationName("appName")
-                .key("key1").value("value1").topic("topic").build();
-        PendingRecord<String, String> p2 = new ModelBuilders.PendingRecordBuilder<String, String>().applicationName("appName")
-                .key("key2").value("value2").topic("topic").build();
+        PendingRecord<String, String> p1 = new PendingRecord<>("appName", new ProducerRecord<>("topic", "key1", "value1"),
+                RecordPriority.LOW);
+        PendingRecord<String, String> p2 = new PendingRecord<>("appName", new ProducerRecord<>("topic", "key2", "value2"),
+                RecordPriority.LOW);
         when(recordRepository.findPendingRecordByApplication(anyString())).thenReturn(Arrays.asList(p1, p2));
 
         wrapper.sendPendingRecords();
