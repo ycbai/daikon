@@ -68,14 +68,6 @@ public class SandboxedInstance implements AutoCloseable {
         if (isolatedThread != null) {
             isolatedThread.setContextClassLoader(previousContextClassLoader);
         } // else getInstance was not called so no need to reset context classloader.
-        ClassLoaderIsolatedSystemProperties.getInstance().stopIsolateClassLoader(sandboxClassLoader);
-        if (sandboxClassLoader instanceof AutoCloseable) {
-            try {
-                ((AutoCloseable) sandboxClassLoader).close();
-            } catch (Exception e) {
-                new TalendRuntimeException(CommonErrorCodes.UNEXPECTED_EXCEPTION, e);
-            }
-        }
         sandboxClassLoader = null;
         previousContextClassLoader = null;
         isolatedThread = null;
@@ -119,4 +111,7 @@ public class SandboxedInstance implements AutoCloseable {
         return this.instance;
     }
 
+    public ClassLoader getSandboxClassLoader() {
+        return sandboxClassLoader;
+    }
 }
