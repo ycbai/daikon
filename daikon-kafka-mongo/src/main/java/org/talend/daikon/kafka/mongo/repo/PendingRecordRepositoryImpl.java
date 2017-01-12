@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.talend.daikon.kafka.mongo.repo.model.PersistentPendingRecord;
 import org.talend.daikon.repo.RecordPriority;
 import org.talend.daikon.repo.model.PendingRecord;
+import org.talend.daikon.repo.model.PendingRecordRepository;
 
 @Repository
 public class PendingRecordRepositoryImpl implements PendingRecordRepository {

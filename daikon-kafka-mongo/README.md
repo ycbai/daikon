@@ -1,13 +1,8 @@
 Service mongo
 ==============
 
-This module provides
-* mongo utilities which allow to create custom converters
-* a mongo repo which allow storing "pending records" documents
-
-Mongo utilities
-------------------------------------
-`MongoCustomConverter` class let developers define custom converters for mongo, which are used by the provided configuration in `RepoConfiguration`
+This module provides a mongo repo which allow storing "pending records" documents
+This repo is an implementation for the module daikon-kafka
 
 Pending record repository
 ------------------------------------

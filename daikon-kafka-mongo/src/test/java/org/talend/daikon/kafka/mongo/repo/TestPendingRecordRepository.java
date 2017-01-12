@@ -16,6 +16,7 @@ import org.talend.daikon.kafka.mongo.repo.model.PersistentPendingRecord;
 import org.talend.daikon.kafka.mongo.util.TestRepositoryAbstract;
 import org.talend.daikon.repo.RecordPriority;
 import org.talend.daikon.repo.model.PendingRecord;
+import org.talend.daikon.repo.model.PendingRecordRepository;
 
 public class TestPendingRecordRepository extends TestRepositoryAbstract {
 

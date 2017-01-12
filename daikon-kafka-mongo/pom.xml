@@ -7,10 +7,10 @@
         <artifactId>daikon-parent</artifactId>
         <version>0.15.0-SNAPSHOT</version>
     </parent>
-    <artifactId>daikon-mongo</artifactId>
+    <artifactId>daikon-kafka-mongo</artifactId>
     <packaging>jar</packaging>
 
-    <name>Daikon mongo.</name>
+    <name>Daikon kakfa mongo</name>
     <url>https://github.com/Talend/daikon</url>
 
     <properties>
