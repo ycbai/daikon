@@ -1,4 +1,4 @@
-package org.talend.daikon.mongo.repo;
+package org.talend.daikon.kafka.mongo.repo;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
-import org.talend.daikon.mongo.repo.model.PersistentPendingRecord;
+import org.talend.daikon.kafka.mongo.repo.model.PersistentPendingRecord;
 import org.talend.daikon.repo.RecordPriority;
 import org.talend.daikon.repo.model.PendingRecord;
 

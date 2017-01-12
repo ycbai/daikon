@@ -1,4 +1,4 @@
-package org.talend.daikon.mongo.repo;
+package org.talend.daikon.kafka.mongo.repo;
 
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
@@ -12,8 +12,8 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.talend.daikon.mongo.repo.model.PersistentPendingRecord;
-import org.talend.daikon.mongo.util.TestRepositoryAbstract;
+import org.talend.daikon.kafka.mongo.repo.model.PersistentPendingRecord;
+import org.talend.daikon.kafka.mongo.util.TestRepositoryAbstract;
 import org.talend.daikon.repo.RecordPriority;
 import org.talend.daikon.repo.model.PendingRecord;
 

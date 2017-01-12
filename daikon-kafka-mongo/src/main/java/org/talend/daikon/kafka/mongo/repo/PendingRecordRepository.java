@@ -1,4 +1,4 @@
-package org.talend.daikon.mongo.repo;
+package org.talend.daikon.kafka.mongo.repo;
 
 import java.util.List;
 

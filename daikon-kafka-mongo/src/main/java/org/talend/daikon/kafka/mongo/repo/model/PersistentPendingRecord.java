@@ -1,4 +1,4 @@
-package org.talend.daikon.mongo.repo.model;
+package org.talend.daikon.kafka.mongo.repo.model;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
