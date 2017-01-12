@@ -16,9 +16,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.talend.daikon.mongo.model.PendingRecord;
-import org.talend.daikon.mongo.model.RecordPriority;
-import org.talend.daikon.mongo.repo.PendingRecordRepository;
+import org.talend.daikon.repo.RecordPriority;
+import org.talend.daikon.repo.model.PendingRecord;
+import org.talend.daikon.repo.model.PendingRecordRepository;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TestKafkaProducerWrapper {

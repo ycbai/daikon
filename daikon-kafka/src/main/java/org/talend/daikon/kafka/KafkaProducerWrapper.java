@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.talend.daikon.mongo.model.PendingRecord;
-import org.talend.daikon.mongo.model.RecordPriority;
-import org.talend.daikon.mongo.repo.PendingRecordRepository;
+import org.talend.daikon.repo.RecordPriority;
+import org.talend.daikon.repo.model.PendingRecord;
+import org.talend.daikon.repo.model.PendingRecordRepository;
 
 /**
  * A wrapper for producing kafka messages.
@@ -59,6 +59,8 @@ public class KafkaProducerWrapper<K, V> {
         List<PendingRecord<K, V>> pendingRecords = repository.findPendingRecordByApplication(applicationName);
         LOGGER.info("Kafka message scheduler will try to send " + pendingRecords.size() + " messages for application "
                 + applicationName);
+
+        pendingRecords.sort((o1, o2) -> Long.compare(o1.getCreationDate(), o2.getCreationDate()));
 
         pendingRecords.forEach(pendingRecord -> {
             this.kafkaProducer.send(pendingRecord.getProducerRecord(), (metadata, e) -> {

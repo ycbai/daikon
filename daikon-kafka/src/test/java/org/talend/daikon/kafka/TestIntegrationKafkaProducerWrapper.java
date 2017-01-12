@@ -2,26 +2,33 @@ package org.talend.daikon.kafka;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.talend.daikon.mongo.model.RecordPriority.LOW;
+import static org.talend.daikon.repo.RecordPriority.LOW;
 
 import java.util.List;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.talend.daikon.DaikonKafkaConfiguration;
+import org.talend.daikon.kafka.util.PendingRecordRepositoryMock;
 import org.talend.daikon.kafka.util.TestKafkaConfiguration;
-import org.talend.daikon.kafka.util.TestRepositoryAbstract;
-import org.talend.daikon.mongo.model.PendingRecord;
-import org.talend.daikon.mongo.repo.PendingRecordRepository;
+import org.talend.daikon.repo.RecordPriority;
+import org.talend.daikon.repo.model.PendingRecord;
 
-import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
-import com.lordofthejars.nosqlunit.core.LoadStrategyEnum;
-
-public class TestIntegrationKafkaProducerWrapper extends TestRepositoryAbstract {
+@RunWith(SpringJUnit4ClassRunner.class)
+@Import(DaikonKafkaConfiguration.class)
+@TestPropertySource(properties = "daikon.kafka.record.sending.application=testApp")
+@DirtiesContext
+public class TestIntegrationKafkaProducerWrapper {
 
     @Value("${daikon.kafka.record.sending.application}")
     private String applicationName;
@@ -40,10 +47,12 @@ public class TestIntegrationKafkaProducerWrapper extends TestRepositoryAbstract 
     private KafkaProducer<String, String> kafkaProducerClosed;
 
     @Autowired
-    private PendingRecordRepository repository;
+    private PendingRecordRepositoryMock repository;
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    @Before
+    public void setup() {
+        repository.clean();
+    }
 
     @Test
     public void testSendMessage_when_kafka_down_message_stored() {
@@ -88,8 +97,8 @@ public class TestIntegrationKafkaProducerWrapper extends TestRepositoryAbstract 
     }
 
     @Test
-    @UsingDataSet(locations = { "/data/pendingRecords_testApp.json" }, loadStrategy = LoadStrategyEnum.CLEAN_INSERT)
     public void testSendPendingRecords_when_kafka_is_alive() throws Exception {
+        with3PendingRecords();
         assertEquals(2, repository.findPendingRecordByApplication(applicationName).size());
         assertEquals(1, repository.findPendingRecordByApplication("otherApp").size());
 
@@ -105,8 +114,8 @@ public class TestIntegrationKafkaProducerWrapper extends TestRepositoryAbstract 
     }
 
     @Test
-    @UsingDataSet(locations = { "/data/pendingRecords_testApp.json" }, loadStrategy = LoadStrategyEnum.CLEAN_INSERT)
     public void testSendPendingRecords_when_kafka_is_down() {
+        with3PendingRecords();
         // given that kafka is down and that there are pending records
         assertEquals(2, repository.findPendingRecordByApplication(applicationName).size());
         assertEquals(1, repository.findPendingRecordByApplication("otherApp").size());
@@ -120,5 +129,47 @@ public class TestIntegrationKafkaProducerWrapper extends TestRepositoryAbstract 
         // pending records are not removed because not sent
         assertEquals(2, repository.findPendingRecordByApplication(applicationName).size());
         assertEquals(1, repository.findPendingRecordByApplication("otherApp").size());
+    }
+
+    private void with3PendingRecords() {
+        PendingRecord<String, String> pr1 = new PendingRecord<>();
+        pr1.setId("pr1");
+        pr1.setApplicationName("testApp");
+        pr1.setCreationDate(200);
+        pr1.setLastUpdateDate(101);
+        pr1.setTopic("topic");
+        pr1.setPartition(0);
+        pr1.setKey("key1");
+        pr1.setValue("value1");
+        pr1.setTimestamp(10L);
+        pr1.setRecordPriority(RecordPriority.LOW);
+
+        PendingRecord<String, String> pr2 = new PendingRecord<>();
+        pr2.setId("pr2");
+        pr2.setApplicationName("testApp");
+        pr2.setCreationDate(100);
+        pr2.setLastUpdateDate(101);
+        pr2.setTopic("topic");
+        pr2.setPartition(0);
+        pr2.setKey("key2");
+        pr2.setValue("value2");
+        pr2.setTimestamp(10L);
+        pr2.setRecordPriority(RecordPriority.LOW);
+
+        PendingRecord<String, String> pr3 = new PendingRecord<>();
+        pr3.setId("pr3");
+        pr3.setApplicationName("otherApp");
+        pr3.setCreationDate(100);
+        pr3.setLastUpdateDate(101);
+        pr3.setTopic("topic");
+        pr3.setPartition(0);
+        pr3.setKey("key3");
+        pr3.setValue("value3");
+        pr3.setTimestamp(10L);
+        pr3.setRecordPriority(RecordPriority.LOW);
+
+        repository.savePendingRecord(pr1);
+        repository.savePendingRecord(pr2);
+        repository.savePendingRecord(pr3);
     }
 }
