@@ -18,6 +18,12 @@
 	 this module should only be launched from the root agreggator, otherwise the generated 
 	 report will be empty.
 -->
+
+    <properties>
+        <!-- skip the deployment for this pom, not necessary -->
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.talend.daikon</groupId>
