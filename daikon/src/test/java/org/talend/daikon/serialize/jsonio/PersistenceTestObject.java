@@ -1,3 +1,4 @@
+
 package org.talend.daikon.serialize.jsonio;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -71,6 +72,7 @@ public class PersistenceTestObject implements DeserializeDeletedFieldHandler, Po
     }
 
     // Migrate to new string2a which replaces string2
+    @Override
     public boolean deletedField(String fieldName, Object value) {
         if (testMigrate) {
             if (fieldName.equals("string2")) {

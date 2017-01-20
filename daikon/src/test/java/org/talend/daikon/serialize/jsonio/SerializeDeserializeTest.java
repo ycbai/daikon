@@ -1,6 +1,7 @@
 package org.talend.daikon.serialize.jsonio;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,19 +11,18 @@ import java.util.Map;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.talend.daikon.serialize.SerializerDeserializer;
+import org.talend.daikon.serialize.SerializerDeserializer.Deserialized;
 
 import com.cedarsoftware.util.io.JsonWriter;
 
-import org.talend.daikon.serialize.SerializerDeserializer;
 import shaded.org.apache.commons.io.IOUtils;
 
 public class SerializeDeserializeTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SerializeDeserializeTest.class);
 
-    static final String oldSer1 = "{\"@type\":\"org.talend.daikon.serialize.jsonio.PersistenceTestObject\",\"string1\":\"string1\",\"string2\":\"string2\",\"string3\":\"string3\","
-            + "\"inner\":{\"string1\":\"string1\",\"string2\":\"string2\","
-            + "\"innerObject2\":{\"string1\":\"string1\",\"string2\":\"string2\"}}}";
+    static final String oldSer1 = "{\"@type\":\"org.talend.daikon.serialize.jsonio.PersistenceTestObject\",\"string1\":\"string1\",\"string2\":\"string2\",\"string3\":\"string3\",\"inner\":{\"string1\":\"string1\",\"string2\":\"string2\",\"innerObject2\":{\"string1\":\"string1\",\"string2\":\"string2\",\"innerObject3\":{\"string1\":\"string1\",\"string2\":\"string2\"}}}}";
 
     @Test
     public void testSimple() {
@@ -65,6 +65,8 @@ public class SerializeDeserializeTest {
         String ser = SerializerDeserializer.toSerializedPersistent(deser.object);
         LOGGER.info(ser);
         assertTrue(ser.contains("__version\":1"));
+        assertTrue(deser.object.inner.innerObject2.hasNullDeleteInner3);
+        assertFalse(deser.object.inner.innerObject2.hasValuedDeleteInner3);
     }
 
     @Test
@@ -76,6 +78,8 @@ public class SerializeDeserializeTest {
         deser = SerializerDeserializer.fromSerializedPersistent(oldSer1, PersistenceTestObject.class);
         assertTrue(deser.migrated);
         deser.object.checkMigrate();
+        assertTrue(deser.object.inner.innerObject2.hasNullDeleteInner3);
+        assertFalse(deser.object.inner.innerObject2.hasValuedDeleteInner3);
     }
 
     @Test
@@ -87,6 +91,8 @@ public class SerializeDeserializeTest {
         deser = SerializerDeserializer.fromSerializedPersistent(oldSer1, PersistenceTestObject.class);
         assertTrue(deser.migrated);
         deser.object.checkMigrate();
+        assertTrue(deser.object.inner.innerObject2.hasNullDeleteInner3);
+        assertFalse(deser.object.inner.innerObject2.hasValuedDeleteInner3);
     }
 
     @Test
@@ -98,6 +104,8 @@ public class SerializeDeserializeTest {
         deser = SerializerDeserializer.fromSerializedPersistent(oldSer1, PersistenceTestObject.class);
         assertFalse(deser.migrated);
         deser.object.checkMigrate();
+        assertTrue(deser.object.inner.innerObject2.hasNullDeleteInner3);
+        assertFalse(deser.object.inner.innerObject2.hasValuedDeleteInner3);
     }
 
     @Test
@@ -116,5 +124,15 @@ public class SerializeDeserializeTest {
                     PersistenceTestObject.class, null, true);
             pt.checkEqual(deser.object);
         }
+    }
+
+    @Test
+    public void testDeserializeMissingFieldTyped() {
+        String serTyped = "{\"@type\":\"org.talend.daikon.serialize.jsonio.PersistenceTestObject\",\"string1\":\"string1\",\"string2\":\"string2\",\"string3\":\"string3\",\"inner\":{\"string1\":\"string1\",\"string2\":\"string2\",\"innerObject2\":{\"string1\":\"string1\",\"string2\":\"string2\",\"innerObject3\":{\"@type\": \"org.talend.daikon.serialize.PersistenceTestObjectInner3\",\"string1\":\"string1\",\"string2\":\"string2\"}}}}";
+        Deserialized<PersistenceTestObject> deser = SerializerDeserializer.fromSerializedPersistent(serTyped,
+                PersistenceTestObject.class);
+        assertFalse(deser.object.inner.innerObject2.hasNullDeleteInner3);
+        assertTrue(deser.object.inner.innerObject2.hasValuedDeleteInner3);
+
     }
 }

@@ -8,6 +8,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.talend.daikon.exception.TalendRuntimeException;
 
@@ -34,8 +35,8 @@ public class SerializerDeserializer {
          * Set by deserialization to indicate the deserialized object has been changed because it was deserialized from
          * an earlier version.
          *
-         * This can be used by the caller to notify the user that the object has been migrated and also, if desired, it can
-         * be re-saved in its current serialized form (which would be different than the serialized form provided
+         * This can be used by the caller to notify the user that the object has been migrated and also, if desired, it
+         * can be re-saved in its current serialized form (which would be different than the serialized form provided
          * initially).
          */
         public boolean migrated;
@@ -83,9 +84,9 @@ public class SerializerDeserializer {
 
     private static class MissingFieldHandler implements JsonReader.MissingFieldHandler {
 
-        boolean[] migratedDeleted;
+        AtomicBoolean migratedDeleted;
 
-        MissingFieldHandler(boolean[] md) {
+        MissingFieldHandler(AtomicBoolean md) {
             migratedDeleted = md;
         }
 
@@ -94,9 +95,17 @@ public class SerializerDeserializer {
             if (!DeserializeDeletedFieldHandler.class.isAssignableFrom(object.getClass())) {
                 return;
             }
-            Boolean migrated = ((DeserializeDeletedFieldHandler) object).deletedField(fieldName, value);
+            Object deserialized = value;
+            if (value instanceof JsonObject) {
+                // convert the JsonObject to a real object
+                deserialized = new com.cedarsoftware.util.io.JsonReader().jsonObjectsToJava((JsonObject) value);
+                if (deserialized instanceof JsonObject) {
+                    deserialized = null;
+                }
+            }
+            Boolean migrated = ((DeserializeDeletedFieldHandler) object).deletedField(fieldName, deserialized);
             if (migrated) {
-                migratedDeleted[0] = true;
+                migratedDeleted.set(true);
             }
         }
     }
@@ -153,7 +162,7 @@ public class SerializerDeserializer {
         Map<Class, JsonReader.JsonClassReaderEx> readerMap = new HashMap<>();
         readerMap.put(DeserializeMarker.class, new CustomReader(postDeserializeHandlers));
 
-        final boolean[] migratedDeleted = new boolean[1];
+        final AtomicBoolean migratedDeleted = new AtomicBoolean(false);// we need to pass the ref.
 
         Map<String, Object> args = new HashMap<>();
         args.put(JsonReader.CUSTOM_READER_MAP, readerMap);
@@ -169,7 +178,7 @@ public class SerializerDeserializer {
             // use Entry key because the hash code may have changed
             migrated |= entry.getKey().postDeserialize(entry.getValue(), setup, persistent);
         }
-        d.migrated = migrated || migratedDeleted[0];
+        d.migrated = migrated || migratedDeleted.get();
         return d;
     }
 
@@ -183,9 +192,8 @@ public class SerializerDeserializer {
     /**
      * Returns a serialized version of the specified object.
      *
-     * @return the serialized {@code String}, use {@link #fromSerialized(String, Class, PostDeserializeSetup, boolean)} to
-     *         materialize the
-     *         object.
+     * @return the serialized {@code String}, use {@link #fromSerialized(String, Class, PostDeserializeSetup, boolean)}
+     * to materialize the object.
      */
     public static <T> String toSerialized(T object, boolean persistent) {
         return toSerialized(object, persistent, null);
@@ -194,9 +202,8 @@ public class SerializerDeserializer {
     /**
      * Returns a serialized version of the specified object.
      *
-     * @return the serialized {@code String}, use {@link #fromSerialized(String, Class, PostDeserializeSetup, boolean)} to
-     *         materialize the
-     *         object.
+     * @return the serialized {@code String}, use {@link #fromSerialized(String, Class, PostDeserializeSetup, boolean)}
+     * to materialize the object.
      */
     public static String toSerialized(Object object, boolean persistent, Map<String, Object> jsonIoOptions) {
         JsonWriter.JsonClassWriterEx writer = new JsonWriter.JsonClassWriterEx() {

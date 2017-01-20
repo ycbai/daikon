@@ -1,6 +1,7 @@
 package org.talend.daikon.serialize.jsonio;
 
 import org.talend.daikon.serialize.DeserializeDeletedFieldHandler;
+import org.talend.daikon.serialize.PersistenceTestObjectInner3;
 import org.talend.daikon.serialize.PostDeserializeHandler;
 import org.talend.daikon.serialize.PostDeserializeSetup;
 import org.talend.daikon.serialize.SerializeSetVersion;
@@ -19,6 +20,10 @@ public class PersistenceTestObjectInner2 implements DeserializeDeletedFieldHandl
 
     // replaces deleted string2
     public String string2a;
+
+    public transient boolean hasNullDeleteInner3 = false;
+
+    public transient boolean hasValuedDeleteInner3 = false;
 
     public PersistenceTestObjectInner2() {
     }
@@ -51,16 +56,21 @@ public class PersistenceTestObjectInner2 implements DeserializeDeletedFieldHandl
     }
 
     // Migrate to new string2a which replaces string2
+    @Override
     public boolean deletedField(String fieldName, Object value) {
         if (fieldName.equals("string2")) {
             string2a = (String) value;
+        } else if (fieldName.equals("innerObject3")) {
+            hasNullDeleteInner3 = value == null;
+            hasValuedDeleteInner3 = value instanceof PersistenceTestObjectInner3;
         }
         return deleteMigration;
     }
 
-    public void checkMigrate() {
-        if (deserializeMigration)
+    public void assertMigrateOk() {
+        if (deserializeMigration) {
             assert ("XXXstring1".equals(string1));
+        }
         assert ("string2".equals(string2a));
     }
 
